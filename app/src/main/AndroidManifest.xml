@@ -13,13 +13,23 @@
         android:theme="@style/Theme.ColloboStation"
         tools:targetApi="31">
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".Splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Main.MainActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".Login.LoginActivity"
+            android:exported="true">
         </activity>
     </application>
 

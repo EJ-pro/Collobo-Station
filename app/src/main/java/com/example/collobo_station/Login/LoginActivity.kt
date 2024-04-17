@@ -1,4 +1,6 @@
 package com.example.collobo_station.Login
 
-class LoginActivity {
+import androidx.appcompat.app.AppCompatActivity
+
+class LoginActivity : AppCompatActivity() {
 }
