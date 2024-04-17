@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "471262308904",
+    "project_id": "collobo-station",
+    "storage_bucket": "collobo-station.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471262308904:android:f2bd9a6fa51f2125ebe31d",
+        "android_client_info": {
+          "package_name": "com.example.collobo_station"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJG5O__5Gek1Kq3S9uRlca5zd1KuRNRhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
