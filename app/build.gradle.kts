@@ -8,6 +8,10 @@ android {
     namespace = "com.example.collobo_station"
     compileSdk = 34
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.collobo_station"
         minSdk = 34
