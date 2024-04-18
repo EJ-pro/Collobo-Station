@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-
+    implementation("com.google.android.material:material:1.4.0")
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation(libs.androidx.core.ktx)
