@@ -16,7 +16,10 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:orientation="horizontal">
-            <!-- Hello TextView -->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/image_dot"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -25,7 +28,6 @@
                 android:textColor="@color/white"
                 android:textSize="40sp"/>
 
-            <!-- User Name TextView -->
             <TextView
                 android:id="@+id/textViewUserName"
                 android:layout_width="wrap_content"
@@ -38,7 +40,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
-            <!-- User Image ImageView -->
             <ImageView
                 android:id="@+id/imageViewUserImage"
                 android:layout_width="wrap_content"
@@ -46,18 +47,26 @@
                 android:layout_gravity="center"
                 android:src="@drawable/image_user" />
         </LinearLayout>
-        <!-- Divider ImageView -->
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
-            android:text="오늘의 추천 공모전입니다."
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="10sp"
-            android:padding="10dp"
-            android:background="@drawable/main_white_background"/>
+            android:background="@drawable/main_white_background"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/image_smalldot"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘의 추천 공모전입니다."
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="10sp"/>
+        </LinearLayout>
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"
             android:layout_height="500dp"
@@ -89,15 +98,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
+            android:paddingLeft="25dp"
             android:paddingRight="20dp"
             android:paddingBottom="5dp">
             <TextView
                 android:id="@+id/textViewContestName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:text="대회명"
+                android:textStyle="bold"
                 android:textSize="19sp"
                 android:textColor="@color/maincolor"/>
         </LinearLayout>

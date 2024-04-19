@@ -244,8 +244,7 @@ class CreateActivity  : AppCompatActivity() {
                             "phone_number" to phone,
                             "nickname" to nickname
                         )
-
-                        db.collection("Users").document(nickname)
+                        db.collection("Users").document(email)
                             .set(userInfo)
                             .addOnSuccessListener {
                                 Toast.makeText(this, "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show()

@@ -1,7 +1,9 @@
 package com.example.collobo_station.Fragment
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +19,9 @@ import com.example.collobo_station.Adapter.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 class Fragment_Home : Fragment() {
 
@@ -28,6 +33,7 @@ class Fragment_Home : Fragment() {
     private lateinit var textViewTargetAudience: TextView
     private lateinit var textViewReceptionPeriod: TextView
     private lateinit var textViewTotalPrize: TextView
+    private lateinit var textViewUserName:TextView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -43,6 +49,47 @@ class Fragment_Home : Fragment() {
         textViewTargetAudience = view.findViewById(R.id.textViewTargetAudience)
         textViewReceptionPeriod = view.findViewById(R.id.textViewReceptionPeriod)
         textViewTotalPrize = view.findViewById(R.id.textViewTotalPrize)
+        textViewUserName = view.findViewById(R.id.textViewUserName)
+
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            val userEmail = user.email
+            if (userEmail != null) {
+                val db = Firebase.firestore
+                // Users 컬렉션에서 현재 사용자의 이메일과 일치하는 문서를 찾습니다.
+                db.collection("Users")
+                    .whereEqualTo("email", userEmail)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        if (!documents.isEmpty) {
+                            val document = documents.documents[0]
+                            val nickname = document.getString("nickname")
+                            if (nickname != null) {
+                                // 닉네임이 존재하는 경우에만 표시합니다.
+                                textViewUserName.text = nickname
+                                Toast.makeText(requireContext(), "안녕하세요, $nickname 님!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                // 닉네임이 없는 경우 "사용자"로 표시합니다.
+                                textViewUserName.text = "사용자"
+                            }
+                        } else {
+                            // 일치하는 문서가 없는 경우 "사용자"로 표시합니다.
+                            textViewUserName.text = "사용자"
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error getting document", e)
+                        // 오류 발생 시 "로그인 필요"로 표시합니다.
+                        textViewUserName.text = "로그인 필요"
+                    }
+            } else {
+                // 사용자 이메일이 없는 경우 "로그인 필요"로 표시합니다.
+                textViewUserName.text = "로그인 필요"
+            }
+        } else {
+            // 사용자가 로그인하지 않은 경우 "로그인 필요"로 표시합니다.
+            textViewUserName.text = "로그인 필요"
+        }
 
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("Recommendation Contest")
