@@ -40,32 +40,41 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
-            <ImageView
-                android:id="@+id/imageViewUserImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:src="@drawable/image_user" />
+                android:src="@drawable/image_test"
+                app:civ_border_color="@color/black"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
-            android:background="@drawable/main_white_background"
+            android:orientation="horizontal"
             android:padding="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/image_smalldot"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="오늘의 추천 공모전입니다."
-                android:textColor="@color/black"
+                android:text="오늘의"
+                android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="10sp"/>
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 추천"
+                android:textColor="@color/maincolor"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 공모전입니다."
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
         </LinearLayout>
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"
@@ -82,7 +91,7 @@
             android:paddingEnd="30dp"
             android:paddingBottom="10dp"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="10dp"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -101,14 +110,16 @@
             android:paddingLeft="25dp"
             android:paddingRight="20dp"
             android:paddingBottom="5dp">
-            <TextView
+
+            <Button
                 android:id="@+id/textViewContestName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="대회명"
-                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:background="@drawable/main_button_background"
                 android:textSize="19sp"
-                android:textColor="@color/maincolor"/>
+                android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

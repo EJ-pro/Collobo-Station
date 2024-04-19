@@ -2,11 +2,14 @@ package com.example.collobo_station.Fragment
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -28,7 +31,7 @@ class Fragment_Home : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var adapter: ViewPager2Adapter
     private lateinit var layoutOnBoardingIndicators: LinearLayout
-    private lateinit var textViewContestName: TextView
+    private lateinit var textViewContestName: Button
     private lateinit var textViewField: TextView
     private lateinit var textViewTargetAudience: TextView
     private lateinit var textViewReceptionPeriod: TextView
@@ -178,12 +181,18 @@ class Fragment_Home : Fragment() {
                         val targetAudience = it.getString("응모대상") ?: ""
                         val receptionPeriod = it.getString("접수기간") ?: ""
                         val totalPrize = it.getString("총상금") ?: ""
+                        val url = it.getString("url") ?:""
 
                         textViewContestName.text = contestName
                         textViewField.text = field
                         textViewTargetAudience.text = targetAudience
                         textViewReceptionPeriod.text = receptionPeriod
                         textViewTotalPrize.text = totalPrize
+
+                        textViewContestName.setOnClickListener {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            startActivity(intent)
+                        }
                     }
                 }
             }
