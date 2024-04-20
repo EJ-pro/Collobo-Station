@@ -26,6 +26,6 @@ class Fragment_Tab_All : Fragment() {
     }
     private fun getTabAllItems(): List<String> {
         // 리사이클러뷰에 표시할 데이터를 생성하거나 가져옵니다.
-        return listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5", "Item 2", "Item 3", "Item 4", "Item 5")
+        return listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
     }
 }

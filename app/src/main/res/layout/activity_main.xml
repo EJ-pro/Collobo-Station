@@ -87,6 +87,7 @@
             android:background="@drawable/navigation_round_bar"
             android:elevation="8dp"
             app:itemIconTint="@drawable/navigation_color"
+            app:itemBackground="@drawable/navigation_pick"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/bottom_navigation" />
     </LinearLayout>

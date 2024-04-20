@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -145,6 +146,23 @@ class Fragment_Home : Fragment() {
             tab.text = tabAdapter.getPageTitle(position)
         }.attach()
 
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                // 선택된 탭에 따라 Fragment의 높이를 조정
+                val layoutParams = viewPagerTabs.layoutParams
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT // 또는 적절한 높이로 설정
+                viewPagerTabs.layoutParams = layoutParams
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // 선택되지 않은 탭에 대한 처리 (필요한 경우)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // 탭이 다시 선택될 때의 처리 (필요한 경우)
+            }
+        })
         return view
     }
 
