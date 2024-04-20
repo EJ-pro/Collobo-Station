@@ -97,7 +97,7 @@ class CreateActivity  : AppCompatActivity() {
                     }
                 },1000)
             } else {
-                checkDuplicateNickname(phone)
+                checkDuplicatePhoneNumber(phone)
             }
         }
         createButton.setOnClickListener {
