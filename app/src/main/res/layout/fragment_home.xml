@@ -214,26 +214,32 @@
                     android:textColor="@android:color/white"/>
             </LinearLayout>
         </LinearLayout>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabMode="fixed"/>
+            android:background="@drawable/home_background"
+            android:layout_marginTop="50dp"
+            android:paddingBottom="50dp"
+            android:orientation="vertical">
 
-        <!-- 프래그먼트 컨테이너 -->
-        <FrameLayout
-            android:id="@+id/fragmentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                app:tabTextColor="@color/maincolor"
+                app:tabIndicatorColor="@color/maincolor"
+                app:tabTextAppearance="@style/TabTextStyle"
+                app:tabIndicatorFullWidth="false"
+                app:tabGravity="fill"
+                app:tabMode="fixed" />
 
-        <!-- Vertical RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewVertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/TabviewPager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

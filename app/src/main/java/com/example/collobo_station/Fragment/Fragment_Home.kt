@@ -1,5 +1,6 @@
 package com.example.collobo_station.Fragment
 
+import TabAdapter
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -22,6 +23,8 @@ import com.example.collobo_station.Adapter.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -37,7 +40,8 @@ class Fragment_Home : Fragment() {
     private lateinit var textViewReceptionPeriod: TextView
     private lateinit var textViewTotalPrize: TextView
     private lateinit var textViewUserName:TextView
-
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPagerTabs: ViewPager
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -130,6 +134,13 @@ class Fragment_Home : Fragment() {
                 setCurrentOnboardingIndicator(position)
             }
         })
+
+        tabLayout = view.findViewById(R.id.tabLayout)
+        viewPagerTabs = view.findViewById(R.id.TabviewPager)
+
+        val Tadapter = TabAdapter(childFragmentManager)
+        viewPagerTabs.adapter = Tadapter
+        tabLayout.setupWithViewPager(viewPagerTabs)
 
         return view
     }

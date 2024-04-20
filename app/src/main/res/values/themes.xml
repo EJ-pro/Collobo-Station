@@ -5,4 +5,7 @@
         <item name="android:colorPrimary">@android:color/transparent</item>
     </style>
     <style name="Theme.ColloboStation" parent="Base.Theme.ColloboStation" />
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
