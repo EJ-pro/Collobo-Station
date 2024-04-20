@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.animation.AccelerateInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.collobo_station.Fragment.Fragment_BookMark
@@ -14,6 +15,7 @@ import com.example.collobo_station.Fragment.Fragment_User
 import com.example.collobo_station.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.logging.Handler
 
 class MainActivity : AppCompatActivity() {
     private lateinit var fabAction: FloatingActionButton
@@ -21,7 +23,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fabSub2: FloatingActionButton
     private lateinit var fabSub3: FloatingActionButton
     private var isExpanded = false
+    private var doubleBackToExitPressedOnce = false
 
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+
+        android.os.Handler().postDelayed({
+            doubleBackToExitPressedOnce = false
+        }, 2000) // 2초간 두 번째 뒤로가기 버튼이 클릭되지 않으면 리셋
+    }
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {

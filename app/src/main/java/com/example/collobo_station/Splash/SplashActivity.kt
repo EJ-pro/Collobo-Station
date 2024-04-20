@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.Main.MainActivity
@@ -13,6 +14,22 @@ import com.example.collobo_station.R
 
 class SplashActivity : AppCompatActivity() {
 
+    private var isExpanded = false
+    private var doubleBackToExitPressedOnce = false
+
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+
+        android.os.Handler().postDelayed({
+            doubleBackToExitPressedOnce = false
+        }, 2000) // 2초간 두 번째 뒤로가기 버튼이 클릭되지 않으면 리셋
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
