@@ -131,22 +131,24 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
-                android:layout_marginTop="50dp"
-                android:layout_marginLeft="20dp"
-                android:layout_width="300dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                app:tabTextColor="@color/maincolor"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="50dp"
+                app:tabGravity="center"
+                app:tabMode="auto"
+                app:tabTextAppearance="@style/home_tab_text"
+                app:tabTextColor="#818181"
                 app:tabIndicatorColor="@color/maincolor"
-                app:tabTextAppearance="@style/TabTextStyle"
                 app:tabIndicatorFullWidth="false"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
-
+                app:tabSelectedTextColor="@color/maincolor"/>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="50dp"
                 android:fitsSystemWindows="true"
                 android:layout_weight="1"/>
         </LinearLayout>
