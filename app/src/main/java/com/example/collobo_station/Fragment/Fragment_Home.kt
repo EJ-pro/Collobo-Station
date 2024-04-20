@@ -1,6 +1,5 @@
 package com.example.collobo_station.Fragment
 
-import TabAdapter
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -24,7 +23,9 @@ import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
+import com.example.collobo_station.Adapter.TabAdapter
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -35,13 +36,11 @@ class Fragment_Home : Fragment() {
     private lateinit var adapter: ViewPager2Adapter
     private lateinit var layoutOnBoardingIndicators: LinearLayout
     private lateinit var textViewContestName: Button
-    private lateinit var textViewField: TextView
-    private lateinit var textViewTargetAudience: TextView
-    private lateinit var textViewReceptionPeriod: TextView
-    private lateinit var textViewTotalPrize: TextView
     private lateinit var textViewUserName:TextView
     private lateinit var tabLayout: TabLayout
-    private lateinit var viewPagerTabs: ViewPager
+    private lateinit var viewPagerTabs: ViewPager2
+    private lateinit var tabadapter: ViewPager2Adapter
+
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -132,11 +131,19 @@ class Fragment_Home : Fragment() {
         })
 
         tabLayout = view.findViewById(R.id.tabLayout)
-        viewPagerTabs = view.findViewById(R.id.TabviewPager)
+        viewPagerTabs = view.findViewById(R.id.TabviewPager2)
 
-        val Tadapter = TabAdapter(childFragmentManager)
-        viewPagerTabs.adapter = Tadapter
-        tabLayout.setupWithViewPager(viewPagerTabs)
+        var tabAdapter = TabAdapter(childFragmentManager, lifecycle)
+
+        tabAdapter.addFragment(Fragment_Tab_All(), "전체보기")
+        tabAdapter.addFragment(Fragment_Tab_Recent(), "최근등록순")
+        tabAdapter.addFragment(Fragment_Tab_DeadLine(),"마감순")
+
+        viewPagerTabs.adapter = tabAdapter
+
+        TabLayoutMediator(tabLayout, viewPagerTabs) { tab, position ->
+            tab.text = tabAdapter.getPageTitle(position)
+        }.attach()
 
         return view
     }

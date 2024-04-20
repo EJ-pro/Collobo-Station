@@ -142,10 +142,11 @@
                 app:tabGravity="fill"
                 app:tabMode="fixed" />
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/TabviewPager"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/TabviewPager2"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
