@@ -131,7 +131,7 @@ class Fragment_Home : Fragment() {
         })
 
         tabLayout = view.findViewById(R.id.tabLayout)
-        viewPagerTabs = view.findViewById(R.id.TabviewPager2)
+        viewPagerTabs = view.findViewById(R.id.view_pager)
 
         var tabAdapter = TabAdapter(childFragmentManager, lifecycle)
 
