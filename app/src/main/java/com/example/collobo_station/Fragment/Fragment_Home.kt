@@ -52,10 +52,6 @@ class Fragment_Home : Fragment() {
         viewPager = view.findViewById(R.id.viewpager2)
         layoutOnBoardingIndicators = view.findViewById(R.id.indicators)
         textViewContestName = view.findViewById(R.id.textViewContestName)
-        textViewField = view.findViewById(R.id.textViewField)
-        textViewTargetAudience = view.findViewById(R.id.textViewTargetAudience)
-        textViewReceptionPeriod = view.findViewById(R.id.textViewReceptionPeriod)
-        textViewTotalPrize = view.findViewById(R.id.textViewTotalPrize)
         textViewUserName = view.findViewById(R.id.textViewUserName)
 
         val user = Firebase.auth.currentUser
@@ -193,12 +189,6 @@ class Fragment_Home : Fragment() {
                         val receptionPeriod = it.getString("접수기간") ?: ""
                         val totalPrize = it.getString("총상금") ?: ""
                         val url = it.getString("url") ?:""
-
-                        textViewContestName.text = contestName
-                        textViewField.text = field
-                        textViewTargetAudience.text = targetAudience
-                        textViewReceptionPeriod.text = receptionPeriod
-                        textViewTotalPrize.text = totalPrize
 
                         textViewContestName.setOnClickListener {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))

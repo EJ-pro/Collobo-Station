@@ -1,6 +1,9 @@
 package com.example.collobo_station.Main
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.collobo_station.Fragment.Fragment_BookMark
@@ -10,8 +13,14 @@ import com.example.collobo_station.Fragment.Fragment_Portfolio
 import com.example.collobo_station.Fragment.Fragment_User
 import com.example.collobo_station.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var fabAction: FloatingActionButton
+    private lateinit var fabSub1: FloatingActionButton
+    private lateinit var fabSub2: FloatingActionButton
+    private lateinit var fabSub3: FloatingActionButton
+    private var isExpanded = false
 
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -48,7 +57,56 @@ class MainActivity : AppCompatActivity() {
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
         navView.selectedItemId = R.id.navigation_item1
+
+        fabAction = findViewById(R.id.fab_action)
+        fabSub1 = findViewById(R.id.fab_sub1)
+        fabSub2 = findViewById(R.id.fab_sub2)
+        fabSub3 = findViewById(R.id.fab_sub3)
+
+        fabAction.setOnClickListener {
+            if (isExpanded) {
+                collapseFabMenu()
+            } else {
+                expandFabMenu()
+            }
+        }
     }
+
+    private fun expandFabMenu() {
+        isExpanded = true
+
+        val animSub1 = ObjectAnimator.ofFloat(fabSub1, "translationY", -resources.getDimension(R.dimen.standard_65))
+        val animSub2 = ObjectAnimator.ofFloat(fabSub2, "translationY", -resources.getDimension(R.dimen.standard_125))
+        val animSub3 = ObjectAnimator.ofFloat(fabSub3, "translationY", -resources.getDimension(R.dimen.standard_185))
+
+        AnimatorSet().apply {
+            playTogether(animSub1, animSub2, animSub3)
+            interpolator = AccelerateInterpolator()
+            duration = 300
+            start()
+        }
+
+        fabAction.animate().rotation(45f)
+    }
+
+    private fun collapseFabMenu() {
+        isExpanded = false
+
+        val animSub1 = ObjectAnimator.ofFloat(fabSub1, "translationY", 0f)
+        val animSub2 = ObjectAnimator.ofFloat(fabSub2, "translationY", 0f)
+        val animSub3 = ObjectAnimator.ofFloat(fabSub3, "translationY", 0f)
+
+        AnimatorSet().apply {
+            playTogether(animSub1, animSub2, animSub3)
+            interpolator = AccelerateInterpolator()
+            duration = 300
+            start()
+        }
+
+        fabAction.animate().rotation(0f)
+    }
+
+
 
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()

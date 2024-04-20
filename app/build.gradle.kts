@@ -42,6 +42,8 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.material:material:<version>")
+    implementation("com.google.android.material:material:1.5.0-alpha02")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.material:material:1.4.0")
     implementation("com.google.firebase:firebase-analytics")
