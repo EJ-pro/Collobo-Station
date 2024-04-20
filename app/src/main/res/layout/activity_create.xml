@@ -94,6 +94,7 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:backgroundTint="@color/maincolor"
                     android:textColorHint="@color/black" />
 
@@ -117,6 +118,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
+                    android:maxLength="30"
                     android:backgroundTint="@color/maincolor"
                     android:textColorHint="@color/black" />
 
@@ -149,6 +152,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:backgroundTint="@color/maincolor"
                     android:inputType="textPassword"
                     android:textColorHint="@color/black" />
@@ -173,6 +177,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
+                    android:maxLength="12"
                     android:backgroundTint="@color/maincolor"
                     android:textColorHint="@color/black" />
 
@@ -206,6 +212,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
+                    android:inputType="phone"
+                    android:maxLength="13"
                     android:backgroundTint="@color/maincolor"
                     android:textColorHint="@color/black" />
 

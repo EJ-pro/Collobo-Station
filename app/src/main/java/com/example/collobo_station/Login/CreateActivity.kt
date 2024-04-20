@@ -3,6 +3,7 @@ package com.example.collobo_station.Login
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.telephony.PhoneNumberFormattingTextWatcher
 import android.util.Log
 import android.widget.ScrollView
 import android.widget.Toast
@@ -42,7 +43,7 @@ class CreateActivity  : AppCompatActivity() {
         val checkDuplicatePhoneNumberButton = binding.checkDuplicatePhoneNumberBtn
         val checkBox = binding.checkBox
         val backButton = binding.createBack
-
+        phoneEditText.addTextChangedListener(PhoneNumberFormattingTextWatcher())
         auth = Firebase.auth
         backButton.setOnClickListener{
             val intent = Intent(this, LoginActivity::class.java)
