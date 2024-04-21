@@ -10,7 +10,9 @@ android {
 
     buildFeatures {
         viewBinding = true
+        //noinspection DataBindingWithoutKapt
         dataBinding = true
+
     }
 
     defaultConfig {
