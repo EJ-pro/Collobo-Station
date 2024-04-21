@@ -121,6 +121,7 @@ class Fragment_Home : Fragment() {
             val v = 1 - Math.abs(fl)
             view.scaleY = 0.8f + v * 0.2f
         })
+
         viewPager.offscreenPageLimit = 1
         viewPager.setPageTransformer(transform)
 
@@ -146,23 +147,21 @@ class Fragment_Home : Fragment() {
             tab.text = tabAdapter.getPageTitle(position)
         }.attach()
 
-
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                // 선택된 탭에 따라 Fragment의 높이를 조정
-                val layoutParams = viewPagerTabs.layoutParams
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT // 또는 적절한 높이로 설정
-                viewPagerTabs.layoutParams = layoutParams
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                // 선택되지 않은 탭에 대한 처리 (필요한 경우)
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                // 탭이 다시 선택될 때의 처리 (필요한 경우)
+        viewPagerTabs.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val fragment = getChildFragmentManager().fragments[position]
+                if (fragment is Fragment_Tab_All) {
+                    fragment.adjustRecyclerViewSize()
+                } else if (fragment is Fragment_Tab_Recent) {
+                    fragment.adjustRecyclerViewSize()
+                } else if (fragment is Fragment_Tab_DeadLine) {
+                    fragment.adjustRecyclerViewSize()
+                }
             }
         })
+
+
         return view
     }
 

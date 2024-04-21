@@ -13,17 +13,22 @@ import com.example.collobo_station.Adapter.TabRecentAdapter
 import com.example.collobo_station.R
 
 class Fragment_Tab_Recent: Fragment() {
+    private lateinit var recyclerView: RecyclerView
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tab_recent, container, false)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = TabRecentAdapter(getTabAllItems())
         // 리사이클러뷰 초기화 및 데이터 로드
         return view
+    }
+    fun adjustRecyclerViewSize() {
+        recyclerView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        recyclerView.requestLayout()
     }
     private fun getTabAllItems(): List<String> {
         // 리사이클러뷰에 표시할 데이터를 생성하거나 가져옵니다.
