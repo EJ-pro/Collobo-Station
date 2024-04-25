@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         fabAction = findViewById(R.id.fab_action)
         fabSub1 = findViewById(R.id.fab_sub1)
         fabSub2 = findViewById(R.id.fab_sub2)
-        fabSub3 = findViewById(R.id.fab_sub3)
 
         fabAction.setOnClickListener {
             if (isExpanded) {
@@ -93,10 +92,9 @@ class MainActivity : AppCompatActivity() {
 
         val animSub1 = ObjectAnimator.ofFloat(fabSub1, "translationY", -resources.getDimension(R.dimen.standard_65))
         val animSub2 = ObjectAnimator.ofFloat(fabSub2, "translationY", -resources.getDimension(R.dimen.standard_125))
-        val animSub3 = ObjectAnimator.ofFloat(fabSub3, "translationY", -resources.getDimension(R.dimen.standard_185))
 
         AnimatorSet().apply {
-            playTogether(animSub1, animSub2, animSub3)
+            playTogether(animSub1, animSub2)
             interpolator = AccelerateInterpolator()
             duration = 300
             start()
@@ -110,10 +108,9 @@ class MainActivity : AppCompatActivity() {
 
         val animSub1 = ObjectAnimator.ofFloat(fabSub1, "translationY", 0f)
         val animSub2 = ObjectAnimator.ofFloat(fabSub2, "translationY", 0f)
-        val animSub3 = ObjectAnimator.ofFloat(fabSub3, "translationY", 0f)
 
         AnimatorSet().apply {
-            playTogether(animSub1, animSub2, animSub3)
+            playTogether(animSub1, animSub2)
             interpolator = AccelerateInterpolator()
             duration = 300
             start()

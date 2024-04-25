@@ -128,13 +128,23 @@
             android:layout_marginTop="50dp"
             android:paddingBottom="50dp"
             android:orientation="vertical">
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:focusable="true"
+                app:iconifiedByDefault="false"
+                app:layout_constraintVertical_weight="1"
+                app:queryHint="검색"
+                app:searchIcon="@drawable/icon_search"/>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 app:tabGravity="center"
                 app:tabMode="auto"
                 app:tabTextAppearance="@style/home_tab_text"

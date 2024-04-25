@@ -1,12 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.ColloboStation" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@android:color/transparent</item>
+        <item name="android:searchViewStyle">@style/MySearchViewStyle</item>
     </style>
+
     <style name="Theme.ColloboStation" parent="Base.Theme.ColloboStation" />
+
     <style name="home_tab_text" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <!-- 힌트 텍스트의 색상 -->
+        <item name="android:textColorHint">#FFFFFF</item>
+        <!-- 서치뷰의 밑줄 색상 -->
+        <item name="colorControlNormal">#FFFFFF</item>
+        <!-- 서치뷰의 포커스된 밑줄 색상 -->
+        <item name="colorControlActivated">#FFFFFF</item>
     </style>
 </resources>

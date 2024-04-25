@@ -43,18 +43,6 @@
             android:orientation="vertical">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/bottom_navigation"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="16dp"
-                android:layout_marginBottom="-33dp"
-                android:src="@drawable/image_heart"
-                app:backgroundTint="@color/maincolor"
-                app:fabSize="normal" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_sub1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,19 +64,18 @@
                 android:src="@drawable/image_action_2"
                 app:backgroundTint="@color/maincolor" />
 
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_sub3"
+                android:id="@+id/fab_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/bottom_navigation"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="22dp"
                 android:layout_marginBottom="-33dp"
-                android:src="@drawable/image_heart"
-                app:backgroundTint="@color/maincolor" />
+                android:src="@drawable/icon_add"
+                app:backgroundTint="@color/maincolor"
+                app:fabSize="normal" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_navigation"
