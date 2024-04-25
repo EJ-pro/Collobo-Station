@@ -40,6 +40,8 @@
             android:name=".Login.CreateActivity"
             android:screenOrientation="portrait"
             android:exported="true" />
+
+        <activity android:name=".Login.ID_PW_Find" />
     </application>
 
 </manifest>
