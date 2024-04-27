@@ -40,8 +40,7 @@ class Fragment_Tab_All : Fragment() {
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val querySnapshot = contestCollection.orderBy("D-day", Query.Direction.ASCENDING).get().await()
-                //val querySnapshot = contestCollection.orderBy("대회명", Query.Direction.DESCENDING).get().await()
+                val querySnapshot = contestCollection.get().await()
                 for (document in querySnapshot.documents) {
                     val contestName = document.getString("대회명") ?: ""
                     val contestField = document.getString("분야") ?: ""
