@@ -10,8 +10,8 @@
         android:padding="15dp"
         android:orientation="horizontal">
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="150dp"
+            android:layout_width="120dp"
+            android:layout_height="180dp"
             android:id="@+id/contest_image"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background_contest"
+                android:layout_marginTop="10dp"
                 android:padding="10dp"
                 android:orientation="vertical">
                 <TextView

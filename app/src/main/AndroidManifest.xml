@@ -42,6 +42,8 @@
             android:exported="true" />
 
         <activity android:name=".Login.ID_PW_Find" />
+        <activity android:name=".Main.Portfolio_management"/>
+        <activity android:name=".Main.Project_Participation"/>
     </application>
 
 </manifest>

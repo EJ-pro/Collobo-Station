@@ -2,6 +2,7 @@ package com.example.collobo_station.Main
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
@@ -11,11 +12,11 @@ import com.example.collobo_station.Fragment.Fragment_BookMark
 import com.example.collobo_station.Fragment.Fragment_Chat
 import com.example.collobo_station.Fragment.Fragment_Home
 import com.example.collobo_station.Fragment.Fragment_Portfolio
-import com.example.collobo_station.Fragment.Fragment_User
+import com.example.collobo_station.Fragment.Splash.Fragment_User
+import com.example.collobo_station.Login.ID_PW_Find
 import com.example.collobo_station.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.logging.Handler
 
 class MainActivity : AppCompatActivity() {
     private lateinit var fabAction: FloatingActionButton
@@ -84,6 +85,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 expandFabMenu()
             }
+        }
+        fabSub1.setOnClickListener {
+            val intent = Intent(this, Project_Participation::class.java)
+            startActivity(intent)
+        }
+        fabSub2.setOnClickListener {
+            val intent = Intent(this, Portfolio_management::class.java)
+            startActivity(intent)
         }
     }
 

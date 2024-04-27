@@ -1,15 +1,14 @@
 package com.example.collobo_station.Login
 
-import Fragment_IDFind
+import com.example.collobo_station.Fragment.Login.Fragment_IDFind
 import ViewPagerFindIDAdapter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.example.collobo_station.R
 import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Fragment.Fragment_PWFind
+import com.example.collobo_station.Fragment.Login.Fragment_PWFind
 
 class ID_PW_Find : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")

@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment
+package com.example.collobo_station.Fragment.Splash
 
 import android.content.Context
 import android.content.Intent

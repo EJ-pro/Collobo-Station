@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment
+package com.example.collobo_station.Fragment.Tab
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,11 +37,11 @@ class Fragment_Tab_All : Fragment() {
     private fun loadDataFromFirestore() {
         val db = FirebaseFirestore.getInstance()
         val contestCollection = db.collection("Contest")
-        contestCollection.orderBy("field_name", Query.Direction.ASCENDING)
-        // contestCollection..orderBy("field_name", Query.Direction.DESCENDING)
+
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val querySnapshot = contestCollection.get().await()
+                val querySnapshot = contestCollection.orderBy("D-day", Query.Direction.ASCENDING).get().await()
+                //val querySnapshot = contestCollection.orderBy("대회명", Query.Direction.DESCENDING).get().await()
                 for (document in querySnapshot.documents) {
                     val contestName = document.getString("대회명") ?: ""
                     val contestField = document.getString("분야") ?: ""

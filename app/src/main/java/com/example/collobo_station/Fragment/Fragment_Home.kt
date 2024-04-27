@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,8 +22,10 @@ import com.example.collobo_station.Adapter.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
-import androidx.viewpager.widget.ViewPager
 import com.example.collobo_station.Adapter.TabAdapter
+import com.example.collobo_station.Fragment.Tab.Fragment_Tab_All
+import com.example.collobo_station.Fragment.Tab.Fragment_Tab_DeadLine
+import com.example.collobo_station.Fragment.Tab.Fragment_Tab_Field
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Firebase
@@ -207,6 +208,7 @@ class Fragment_Home : Fragment() {
 
         tabAdapter.addFragment(Fragment_Tab_All(), "전체보기")
         tabAdapter.addFragment(Fragment_Tab_Field(), "분야별")
+        tabAdapter.addFragment(Fragment_Tab_DeadLine(), "마감순")
 
         viewPagerTabs.adapter = tabAdapter
 
