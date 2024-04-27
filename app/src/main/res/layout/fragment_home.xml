@@ -136,20 +136,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 android:orientation="horizontal">
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
                     android:src="@drawable/icon_search"/>
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/home_search"
                     android:text="검색"
-                    android:textSize="20dp"
-                    android:layout_marginLeft="5dp"
+                    android:textSize="15dp"
                     android:background="@android:color/transparent"
                     android:gravity="left|center"
                     android:textColor="#818181"

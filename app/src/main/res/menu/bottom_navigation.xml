@@ -22,16 +22,9 @@
         android:state_selected="true"
         app:showAsAction="ifRoom"
         android:title=""/>
-    <item
-        android:id="@+id/navigation_item4"
-        android:icon="@drawable/image_calendar_month"
-        android:enabled="true"
-        android:state_selected="true"
-        app:showAsAction="ifRoom"
-        android:title=""/>
 
     <item
-        android:id="@+id/navigation_item5"
+        android:id="@+id/navigation_item4"
         android:icon="@drawable/image_user"
         android:enabled="true"
         android:state_selected="true"

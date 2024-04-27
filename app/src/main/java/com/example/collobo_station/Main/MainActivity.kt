@@ -55,10 +55,6 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_item4 -> {
-                    replaceFragment(Fragment_Portfolio())
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.navigation_item5 -> {
                     replaceFragment(Fragment_User())
                     return@OnNavigationItemSelectedListener true
                 }
