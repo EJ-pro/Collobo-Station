@@ -11,6 +11,7 @@ import com.example.collobo_station.Adapter.TabAllAdapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -36,7 +37,8 @@ class Fragment_Tab_All : Fragment() {
     private fun loadDataFromFirestore() {
         val db = FirebaseFirestore.getInstance()
         val contestCollection = db.collection("Contest")
-
+        contestCollection.orderBy("field_name", Query.Direction.ASCENDING)
+        // contestCollection..orderBy("field_name", Query.Direction.DESCENDING)
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 val querySnapshot = contestCollection.get().await()
