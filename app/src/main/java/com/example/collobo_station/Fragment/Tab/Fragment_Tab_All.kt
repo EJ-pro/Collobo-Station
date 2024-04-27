@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,6 +23,7 @@ class Fragment_Tab_All : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tabAllAdapter: TabAllAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,16 +34,34 @@ class Fragment_Tab_All : Fragment() {
         tabAllAdapter = TabAllAdapter(contestList)
         recyclerView.adapter = tabAllAdapter
         loadDataFromFirestore()
+        tabAllAdapter.setOnItemClickListener(object : TabAllAdapter.OnItemClickListener {
+
+            override fun onItemClick(position: Int) {
+                Toast.makeText(requireContext(), "테스트", Toast.LENGTH_SHORT).show()
+                val documentSnapshot = contestList[position]
+                val contestName = documentSnapshot.getString("대회명") ?: ""
+                val contestField = documentSnapshot.getString("분야") ?: ""
+                val contestPeriod = documentSnapshot.getString("접수기간") ?: ""
+                val contestCount = documentSnapshot.getString("D-day") ?: ""
+
+                val bundle = Bundle().apply {
+                    putString("contestName", contestName)
+                    putString("contestField", contestField)
+                    putString("contestPeriod", contestPeriod)
+                    putString("contestCount", contestCount)
+                }
+                val fragment = Fragment_Contest_Detail()
+                fragment.arguments = bundle
+                fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, fragment)?.commit()
+            }
+        })
         return view
     }
 
     private fun loadDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val contestCollection = db.collection("Contest")
-
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val querySnapshot = contestCollection.get().await()
+                val querySnapshot = getContestDataFromFirestore()
                 for (document in querySnapshot.documents) {
                     val contestName = document.getString("대회명") ?: ""
                     val contestField = document.getString("분야") ?: ""
@@ -58,4 +79,11 @@ class Fragment_Tab_All : Fragment() {
             }
         }
     }
+
+    private suspend fun getContestDataFromFirestore(): QuerySnapshot {
+        val db = FirebaseFirestore.getInstance()
+        val contestCollection = db.collection("Contest")
+        return contestCollection.get().await()
+    }
+
 }

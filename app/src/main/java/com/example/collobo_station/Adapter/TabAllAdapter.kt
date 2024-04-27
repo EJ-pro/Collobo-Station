@@ -33,7 +33,18 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
     override fun getItemCount(): Int {
         return items.size
     }
+    // 아이템 클릭 리스너 인터페이스 정의
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
 
+    // 아이템 클릭 리스너 멤버 변수
+    private var itemClickListener: OnItemClickListener? = null
+
+    // 아이템 클릭 리스너 설정 메서드
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.itemClickListener = listener
+    }
     inner class TabAllViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contestImage: ImageView = itemView.findViewById(R.id.contest_image)
         private val contestName: TextView = itemView.findViewById(R.id.Contest_name)
