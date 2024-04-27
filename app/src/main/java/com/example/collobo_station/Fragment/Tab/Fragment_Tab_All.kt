@@ -19,7 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class Fragment_Tab_All : Fragment() {
+class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tabAllAdapter: TabAllAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
@@ -34,30 +34,16 @@ class Fragment_Tab_All : Fragment() {
         tabAllAdapter = TabAllAdapter(contestList)
         recyclerView.adapter = tabAllAdapter
         loadDataFromFirestore()
-        tabAllAdapter.setOnItemClickListener(object : TabAllAdapter.OnItemClickListener {
-
-            override fun onItemClick(position: Int) {
-                Toast.makeText(requireContext(), "테스트", Toast.LENGTH_SHORT).show()
-                val documentSnapshot = contestList[position]
-                val contestName = documentSnapshot.getString("대회명") ?: ""
-                val contestField = documentSnapshot.getString("분야") ?: ""
-                val contestPeriod = documentSnapshot.getString("접수기간") ?: ""
-                val contestCount = documentSnapshot.getString("D-day") ?: ""
-
-                val bundle = Bundle().apply {
-                    putString("contestName", contestName)
-                    putString("contestField", contestField)
-                    putString("contestPeriod", contestPeriod)
-                    putString("contestCount", contestCount)
-                }
-                val fragment = Fragment_Contest_Detail()
-                fragment.arguments = bundle
-                fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, fragment)?.commit()
-            }
-        })
+        tabAllAdapter.setOnItemClickListener(this)
         return view
     }
-
+    override fun onItemClick(position: Int) {
+        // 클릭된 아이템의 위치(position)을 통해 원하는 동작을 수행
+        val clickedItem = contestList[position]
+        val contestName = clickedItem.getString("대회명") ?: ""
+        Toast.makeText(requireContext(), "Clicked on $contestName", Toast.LENGTH_SHORT).show()
+        // 여기에 클릭 이벤트에 따른 추가적인 동작을 구현할 수 있습니다.
+    }
     private fun loadDataFromFirestore() {
         GlobalScope.launch(Dispatchers.Main) {
             try {

@@ -25,14 +25,17 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
     override fun onBindViewHolder(holder: TabAllViewHolder, position: Int) {
         holder.bind(items[position])
     }
+
     fun setItems(items: List<DocumentSnapshot>) {
         itemList.clear()
         itemList.addAll(items)
         notifyDataSetChanged()
     }
+
     override fun getItemCount(): Int {
         return items.size
     }
+
     // 아이템 클릭 리스너 인터페이스 정의
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -45,12 +48,23 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.itemClickListener = listener
     }
+
     inner class TabAllViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contestImage: ImageView = itemView.findViewById(R.id.contest_image)
         private val contestName: TextView = itemView.findViewById(R.id.Contest_name)
         private val contestDay: TextView = itemView.findViewById(R.id.Contest_day)
         private val contestField: TextView = itemView.findViewById(R.id.Contest_Feild)
         private val contestCount: TextView = itemView.findViewById(R.id.Contest_Count)
+
+        init {
+            // 아이템 뷰에 클릭 리스너 설정
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    itemClickListener?.onItemClick(position)
+                }
+            }
+        }
 
         fun bind(item: DocumentSnapshot) {
             val contestData = item.data
@@ -62,7 +76,8 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
                 contestCount.text = it["D-day"] as? String ?: "데이터가 없습니다."
 
                 val imageUrl = it["이미지"] as? String
-                val storageReference = imageUrl?.let { url -> Firebase.storage.reference.child(url) }
+                val storageReference =
+                    imageUrl?.let { url -> Firebase.storage.reference.child(url) }
 
                 // 이미지 파일 다운로드 및 처리
                 storageReference?.getBytes(Long.MAX_VALUE)
@@ -72,8 +87,8 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
                         contestImage.setImageBitmap(bmp)
                     }
                     ?.addOnFailureListener { exception ->
-                        // 다운로드 실패 시 에러 로그 출력
-                        Log.e("Fragment_Tab_All", "Error downloading image", exception)
+                        // 다운로드 실패 시
+
                     }
             }
         }
