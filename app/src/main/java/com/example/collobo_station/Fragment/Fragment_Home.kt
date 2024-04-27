@@ -185,11 +185,6 @@ class Fragment_Home : Fragment() {
                 if (!documents.isEmpty && currentPosition < documents.size()) {
                     val document = documents.elementAtOrNull(currentPosition)
                     document?.let {
-                        val contestName = it.getString("대회명") ?: ""
-                        val field = it.getString("분야") ?: ""
-                        val targetAudience = it.getString("응모대상") ?: ""
-                        val receptionPeriod = it.getString("접수기간") ?: ""
-                        val totalPrize = it.getString("총상금") ?: ""
                         val url = it.getString("url") ?: ""
 
                         textViewContestName.setOnClickListener {
@@ -211,27 +206,12 @@ class Fragment_Home : Fragment() {
         var tabAdapter = TabAdapter(childFragmentManager, lifecycle)
 
         tabAdapter.addFragment(Fragment_Tab_All(), "전체보기")
-        tabAdapter.addFragment(Fragment_Tab_Recent(), "최근등록순")
-        tabAdapter.addFragment(Fragment_Tab_DeadLine(), "마감순")
+        tabAdapter.addFragment(Fragment_Tab_Field(), "분야별")
 
         viewPagerTabs.adapter = tabAdapter
 
         TabLayoutMediator(tabLayout, viewPagerTabs) { tab, position ->
             tab.text = tabAdapter.getPageTitle(position)
         }.attach()
-
-        viewPagerTabs.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                val fragment = getChildFragmentManager().fragments[position]
-                if (fragment is Fragment_Tab_All) {
-                    fragment.adjustRecyclerViewSize()
-                } else if (fragment is Fragment_Tab_Recent) {
-                    fragment.adjustRecyclerViewSize()
-                } else if (fragment is Fragment_Tab_DeadLine) {
-                    fragment.adjustRecyclerViewSize()
-                }
-            }
-        })
     }
 }

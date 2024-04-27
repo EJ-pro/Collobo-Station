@@ -8,21 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.collobo_station.Adapter.TabAllAdapter
-import com.example.collobo_station.Adapter.TabRecentAdapter
+import com.example.collobo_station.Adapter.TabFieldAdapter
 import com.example.collobo_station.R
 
-class Fragment_Tab_Recent: Fragment() {
+class Fragment_Tab_Field : Fragment() {
     private lateinit var recyclerView: RecyclerView
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_tab_recent, container, false)
+        val view = inflater.inflate(R.layout.fragment_tab_field, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = TabRecentAdapter(getTabAllItems())
+        recyclerView.adapter = TabFieldAdapter(getTabAllItems())
         // 리사이클러뷰 초기화 및 데이터 로드
         return view
     }

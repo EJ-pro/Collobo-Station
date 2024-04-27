@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.google.android.material:material:<version>")
     implementation("com.google.android.material:material:1.5.0-alpha02")
     implementation("de.hdodenhof:circleimageview:3.1.0")

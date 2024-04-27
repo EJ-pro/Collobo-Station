@@ -121,6 +121,7 @@
                 android:textSize="19sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -128,30 +129,50 @@
             android:layout_marginTop="50dp"
             android:paddingBottom="50dp"
             android:orientation="vertical">
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/search"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginTop="50dp"
-                android:focusable="true"
-                app:iconifiedByDefault="false"
-                app:layout_constraintVertical_weight="1"
-                app:queryHint="검색"
-                app:searchIcon="@drawable/icon_search"/>
-
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_search"/>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/home_search"
+                    android:text="검색"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="left|center"
+                    android:textColor="#818181"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFFFFF"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
-                android:layout_width="250dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
-                app:tabGravity="center"
                 app:tabMode="auto"
                 app:tabTextAppearance="@style/home_tab_text"
                 app:tabTextColor="#818181"
                 app:tabIndicatorColor="@color/maincolor"
                 app:tabIndicatorFullWidth="false"
                 app:tabSelectedTextColor="@color/maincolor"/>
+
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"
