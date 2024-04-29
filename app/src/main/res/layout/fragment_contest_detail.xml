@@ -20,11 +20,11 @@
             android:layout_height="20dp"
             android:layout_marginTop="20dp"
             android:src="@drawable/image_alarm"/>
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_margin="20dp"
-            android:src="@drawable/image_meunbar"/>
+        <Button
+            android:id="@+id/shareBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="공유하기"/>
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
