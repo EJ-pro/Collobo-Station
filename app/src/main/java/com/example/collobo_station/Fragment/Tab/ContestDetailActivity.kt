@@ -1,9 +1,13 @@
 package com.example.collobo_station
 
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
@@ -67,6 +71,14 @@ class ContestDetailActivity : AppCompatActivity() {
                 // 다운로드 실패 시
             }
 
+        // url_Button을 클릭하면 contestUrl 주소로 이동
+        val urlButton: Button = findViewById(R.id.url_button)
+        urlButton.setOnClickListener {
+            val url = contestHomepageUrl
+            if (url != null) {
+                openWebPage(url)
+            }
+        }
         // 텍스트뷰에 데이터 설정
         contestNameTextView.text = contestName
         contestFieldTextView.text = contestField
@@ -80,5 +92,13 @@ class ContestDetailActivity : AppCompatActivity() {
         contestEligibilityTextView.text = contestEligibility
         contestHomepageUrlTextView.text = contestHomepageUrl
         contestprecautionsTextView.text = contestprecautions
+    }
+    // 웹페이지 열기
+    private fun openWebPage(url: String) {
+        val webpage = Uri.parse(url)
+
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webpage.toString()))
+        startActivity(intent)
+
     }
 }
