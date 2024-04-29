@@ -14,7 +14,14 @@ class ContestDetailActivity : AppCompatActivity() {
     private lateinit var contestFieldTextView: TextView
     private lateinit var contestPeriodTextView: TextView
     private lateinit var contestCountTextView: TextView
-
+    private lateinit var contestRegionTextView: TextView
+    private lateinit var contestAwardTextView: TextView
+    private lateinit var contestUrlTextView: TextView
+    private lateinit var contestOrganizerTextView: TextView
+    private lateinit var contestHostTextView: TextView
+    private lateinit var contestEligibilityTextView: TextView
+    private lateinit var contestHomepageUrlTextView: TextView
+    private lateinit var contestprecautionsTextView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_contest_detail)
@@ -25,13 +32,28 @@ class ContestDetailActivity : AppCompatActivity() {
         val contestPeriod = intent.getStringExtra("contestPeriod")
         val contestCount = intent.getStringExtra("contestCount")
         val contestImage = intent.getStringExtra("contestImage")
-
+        val contestRegion = intent.getStringExtra("contestRegion")
+        val contestAward = intent.getStringExtra("contestAward")
+        val contestUrl = intent.getStringExtra("contestUrl")
+        val contestOrganizer = intent.getStringExtra("contestOrganizer")
+        val contestHost = intent.getStringExtra("contestHost")
+        val contestEligibility = intent.getStringExtra("contestEligibility")
+        val contestHomepageUrl = intent.getStringExtra("contestHomepageUrl")
+        val contestprecautions = intent.getStringExtra("contestprecautions")
         // 레이아웃 요소 찾기
         contestImageView = findViewById(R.id.contest_image)
         contestNameTextView = findViewById(R.id.contestNameTextView)
-        contestFieldTextView = findViewById(R.id.contestFieldTextView)
+        contestFieldTextView = findViewById(R.id.contestField)
         contestPeriodTextView = findViewById(R.id.contestPeriodTextView)
         contestCountTextView = findViewById(R.id.contestCountTextView)
+        contestRegionTextView = findViewById(R.id.contestRegion)
+        contestAwardTextView = findViewById(R.id.contestAward)
+        contestUrlTextView = findViewById(R.id.contestUrl)
+        contestOrganizerTextView = findViewById(R.id.contestOrganizer)
+        contestHostTextView = findViewById(R.id.contestHost)
+        contestEligibilityTextView = findViewById(R.id.contestEligibility)
+        contestHomepageUrlTextView = findViewById(R.id.contestHomepageUrl)
+        contestprecautionsTextView = findViewById(R.id.contestprecautions)
 
         // 이미지를 로드하고 ImageView에 설정
         val storageReference = contestImage?.let { Firebase.storage.reference.child(it) }
@@ -50,5 +72,13 @@ class ContestDetailActivity : AppCompatActivity() {
         contestFieldTextView.text = contestField
         contestPeriodTextView.text = contestPeriod
         contestCountTextView.text = contestCount
+        contestRegionTextView.text = contestRegion
+        contestAwardTextView.text = contestAward
+        contestUrlTextView.text = contestUrl
+        contestOrganizerTextView.text = contestOrganizer
+        contestHostTextView.text = contestHost
+        contestEligibilityTextView.text = contestEligibility
+        contestHomepageUrlTextView.text = contestHomepageUrl
+        contestprecautionsTextView.text = contestprecautions
     }
 }

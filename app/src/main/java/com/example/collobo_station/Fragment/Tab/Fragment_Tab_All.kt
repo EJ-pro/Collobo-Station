@@ -49,6 +49,14 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         val contestImage = clickedItem.getString("이미지") ?: ""
         val contestPeriod = clickedItem.getString("접수기간") ?: ""
         val contestCount = clickedItem.getString("D-day") ?: ""
+        val contestRegion = clickedItem.getString("대회지역") ?: ""
+        val contestAward = clickedItem.getString("시상") ?: ""
+        val contestUrl = clickedItem.getString("접수url") ?: ""
+        val contestOrganizer = clickedItem.getString("주관") ?: ""
+        val contestHost = clickedItem.getString("주최") ?: ""
+        val contestEligibility = clickedItem.getString("참가자격") ?: ""
+        val contestHomepageUrl = clickedItem.getString("홈페이지url") ?: ""
+        val contestprecautions = clickedItem.getString("주의사항") ?: ""
 
         // 데이터를 담을 Intent 생성
         val intent = Intent(requireContext(), ContestDetailActivity::class.java).apply {
@@ -57,6 +65,14 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
             putExtra("contestImage", contestImage)
             putExtra("contestPeriod", contestPeriod)
             putExtra("contestCount", contestCount)
+            putExtra("contestRegion", contestRegion)
+            putExtra("contestAward", contestAward)
+            putExtra("contestUrl", contestUrl)
+            putExtra("contestOrganizer", contestOrganizer)
+            putExtra("contestHost", contestHost)
+            putExtra("contestEligibility", contestEligibility)
+            putExtra("contestHomepageUrl", contestHomepageUrl)
+            putExtra("contestprecautions", contestprecautions)
         }
 
         // Activity 시작
@@ -73,6 +89,14 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
                     val contestImage = document.getString("이미지") ?: ""
                     val contestPeriod = document.getString("접수기간") ?: ""
                     val contestCount = document.getString("D-day") ?: ""
+                    val contestRegion = document.getString("대회지역") ?: ""
+                    val contestAward = document.getString("시상") ?: ""
+                    val contestUrl = document.getString("접수url") ?: ""
+                    val contestOrganizer = document.getString("주관") ?: ""
+                    val contestHost = document.getString("주최") ?: ""
+                    val contestEligibility = document.getString("참가자격") ?: ""
+                    val contestHomepageUrl = document.getString("홈페이지url") ?: ""
+                    val contestprecautions = document.getString("주의사항") ?: ""
 
                     val contestItem = "$contestName\n분야: $contestField\n접수기간: $contestPeriod\nD-day: $contestCount"
                     contestList.add(document)

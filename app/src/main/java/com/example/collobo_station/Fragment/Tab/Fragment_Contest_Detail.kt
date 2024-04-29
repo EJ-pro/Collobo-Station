@@ -26,7 +26,7 @@ class Fragment_Contest_Detail : Fragment() {
 
         // 상세 페이지에 데이터 표시
         val contestNameTextView = view.findViewById<TextView>(R.id.contestNameTextView)
-        val contestFieldTextView = view.findViewById<TextView>(R.id.contestFieldTextView)
+        val contestFieldTextView = view.findViewById<TextView>(R.id.contestField)
         val contestPeriodTextView = view.findViewById<TextView>(R.id.contestPeriodTextView)
         val contestCountTextView = view.findViewById<TextView>(R.id.contestCountTextView)
 
