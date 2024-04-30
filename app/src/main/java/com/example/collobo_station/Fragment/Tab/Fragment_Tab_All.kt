@@ -11,16 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.Adapter.TabAllAdapter
 import com.example.collobo_station.ContestDetailActivity
-import com.example.collobo_station.Login.ID_PW_Find
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
@@ -47,8 +47,9 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         val contestName = clickedItem.getString("대회명") ?: ""
         val contestField = clickedItem.getString("분야") ?: ""
         val contestImage = clickedItem.getString("이미지") ?: ""
-        val contestPeriod = clickedItem.getString("접수기간") ?: ""
-        val contestCount = clickedItem.getString("D-day") ?: ""
+        val contestPeriodStart = clickedItem.getString("접수시작") ?: ""
+        val contestPeriod = clickedItem.getTimestamp("접수마감")?.toDate() ?: Date()
+        val contestCount = calculateDDay(contestPeriod)
         val contestRegion = clickedItem.getString("대회지역") ?: ""
         val contestAward = clickedItem.getString("시상") ?: ""
         val contestUrl = clickedItem.getString("접수url") ?: ""
@@ -63,7 +64,8 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
             putExtra("contestName", contestName)
             putExtra("contestField", contestField)
             putExtra("contestImage", contestImage)
-            putExtra("contestPeriod", contestPeriod)
+            putExtra("contestPeriodStart", contestPeriodStart)
+            putExtra("contestPeriod", SimpleDateFormat("yyyy-MM-dd").format(contestPeriod))
             putExtra("contestCount", contestCount)
             putExtra("contestRegion", contestRegion)
             putExtra("contestAward", contestAward)
@@ -84,21 +86,6 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
             try {
                 val querySnapshot = getContestDataFromFirestore()
                 for (document in querySnapshot.documents) {
-                    val contestName = document.getString("대회명") ?: ""
-                    val contestField = document.getString("분야") ?: ""
-                    val contestImage = document.getString("이미지") ?: ""
-                    val contestPeriod = document.getString("접수기간") ?: ""
-                    val contestCount = document.getString("D-day") ?: ""
-                    val contestRegion = document.getString("대회지역") ?: ""
-                    val contestAward = document.getString("시상") ?: ""
-                    val contestUrl = document.getString("접수url") ?: ""
-                    val contestOrganizer = document.getString("주관") ?: ""
-                    val contestHost = document.getString("주최") ?: ""
-                    val contestEligibility = document.getString("참가자격") ?: ""
-                    val contestHomepageUrl = document.getString("홈페이지url") ?: ""
-                    val contestprecautions = document.getString("주의사항") ?: ""
-
-                    val contestItem = "$contestName\n분야: $contestField\n접수기간: $contestPeriod\nD-day: $contestCount"
                     contestList.add(document)
                 }
                 tabAllAdapter.setItems(contestList)
@@ -115,4 +102,14 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         return contestCollection.get().await()
     }
 
+    private fun calculateDDay(eventDate: Date): String {
+        val currentDate = Calendar.getInstance().time
+        val diff = eventDate.time - currentDate.time
+        val days = diff / (1000 * 60 * 60 * 24)
+        return if (days >= 0) {
+            "D-${days + 1}"
+        } else {
+            "D+${-days}"
+        }
+    }
 }

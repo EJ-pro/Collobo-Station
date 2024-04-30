@@ -27,7 +27,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/maincolor"
-                    android:text="D-"
+                    android:text=""
                     android:textSize="20dp"
                     android:textStyle="bold"/>
                 <TextView
@@ -69,10 +69,18 @@
                         android:textSize="10dp"
                         android:textStyle="normal"/>
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:id="@+id/Contest_Day_Start"
+                        android:text=""
+                        android:textSize="10dp"
+                        android:textStyle="normal"/>
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:id="@+id/Contest_day"
+                        android:id="@+id/Contest_Day_Last"
                         android:text="데이터가 안불러와졌습니다."
                         android:textSize="10dp"
                         android:textStyle="normal"/>

@@ -1,5 +1,6 @@
 package com.example.collobo_station
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -16,6 +17,7 @@ class ContestDetailActivity : AppCompatActivity() {
     private lateinit var contestImageView: ImageView
     private lateinit var contestNameTextView: TextView
     private lateinit var contestFieldTextView: TextView
+    private lateinit var contestPeriodStartTextView: TextView
     private lateinit var contestPeriodTextView: TextView
     private lateinit var contestCountTextView: TextView
     private lateinit var contestRegionTextView: TextView
@@ -26,6 +28,7 @@ class ContestDetailActivity : AppCompatActivity() {
     private lateinit var contestEligibilityTextView: TextView
     private lateinit var contestHomepageUrlTextView: TextView
     private lateinit var contestprecautionsTextView: TextView
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_contest_detail)
@@ -33,6 +36,7 @@ class ContestDetailActivity : AppCompatActivity() {
         // Intent에서 데이터 가져오기
         val contestName = intent.getStringExtra("contestName")
         val contestField = intent.getStringExtra("contestField")
+        val contestPeriodStart = intent.getStringExtra("contestPeriodStart")
         val contestPeriod = intent.getStringExtra("contestPeriod")
         val contestCount = intent.getStringExtra("contestCount")
         val contestImage = intent.getStringExtra("contestImage")
@@ -44,10 +48,12 @@ class ContestDetailActivity : AppCompatActivity() {
         val contestEligibility = intent.getStringExtra("contestEligibility")
         val contestHomepageUrl = intent.getStringExtra("contestHomepageUrl")
         val contestprecautions = intent.getStringExtra("contestprecautions")
+
         // 레이아웃 요소 찾기
         contestImageView = findViewById(R.id.contest_image)
         contestNameTextView = findViewById(R.id.contestNameTextView)
         contestFieldTextView = findViewById(R.id.contestField)
+        contestPeriodStartTextView = findViewById(R.id.contestPeriodStartTextView)
         contestPeriodTextView = findViewById(R.id.contestPeriodTextView)
         contestCountTextView = findViewById(R.id.contestCountTextView)
         contestRegionTextView = findViewById(R.id.contestRegion)
@@ -83,6 +89,7 @@ class ContestDetailActivity : AppCompatActivity() {
         contestNameTextView.text = contestName
         contestFieldTextView.text = contestField
         contestPeriodTextView.text = contestPeriod
+        contestPeriodStartTextView.text = contestPeriodStart
         contestCountTextView.text = contestCount
         contestRegionTextView.text = contestRegion
         contestAwardTextView.text = contestAward

@@ -37,7 +37,8 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
     inner class TabFieldViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contestImage: ImageView = itemView.findViewById(R.id.contest_image)
         private val contestName: TextView = itemView.findViewById(R.id.Contest_name)
-        private val contestDay: TextView = itemView.findViewById(R.id.Contest_day)
+        private val contestDayLast: TextView = itemView.findViewById(R.id.Contest_Day_Last)
+        private val contestDayStart: TextView = itemView.findViewById(R.id.Contest_Day_Start)
         private val contestField: TextView = itemView.findViewById(R.id.Contest_Feild)
         private val contestCount: TextView = itemView.findViewById(R.id.Contest_Count)
 
@@ -46,7 +47,8 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
             contestData?.let {
                 // 텍스트 뷰에 데이터 설정
                 contestName.text = it["대회명"] as? String ?: "데이터가 없습니다."
-                contestDay.text = it["접수기간"] as? String ?: "데이터가 없습니다."
+                contestDayStart.text = it["접수시작"] as? String ?: "데이터가 없습니다."
+                contestDayLast.text = it["접수마감"] as? String ?: "데이터가 없습니다."
                 contestField.text = it["분야"] as? String ?: "데이터가 없습니다."
                 contestCount.text = it["D-day"] as? String ?: "데이터가 없습니다."
 
