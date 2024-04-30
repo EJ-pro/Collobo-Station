@@ -167,7 +167,7 @@ class CreateActivity  : AppCompatActivity() {
         usersRef.whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { documents ->
-                val isEmailChecked = documents.isEmpty
+                isEmailChecked = documents.isEmpty
 
                 if (isEmailChecked) {
                     Toast.makeText(applicationContext, "사용 가능한 이메일입니다.", Toast.LENGTH_SHORT).show()
@@ -181,6 +181,7 @@ class CreateActivity  : AppCompatActivity() {
             }
     }
 
+
     private fun checkDuplicateNickname(nickname: String) {
         val db = Firebase.firestore
         val usersRef = db.collection("Users")
@@ -188,7 +189,7 @@ class CreateActivity  : AppCompatActivity() {
         usersRef.whereEqualTo("nickname", nickname)
             .get()
             .addOnSuccessListener { documents ->
-                val isNicknameChecked = documents.isEmpty
+                isNicknameChecked = documents.isEmpty
 
                 if (isNicknameChecked) {
                     Toast.makeText(applicationContext, "사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
@@ -254,6 +255,8 @@ class CreateActivity  : AppCompatActivity() {
                 }
             }
     }
+
+
 
     companion object {
         private const val TAG = "CreateActivity"
