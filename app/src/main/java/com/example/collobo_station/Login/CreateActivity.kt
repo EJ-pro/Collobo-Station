@@ -161,71 +161,66 @@ class CreateActivity  : AppCompatActivity() {
     }
 
     private fun checkDuplicateEmail(email: String) {
-        val database = Firebase.database
-        val usersRef = database.getReference("Users")
+        val db = Firebase.firestore
+        val usersRef = db.collection("Users")
 
-        usersRef.orderByChild("email").equalTo(email)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    isEmailChecked = snapshot.childrenCount == 0L
+        usersRef.whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+                val isEmailChecked = documents.isEmpty
 
-                    if (isEmailChecked) {
-                        Toast.makeText(applicationContext, "사용 가능한 이메일입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(applicationContext, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show()
-                    }
+                if (isEmailChecked) {
+                    Toast.makeText(applicationContext, "사용 가능한 이메일입니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(applicationContext, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show()
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG, "Error checking email duplication", error.toException())
-                    Toast.makeText(applicationContext, "이메일 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error checking email duplication", exception)
+                Toast.makeText(applicationContext, "이메일 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun checkDuplicateNickname(nickname: String) {
-        val database = Firebase.database
-        val usersRef = database.getReference("Users")
+        val db = Firebase.firestore
+        val usersRef = db.collection("Users")
 
-        usersRef.orderByChild("nickname").equalTo(nickname)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    isNicknameChecked = snapshot.childrenCount == 0L
+        usersRef.whereEqualTo("nickname", nickname)
+            .get()
+            .addOnSuccessListener { documents ->
+                val isNicknameChecked = documents.isEmpty
 
-                    if (isNicknameChecked) {
-                        Toast.makeText(applicationContext, "사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(applicationContext, "이미 사용 중인 닉네임입니다.", Toast.LENGTH_SHORT).show()
-                    }
+                if (isNicknameChecked) {
+                    Toast.makeText(applicationContext, "사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(applicationContext, "이미 사용 중인 닉네임입니다.", Toast.LENGTH_SHORT).show()
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG, "Error checking nickname duplication", error.toException())
-                    Toast.makeText(applicationContext, "닉네임 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error checking nickname duplication", exception)
+                Toast.makeText(applicationContext, "닉네임 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
+
     private fun checkDuplicatePhoneNumber(phone: String) {
-        val database = Firebase.database
-        val usersRef = database.getReference("Users")
+        val db = Firebase.firestore
+        val usersRef = db.collection("Users")
 
-        usersRef.orderByChild("phone_number").equalTo(phone)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val isPhoneChecked = snapshot.childrenCount == 0L
+        usersRef.whereEqualTo("phone_number", phone)
+            .get()
+            .addOnSuccessListener { documents ->
+                val isPhoneChecked = documents.isEmpty
 
-                    if (isPhoneChecked) {
-                        Toast.makeText(applicationContext, "사용 가능한 전화번호입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(applicationContext, "이미 사용 중인 전화번호입니다.", Toast.LENGTH_SHORT).show()
-                    }
+                if (isPhoneChecked) {
+                    Toast.makeText(applicationContext, "사용 가능한 전화번호입니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(applicationContext, "이미 사용 중인 전화번호입니다.", Toast.LENGTH_SHORT).show()
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG, "Error checking phone number duplication", error.toException())
-                    Toast.makeText(applicationContext, "전화번호 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error checking phone number duplication", exception)
+                Toast.makeText(applicationContext, "전화번호 중복 확인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun createAccount(email: String, password: String, phone: String, nickname: String) {
@@ -259,8 +254,6 @@ class CreateActivity  : AppCompatActivity() {
                 }
             }
     }
-
-
 
     companion object {
         private const val TAG = "CreateActivity"
