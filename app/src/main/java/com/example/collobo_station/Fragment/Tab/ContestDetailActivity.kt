@@ -112,6 +112,7 @@ class ContestDetailActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
     }
+
     // 웹페이지 열기
     private fun openWebPage(url: String) {
         val webpage = Uri.parse(url)

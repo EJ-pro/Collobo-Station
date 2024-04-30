@@ -48,7 +48,7 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
                 // 텍스트 뷰에 데이터 설정
                 contestName.text = it["대회명"] as? String ?: "데이터가 없습니다."
                 contestDayStart.text = it["접수시작"] as? String ?: "데이터가 없습니다."
-                contestDayLast.text = it["접수마감"] as? String ?: "데이터가 없습니다."
+//                contestDayLast.text = it["접수마감"] as? String ?: "데이터가 없습니다."
                 contestField.text = it["분야"] as? String ?: "데이터가 없습니다."
                 contestCount.text = it["D-day"] as? String ?: "데이터가 없습니다."
 

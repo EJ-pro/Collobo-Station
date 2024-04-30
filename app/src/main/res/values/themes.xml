@@ -21,4 +21,7 @@
         <!-- 서치뷰의 포커스된 밑줄 색상 -->
         <item name="colorControlActivated">#FFFFFF</item>
     </style>
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">15sp</item> <!-- 텍스트 크기를 조정합니다 -->
+    </style>
 </resources>

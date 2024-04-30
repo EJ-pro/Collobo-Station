@@ -47,10 +47,9 @@ class Fragment_Tab_Field : Fragment() {
                     val contestName = document.getString("대회명") ?: ""
                     val contestField = document.getString("분야") ?: ""
                     val contestImage = document.getString("이미지") ?: ""
-                    val contestPeriod = document.getString("접수기간") ?: ""
+                    val contestPeriod = document.getString("접수시작") ?: ""
                     val contestCount = document.getString("D-day") ?: ""
 
-                    val contestItem = "$contestName\n분야: $contestField\n접수기간: $contestPeriod\nD-day: $contestCount"
                     contestList.add(document)
                 }
                 tabFieldAdapter.setItems(contestList)
