@@ -50,6 +50,7 @@
         android:textSize="14sp"
         android:textColorHint="@color/white"
         android:maxLength="50"
+        android:singleLine="true"
         android:textColor="@color/white"
         android:background="@drawable/login_rounded_gradient_background" />
 
@@ -64,6 +65,7 @@
         android:textColorHint="@color/white"
         android:maxLines="1"
         android:maxLength="50"
+        android:singleLine="true"
         android:textColor="@color/white"
         android:inputType="textPassword"
         android:background="@drawable/login_rounded_gradient_background" />

@@ -44,6 +44,7 @@ class CreateActivity  : AppCompatActivity() {
         val backButton = binding.createBack
         phoneEditText.addTextChangedListener(PhoneNumberFormattingTextWatcher())
         auth = Firebase.auth
+
         backButton.setOnClickListener{
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

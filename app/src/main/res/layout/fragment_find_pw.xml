@@ -13,6 +13,7 @@
         android:id="@+id/findpw_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:maxLines="1"
         android:backgroundTint="@color/maincolor"
         android:textColorHint="@color/black"
@@ -27,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
+        android:singleLine="true"
         android:inputType="phone"
         android:maxLength="13"
         android:backgroundTint="@color/maincolor"
@@ -42,6 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
+        android:singleLine="true"
         android:backgroundTint="@color/maincolor"
         android:textColorHint="@color/black"
         android:hint="이메일"/>
