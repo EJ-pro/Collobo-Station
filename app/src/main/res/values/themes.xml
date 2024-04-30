@@ -24,4 +24,7 @@
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">15sp</item> <!-- 텍스트 크기를 조정합니다 -->
     </style>
+    <style name="TabTextIDPW" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">20sp</item> <!-- 텍스트 크기를 조정합니다 -->
+    </style>
 </resources>

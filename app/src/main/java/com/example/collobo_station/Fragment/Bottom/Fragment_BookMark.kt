@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment
+package com.example.collobo_station.Fragment.Bottom
 
 import androidx.fragment.app.Fragment
 

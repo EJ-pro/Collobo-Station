@@ -50,8 +50,7 @@ class LoginActivity : AppCompatActivity() {
         val id: EditText = binding.userId
         val pw: EditText = binding.userPw
         val loginButton: Button = binding.loginBtn
-        val createBtn1 : Button = binding.createBtn1
-        val createBtn2 : Button = binding.createBtn2
+        val ID_PWButton : Button = binding.idPwBtn
         val createBtn3 : Button = binding.createBtn3
 
 
@@ -66,13 +65,9 @@ class LoginActivity : AppCompatActivity() {
                 login(inputId, inputPw)
             }
         }
-        createBtn1.setOnClickListener {
-            val intent = Intent(this, ID_PW_Find::class.java)
-            startActivity(intent)
-        }
 
         // 비밀번호 찾기 버튼 클릭 시
-        createBtn2.setOnClickListener {
+        ID_PWButton.setOnClickListener {
             val intent = Intent(this, ID_PW_Find::class.java)
             startActivity(intent)
         }

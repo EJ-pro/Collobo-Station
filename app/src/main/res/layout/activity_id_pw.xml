@@ -2,53 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black"
     android:orientation="vertical">
 
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="   ← 아이디/비밀번호 찾기  "
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@android:color/transparent"
-        />
-    <TextView
+        android:gravity="center"
+        android:padding="10dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/create_back_button_image"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  아이디/비밀번호 찾기"
+            android:textSize="20sp"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:text=""
-        android:textStyle="bold"
         android:textColor="@color/black"
         android:gravity="center"
         android:textSize="20sp" />
 
-    <LinearLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="아이디 찾기"
-            android:id="@+id/go_findid_btn"
-            android:background="@android:color/transparent"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="비밀번호 찾기"
-            android:id="@+id/go_findpw_btn"
-            android:background="@android:color/transparent"/>
-
-    </LinearLayout>
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        app:tabMode="auto"
+        app:tabTextAppearance="@style/TabTextIDPW"
+        app:tabTextColor="#818181"
+        app:tabIndicatorColor="@color/maincolor"
+        app:tabIndicatorFullWidth="true"
+        app:tabSelectedTextColor="@color/maincolor"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"

@@ -32,7 +32,6 @@ class CreateActivity  : AppCompatActivity() {
         binding = ActivityCreateBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val nameEditText = binding.name
         val emailEditText = binding.email
         val passwordEditText = binding.password
         val nicknameEditText = binding.nickname
@@ -105,7 +104,6 @@ class CreateActivity  : AppCompatActivity() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             val nickname = nicknameEditText.text.toString()
-            val name = nameEditText.text.toString()
             val phone = phoneEditText.text.toString()
 
             // 중복 확인 버튼을 클릭하지 않았을 때 처리
@@ -121,7 +119,7 @@ class CreateActivity  : AppCompatActivity() {
             }
 
             // 이메일과 닉네임이 중복 확인되었을 때 회원가입 진행
-            createAccount(name,email, password, nickname, phone)
+            createAccount(email, password, nickname, phone)
         }
         createButton.setOnClickListener {
 
@@ -137,7 +135,6 @@ class CreateActivity  : AppCompatActivity() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             val nickname = nicknameEditText.text.toString()
-            val name = nameEditText.text.toString()
             val phone = phoneEditText.text.toString()
             // 체크박스가 체크되었는지 확인
             if (!checkBox.isChecked) {
@@ -158,7 +155,7 @@ class CreateActivity  : AppCompatActivity() {
             }
 
             // 등록 진행
-            createAccount(name, email, password, phone, nickname)
+            createAccount(email, password, phone, nickname)
         }
 
     }
@@ -231,7 +228,7 @@ class CreateActivity  : AppCompatActivity() {
             })
     }
 
-    private fun createAccount(name: String, email: String, password: String, phone: String, nickname: String) {
+    private fun createAccount(email: String, password: String, phone: String, nickname: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -240,7 +237,6 @@ class CreateActivity  : AppCompatActivity() {
                     if (user != null) {
                         val db = Firebase.firestore
                         val userInfo = hashMapOf(
-                            "name" to name,
                             "email" to email,
                             "phone_number" to phone,
                             "nickname" to nickname

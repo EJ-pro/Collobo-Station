@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment
+package com.example.collobo_station.Fragment.Bottom
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG

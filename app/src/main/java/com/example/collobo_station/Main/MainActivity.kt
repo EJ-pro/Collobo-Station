@@ -8,12 +8,10 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.collobo_station.Fragment.Fragment_BookMark
-import com.example.collobo_station.Fragment.Fragment_Chat
-import com.example.collobo_station.Fragment.Fragment_Home
-import com.example.collobo_station.Fragment.Fragment_Portfolio
+import com.example.collobo_station.Fragment.Bottom.Fragment_BookMark
+import com.example.collobo_station.Fragment.Bottom.Fragment_Chat
+import com.example.collobo_station.Fragment.Bottom.Fragment_Home
 import com.example.collobo_station.Fragment.Splash.Fragment_User
-import com.example.collobo_station.Login.ID_PW_Find
 import com.example.collobo_station.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
