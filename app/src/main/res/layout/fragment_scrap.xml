@@ -61,16 +61,12 @@
         </LinearLayout>
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/scrap_viewpager2"
+            android:id="@+id/Scrap_viewPager"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="70dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:orientation="vertical" />
+            android:paddingBottom="50dp"/>
 
     </LinearLayout>
 </LinearLayout>
