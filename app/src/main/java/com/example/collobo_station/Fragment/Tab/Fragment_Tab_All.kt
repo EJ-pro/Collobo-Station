@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +13,7 @@ import com.example.collobo_station.ContestDetailActivity
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -36,7 +36,11 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         tabAllAdapter = TabAllAdapter(contestList)
         recyclerView.adapter = tabAllAdapter
-        loadDataFromFirestore()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            loadDataFromFirestore()
+        }
+
         tabAllAdapter.setOnItemClickListener(this)
         return view
     }
@@ -81,10 +85,10 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         startActivity(intent)
     }
 
-    private fun loadDataFromFirestore() {
+    private suspend fun loadDataFromFirestore() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val querySnapshot = getContestDataFromFirestore()
+                val querySnapshot = getContestQueryFromFirestore().get().await()
                 for (document in querySnapshot.documents) {
                     contestList.add(document)
                 }
@@ -96,10 +100,12 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         }
     }
 
-    private suspend fun getContestDataFromFirestore(): QuerySnapshot {
+
+
+    private suspend fun getContestQueryFromFirestore(): Query {
         val db = FirebaseFirestore.getInstance()
         val contestCollection = db.collection("Contest")
-        return contestCollection.get().await()
+        return contestCollection.orderBy("추가순서", Query.Direction.DESCENDING)
     }
 
     private fun calculateDDay(eventDate: Date): String {
