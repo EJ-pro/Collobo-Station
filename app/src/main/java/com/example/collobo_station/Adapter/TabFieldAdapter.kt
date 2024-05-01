@@ -13,9 +13,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.storage.storage
 
-class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
+class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>, private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<TabFieldAdapter.TabFieldViewHolder>() {
-    private var itemList = mutableListOf<DocumentSnapshot>()
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabFieldViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_home_contest, parent, false)
@@ -24,12 +28,17 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
 
     override fun onBindViewHolder(holder: TabFieldViewHolder, position: Int) {
         holder.bind(items[position])
+        holder.itemView.setOnClickListener {
+            itemClickListener.onItemClick(position)
+        }
     }
+
     fun setItems(items: List<DocumentSnapshot>) {
-        itemList.clear()
-        itemList.addAll(items)
+        this.items.clear()
+        this.items.addAll(items)
         notifyDataSetChanged()
     }
+
     override fun getItemCount(): Int {
         return items.size
     }
@@ -48,7 +57,7 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
                 // 텍스트 뷰에 데이터 설정
                 contestName.text = it["대회명"] as? String ?: "데이터가 없습니다."
                 contestDayStart.text = it["접수시작"] as? String ?: "데이터가 없습니다."
-//                contestDayLast.text = it["접수마감"] as? String ?: "데이터가 없습니다."
+                contestDayLast.text = it["접수마감"] as? String ?: "데이터가 없습니다."
                 contestField.text = it["분야"] as? String ?: "데이터가 없습니다."
                 contestCount.text = it["D-day"] as? String ?: "데이터가 없습니다."
 

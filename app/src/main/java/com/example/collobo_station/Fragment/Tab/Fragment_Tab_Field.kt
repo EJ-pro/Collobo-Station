@@ -1,5 +1,6 @@
 package com.example.collobo_station.Fragment.Tab
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.Adapter.TabAllAdapter
 import com.example.collobo_station.Adapter.TabFieldAdapter
+import com.example.collobo_station.ContestDetailActivity
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,11 +19,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 
-class Fragment_Tab_Field : Fragment() {
+class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var tabFieldAdapter: TabFieldAdapter
+    private lateinit var tabAllAdapter: TabAllAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,34 +35,86 @@ class Fragment_Tab_Field : Fragment() {
         val view = inflater.inflate(R.layout.fragment_tab_field, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        tabFieldAdapter = TabFieldAdapter(contestList)
-        recyclerView.adapter = tabFieldAdapter
-        loadDataFromFirestore()
+        tabAllAdapter = TabAllAdapter(contestList)
+        recyclerView.adapter = tabAllAdapter
+
+        GlobalScope.launch(Dispatchers.Main) {
+            loadDataFromFirestore()
+        }
+
+        tabAllAdapter.setOnItemClickListener(this)
         return view
     }
 
-    private fun loadDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val contestCollection = db.collection("Contest")
+    override fun onItemClick(position: Int) {
+        // 클릭된 아이템의 위치(position)을 통해 원하는 동작을 수행
+        val clickedItem = contestList[position]
+        val contestName = clickedItem.getString("대회명") ?: ""
+        val contestField = clickedItem.getString("분야") ?: ""
+        val contestImage = clickedItem.getString("이미지") ?: ""
+        val contestPeriodStart = clickedItem.getString("접수시작") ?: ""
+        val contestPeriod = clickedItem.getTimestamp("접수마감")?.toDate() ?: Date()
+        val contestCount = calculateDDay(contestPeriod)
+        val contestRegion = clickedItem.getString("대회지역") ?: ""
+        val contestAward = clickedItem.getString("시상") ?: ""
+        val contestUrl = clickedItem.getString("접수url") ?: ""
+        val contestOrganizer = clickedItem.getString("주관") ?: ""
+        val contestHost = clickedItem.getString("주최") ?: ""
+        val contestEligibility = clickedItem.getString("참가자격") ?: ""
+        val contestHomepageUrl = clickedItem.getString("홈페이지url") ?: ""
+        val contestprecautions = clickedItem.getString("주의사항") ?: ""
 
+        // 데이터를 담을 Intent 생성
+        val intent = Intent(requireContext(), ContestDetailActivity::class.java).apply {
+            putExtra("contestName", contestName)
+            putExtra("contestField", contestField)
+            putExtra("contestImage", contestImage)
+            putExtra("contestPeriodStart", contestPeriodStart)
+            putExtra("contestPeriod", SimpleDateFormat("yyyy-MM-dd").format(contestPeriod))
+            putExtra("contestCount", contestCount)
+            putExtra("contestRegion", contestRegion)
+            putExtra("contestAward", contestAward)
+            putExtra("contestUrl", contestUrl)
+            putExtra("contestOrganizer", contestOrganizer)
+            putExtra("contestHost", contestHost)
+            putExtra("contestEligibility", contestEligibility)
+            putExtra("contestHomepageUrl", contestHomepageUrl)
+            putExtra("contestprecautions", contestprecautions)
+        }
+
+        // Activity 시작
+        startActivity(intent)
+    }
+
+    private suspend fun loadDataFromFirestore() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val querySnapshot = contestCollection.orderBy("D-day", Query.Direction.ASCENDING).get().await()
-                //val querySnapshot = contestCollection.orderBy("대회명", Query.Direction.DESCENDING).get().await()
+                val querySnapshot = getContestQueryFromFirestore().get().await()
                 for (document in querySnapshot.documents) {
-                    val contestName = document.getString("대회명") ?: ""
-                    val contestField = document.getString("분야") ?: ""
-                    val contestImage = document.getString("이미지") ?: ""
-                    val contestPeriod = document.getString("접수시작") ?: ""
-                    val contestCount = document.getString("D-day") ?: ""
-
                     contestList.add(document)
                 }
-                tabFieldAdapter.setItems(contestList)
-                tabFieldAdapter.notifyDataSetChanged()
+                tabAllAdapter.setItems(contestList)
+                tabAllAdapter.notifyDataSetChanged()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private suspend fun getContestQueryFromFirestore(): Query {
+        val db = FirebaseFirestore.getInstance()
+        val contestCollection = db.collection("Contest")
+        return contestCollection.orderBy("추가순서", Query.Direction.DESCENDING)
+    }
+
+    private fun calculateDDay(eventDate: Date): String {
+        val currentDate = Calendar.getInstance().time
+        val diff = eventDate.time - currentDate.time
+        val days = diff / (1000 * 60 * 60 * 24)
+        return if (days >= 0) {
+            "D-${days + 1}"
+        } else {
+            "D+${-days}"
         }
     }
 }
