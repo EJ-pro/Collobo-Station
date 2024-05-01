@@ -8,9 +8,9 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.collobo_station.Fragment.Bottom.Fragment_BookMark
 import com.example.collobo_station.Fragment.Bottom.Fragment_Chat
 import com.example.collobo_station.Fragment.Bottom.Fragment_Home
+import com.example.collobo_station.Fragment.Bottom.Fragment_Scrap
 import com.example.collobo_station.Fragment.Splash.Fragment_User
 import com.example.collobo_station.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_item3 -> {
-                    replaceFragment(Fragment_BookMark())
+                    replaceFragment(Fragment_Scrap())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_item4 -> {
