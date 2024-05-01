@@ -1,8 +1,10 @@
 package com.example.collobo_station.Login
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.collobo_station.Adapter.IDPWFindAdapter
@@ -17,7 +19,12 @@ class ID_PW_Find : AppCompatActivity() {
 
         val viewPager: ViewPager2 = findViewById(R.id.id_pw_find_viewpage)
         val tabLayout: TabLayout = findViewById(R.id.tabLayout)
+        val find_back: Button = findViewById(R.id.find_back)
 
+        find_back.setOnClickListener{
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
         val adapter = IDPWFindAdapter(supportFragmentManager, lifecycle)
         viewPager.adapter = adapter
 
