@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.PageTransformer
+import com.example.collobo_station.Adapter.ScrapPagerAdapter
 import com.example.collobo_station.R
 
 class Fragment_Scrap : Fragment() {
@@ -13,6 +16,10 @@ class Fragment_Scrap : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_scrap, container, false)
+        val view = inflater.inflate(R.layout.fragment_scrap, container, false)
+
+        // ViewPager2 초기화
+        val viewPager: ViewPager2 = view.findViewById(R.id.scrap_viewpager2)
+        return view
     }
 }
