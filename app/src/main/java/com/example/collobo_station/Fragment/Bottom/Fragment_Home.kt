@@ -79,11 +79,6 @@ class Fragment_Home : Fragment() {
                             val nickname = document.getString("nickname")
                             if (nickname != null) {
                                 textViewUserName.text = nickname
-                                Toast.makeText(
-                                    requireContext(),
-                                    "안녕하세요, $nickname 님!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             } else {
                                 textViewUserName.text = "사용자"
                             }

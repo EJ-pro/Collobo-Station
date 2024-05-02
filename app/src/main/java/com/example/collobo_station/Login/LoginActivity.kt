@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -11,6 +12,7 @@ import com.example.collobo_station.Main.MainActivity
 import com.example.collobo_station.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
@@ -89,14 +91,37 @@ class LoginActivity : AppCompatActivity() {
                         putBoolean("isLoggedIn", true)
                         apply()
                     }
-
-                    Toast.makeText(this, "로그인에 성공했습니다!", Toast.LENGTH_SHORT).show()
+                    getNicknameFromFirestore(id)
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
                     Toast.makeText(this, "아이디와 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
                 }
+
+            }
+
+    }
+    private fun getNicknameFromFirestore(email: String) {
+        val db = FirebaseFirestore.getInstance()
+        val usersCollection = db.collection("Users")
+
+        usersCollection.whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val nickname = documents.documents[0].getString("nickname")
+                    Toast.makeText(this, "안녕하세요, $nickname 님!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "사용자 정보를 가져오는 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", "Error getting documents: ", exception)
             }
     }
 }
