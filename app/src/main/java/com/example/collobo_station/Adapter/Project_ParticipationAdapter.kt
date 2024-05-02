@@ -7,12 +7,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.R
 
-class Project_ParticipationAdapter (private val data: List<String>) :
+class Project_ParticipationAdapter :
     RecyclerView.Adapter<Project_ParticipationAdapter.ViewHolder>() {
+
+    private var dataList = listOf<String>()
 
     // ViewHolder 클래스 정의
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.Field)
+        val textView1: TextView = itemView.findViewById(R.id.text1)
+        val textView2: TextView = itemView.findViewById(R.id.text2)
+        val textView3: TextView = itemView.findViewById(R.id.text3)
     }
 
     // onCreateViewHolder: 뷰 홀더를 생성하고 레이아웃을 연결합니다.
@@ -24,11 +28,20 @@ class Project_ParticipationAdapter (private val data: List<String>) :
 
     // onBindViewHolder: 뷰 홀더에 데이터를 바인딩합니다.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = data[position]
+        val data = dataList[position].split(", ")
+        holder.textView1.text = data[0]
+        holder.textView2.text = data[1]
+        holder.textView3.text = data[2]
     }
 
     // getItemCount: 데이터의 개수를 반환합니다.
     override fun getItemCount(): Int {
-        return data.size
+        return dataList.size
+    }
+
+    // 데이터 설정 메소드
+    fun setData(dataList: List<String>) {
+        this.dataList = dataList
+        notifyDataSetChanged()
     }
 }

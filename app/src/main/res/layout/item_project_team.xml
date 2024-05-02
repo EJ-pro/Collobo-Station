@@ -9,17 +9,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/detailed"
+        android:id="@+id/text1"
         android:textSize="20sp"
         android:textColor="@color/white"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:id="@+id/Field"/>
+        android:id="@+id/text2"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:id="@+id/check"/>
+        android:id="@+id/text3"/>
 </LinearLayout>
