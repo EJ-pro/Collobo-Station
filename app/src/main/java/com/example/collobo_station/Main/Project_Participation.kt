@@ -9,13 +9,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.collobo_station.Adapter.Project_ParticipationAdapter
+import com.example.collobo_station.Adapter.Project_ParticipationAdapter_Developer
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class Project_Participation : AppCompatActivity()  {
     private lateinit var Designer_recyclerView: RecyclerView
     private lateinit var Developer_recyclerView: RecyclerView
-    private lateinit var adapter: Project_ParticipationAdapter
+    private lateinit var Designer_adapter: Project_ParticipationAdapter
+    private lateinit var Developer_adapter: Project_ParticipationAdapter_Developer
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,14 +36,24 @@ class Project_Participation : AppCompatActivity()  {
         Developer_recyclerView.layoutManager = Developer_layoutManager
 
         // 어댑터를 생성하고 리사이클러뷰에 연결합니다.
-        adapter = Project_ParticipationAdapter()
-        Designer_recyclerView.adapter = adapter
-        Developer_recyclerView.adapter = adapter
+        Designer_adapter = Project_ParticipationAdapter()
+        Developer_adapter = Project_ParticipationAdapter_Developer()
+
+        Designer_recyclerView.adapter = Designer_adapter
+        Developer_recyclerView.adapter = Developer_adapter
 
         // Firestore에서 데이터 가져오기
-        fetchDataFromFirestore()
+        fetchDataFromFirestore_Designer()
+        fetchDataFromFirestore_Developer()
+
         // 리사이클러뷰 아이템 클릭 리스너 설정
-        adapter.setItemClickListener { item ->
+        Designer_adapter.setItemClickListener { item ->
+            // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
+            val intent = Intent(this, Team_Looking_Write::class.java)
+            intent.putExtra("item_data", item)
+            startActivity(intent)
+        }
+        Developer_adapter.setItemClickListener { item ->
             // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
             val intent = Intent(this, Team_Looking_Write::class.java)
             intent.putExtra("item_data", item)
@@ -49,7 +61,7 @@ class Project_Participation : AppCompatActivity()  {
         }
     }
 
-    private fun fetchDataFromFirestore() {
+    private fun fetchDataFromFirestore_Designer() {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Looking")
 
@@ -63,7 +75,26 @@ class Project_Participation : AppCompatActivity()  {
                     dataList.add("$text1, $text2, $text3")
                 }
                 // 어댑터에 데이터 설정
-                adapter.setData(dataList)
+                Designer_adapter.setData(dataList)
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
+            }
+    }private fun fetchDataFromFirestore_Developer() {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("Team_Looking_Developer")
+
+        collectionRef.get()
+            .addOnSuccessListener { documents ->
+                val dataList = mutableListOf<String>()
+                for (document in documents) {
+                    val text1 = document.getString("text1") ?: ""
+                    val text2 = document.getString("text2") ?: ""
+                    val text3 = document.getString("text3") ?: ""
+                    dataList.add("$text1, $text2, $text3")
+                }
+                // 어댑터에 데이터 설정
+                Developer_adapter.setData(dataList)
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리
