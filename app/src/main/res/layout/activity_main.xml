@@ -67,7 +67,8 @@
                 app:itemBackground="@drawable/navigation_pick"
                 android:layout_alignParentBottom="true"
                 app:labelVisibilityMode="unlabeled"
-                app:menu="@menu/bottom_navigation" />
+                app:menu="@menu/bottom_navigation"
+                app:itemIconSize="30dp" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

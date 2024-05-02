@@ -6,6 +6,7 @@
         android:icon="@drawable/image_home"
         android:enabled="true"
         android:state_selected="true"
+        app:itemIconSize="30dp"
         app:showAsAction="ifRoom"
         android:title=""/>
     <item
@@ -13,6 +14,7 @@
         android:icon="@drawable/image_chat"
         android:enabled="true"
         android:state_selected="true"
+        app:itemIconSize="30dp"
         app:showAsAction="ifRoom"
         android:title=""/>
     <item
@@ -20,6 +22,7 @@
         android:icon="@drawable/image_heart"
         android:enabled="true"
         android:state_selected="true"
+        app:itemIconSize="30dp"
         app:showAsAction="ifRoom"
         android:title=""/>
 
@@ -28,6 +31,7 @@
         android:icon="@drawable/image_user"
         android:enabled="true"
         android:state_selected="true"
+        app:itemIconSize="30dp"
         app:showAsAction="ifRoom"
         android:title=""/>
 </menu>

@@ -5,7 +5,7 @@
             <stroke
                 android:width="20dp"
                 android:color="#00000000"/> <!-- 투명색 테두리 -->
-            <corners android:radius="35dp"/> <!-- 둥근 모서리 반경 -->
+            <corners android:radius="25dp"/> <!-- 둥근 모서리 반경 -->
         </shape>
     </item>
 </selector>

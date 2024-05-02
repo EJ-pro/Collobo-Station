@@ -31,8 +31,8 @@ class Fragment_Chat  : Fragment() {
         // Adapter 설정
         val adapter = ScrapPagerAdapter(itemList)
         viewPager.adapter = adapter
-        viewPager.offscreenPageLimit = 3
-        viewPager.setPageTransformer(SliderTransformer(3))
+        viewPager.offscreenPageLimit = 5
+        viewPager.setPageTransformer(SliderTransformer(5))
         return view
     }
 }
