@@ -45,6 +45,7 @@
         <activity android:name=".Main.Portfolio_management"/>
         <activity android:name=".Main.Project_Participation"/>
         <activity android:name=".ContestDetailActivity"/>
+        <activity android:name=".Main.Team_Looking_Write"/>
     </application>
 
 </manifest>

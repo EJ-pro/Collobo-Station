@@ -11,12 +11,24 @@ class Project_ParticipationAdapter :
     RecyclerView.Adapter<Project_ParticipationAdapter.ViewHolder>() {
 
     private var dataList = listOf<String>()
+    private var itemClickListener: ((String) -> Unit)? = null
 
     // ViewHolder 클래스 정의
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView1: TextView = itemView.findViewById(R.id.text1)
         val textView2: TextView = itemView.findViewById(R.id.text2)
         val textView3: TextView = itemView.findViewById(R.id.text3)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = dataList[position]
+                    // 클릭된 아이템의 데이터를 인터페이스를 통해 외부로 전달
+                    itemClickListener?.invoke(item)
+                }
+            }
+        }
     }
 
     // onCreateViewHolder: 뷰 홀더를 생성하고 레이아웃을 연결합니다.
@@ -43,5 +55,9 @@ class Project_ParticipationAdapter :
     fun setData(dataList: List<String>) {
         this.dataList = dataList
         notifyDataSetChanged()
+    }
+    // 클릭 리스너 설정 메소드
+    fun setItemClickListener(listener: (String) -> Unit) {
+        this.itemClickListener = listener
     }
 }
