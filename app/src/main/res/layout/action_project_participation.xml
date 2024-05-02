@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_margin="30dp"
             android:background="@drawable/project_participation_viewpager2_background"
-            android:layout_height="400dp"
+            android:layout_height="330dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
@@ -77,8 +77,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="30dp"
                 android:id="@+id/project_recyclerview"/>
             <androidx.viewpager2.widget.ViewPager2
                 android:layout_width="match_parent"
