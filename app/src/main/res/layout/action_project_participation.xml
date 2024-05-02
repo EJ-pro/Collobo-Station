@@ -39,10 +39,51 @@
             android:textSize="30sp"
             android:textColor="@color/white"
             android:text="팀원모집"/>
-        <androidx.viewpager2.widget.ViewPager2
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_margin="30dp"
             android:background="@drawable/project_participation_viewpager2_background"
-            android:layout_height="400dp"/>
+            android:layout_height="400dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:paddingLeft="30dp"
+                android:paddingTop="40dp"
+                android:text="분야별로 디자이너 / 개발자를 구해보세요 !"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/maincolor"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="분야별 "/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:text="팀원 구하기"/>
+            </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="30dp"
+                android:id="@+id/project_recyclerview"/>
+            <androidx.viewpager2.widget.ViewPager2
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/project_viewpager2"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
