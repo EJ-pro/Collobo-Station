@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.CompositePageTransformer
@@ -22,6 +23,7 @@ import com.example.collobo_station.Adapter.Home.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.collobo_station.Adapter.Tab.TabAdapter
+import com.example.collobo_station.Team_Matching.Team_Write_Activity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Firebase
@@ -46,6 +48,11 @@ class Fragment_Home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        // Fragment_Home 클래스의 onCreateView 메서드에서 뷰를 초기화하고 사용자 정보를 가져오며 ViewPager 및 TabLayout을 설정합니다.
+        // initView(view) - 뷰를 초기화하는 메서드입니다.
+        // fetchUserInfo() - 사용자 정보를 가져오는 메서드입니다.
+        // setupViewPager() - ViewPager를 설정하는 메서드입니다. Recommendation Contest 문서에서 이미지 URL을 가져와 ViewPager에 표시합니다.
+        // setupTabLayout(view) - TabLayout을 설정하는 메서드입니다. ViewPagerTabs 어댑터를 생성하고 각 탭에 해당하는 Fragment를 추가합니다.
         initView(view)
         fetchUserInfo()
         setupViewPager()

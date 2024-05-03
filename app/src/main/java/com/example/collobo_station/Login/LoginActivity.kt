@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.example.collobo_station.Data.DataInfo
+import com.example.collobo_station.Data.UserInfo
 import com.example.collobo_station.Main.MainActivity
 import com.example.collobo_station.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -110,11 +112,19 @@ class LoginActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
-                    val nickname = documents.documents[0].getString("nickname")
-                    Toast.makeText(this, "안녕하세요, $nickname 님!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    val document = documents.documents[0]
+                    val nickname = document.getString("nickname")
+                    if (nickname != null) {
+                        val userInfo = UserInfo(
+                            email = email,
+                            nickname = nickname,
+                            phoneNumber = document.getString("phone_number") ?: ""
+                        )
+                        DataInfo.setUserInfo(userInfo)
+                        Toast.makeText(this, "안녕하세요, $nickname 님!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "사용자 정보에 닉네임이 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
