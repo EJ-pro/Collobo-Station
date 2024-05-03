@@ -9,10 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.collobo_station.Fragment.Bottom.Fragment_Chat
-import com.example.collobo_station.Fragment.Bottom.Fragment_Home
-import com.example.collobo_station.Fragment.Bottom.Fragment_Scrap
+import com.example.collobo_station.Fragment.Home.Fragment_Home
+import com.example.collobo_station.Fragment.Scrap.Fragment_Scrap
 import com.example.collobo_station.Fragment.Splash.Fragment_User
 import com.example.collobo_station.R
+import com.example.collobo_station.Team_Matching.Project_Participation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 

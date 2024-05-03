@@ -1,13 +1,12 @@
 package com.example.collobo_station.Login
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Adapter.IDPWFindAdapter
+import com.example.collobo_station.Adapter.Login.IDPWFindAdapter
 import com.example.collobo_station.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator

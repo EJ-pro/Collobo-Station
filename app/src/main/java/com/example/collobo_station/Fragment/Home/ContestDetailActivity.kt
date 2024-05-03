@@ -1,4 +1,4 @@
-package com.example.collobo_station
+package com.example.collobo_station.Fragment.Home
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.collobo_station.R
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 

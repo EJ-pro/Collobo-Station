@@ -1,16 +1,15 @@
-package com.example.collobo_station.Main
+package com.example.collobo_station.Team_Matching
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Adapter.Project_ParticipationAdapter
-import com.example.collobo_station.Adapter.Project_ParticipationAdapter_Developer
+import com.example.collobo_station.Adapter.Home.Project_ParticipationAdapter
+import com.example.collobo_station.Adapter.Home.Project_ParticipationAdapter_Developer
 import com.example.collobo_station.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 
 class Project_Participation : AppCompatActivity()  {
@@ -57,6 +56,14 @@ class Project_Participation : AppCompatActivity()  {
             // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
             val intent = Intent(this, Team_Looking_Write::class.java)
             intent.putExtra("item_data", item)
+            startActivity(intent)
+        }
+
+        // 플로팅 액션 버튼 클릭 리스너 설정
+        val fabButton: FloatingActionButton = findViewById(R.id.team_plus_btn)
+        fabButton.setOnClickListener {
+            // Team_Write_Activity로 이동
+            val intent = Intent(this, Team_Write_Activity::class.java)
             startActivity(intent)
         }
     }

@@ -43,9 +43,10 @@
 
         <activity android:name=".Login.ID_PW_Find" />
         <activity android:name=".Main.Portfolio_management"/>
-        <activity android:name=".Main.Project_Participation"/>
-        <activity android:name=".ContestDetailActivity"/>
-        <activity android:name=".Main.Team_Looking_Write"/>
+        <activity android:name=".Team_Matching.Project_Participation"/>
+        <activity android:name=".Fragment.Home.ContestDetailActivity"/>
+        <activity android:name=".Team_Matching.Team_Looking_Write"/>
+        <activity android:name=".Team_Matching.Team_Write_Activity"/>
     </application>
 
 </manifest>

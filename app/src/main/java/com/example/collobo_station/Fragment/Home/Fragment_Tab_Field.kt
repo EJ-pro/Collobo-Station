@@ -1,16 +1,14 @@
-package com.example.collobo_station.Fragment.Tab
+package com.example.collobo_station.Fragment.Home
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.collobo_station.Adapter.TabAllAdapter
-import com.example.collobo_station.ContestDetailActivity
+import com.example.collobo_station.Adapter.Tab.TabAllAdapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,9 +18,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
-class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
+class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tabAllAdapter: TabAllAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
@@ -31,7 +30,7 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_tab_all, container, false)
+        val view = inflater.inflate(R.layout.fragment_tab_field, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         tabAllAdapter = TabAllAdapter(contestList)
@@ -46,6 +45,7 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
+        // 클릭된 아이템의 위치(position)을 통해 원하는 동작을 수행
         val clickedItem = contestList[position]
         val contestName = clickedItem.getString("대회명") ?: ""
         val contestField = clickedItem.getString("분야") ?: ""
@@ -62,6 +62,7 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
         val contestHomepageUrl = clickedItem.getString("홈페이지url") ?: ""
         val contestprecautions = clickedItem.getString("주의사항") ?: ""
 
+        // 데이터를 담을 Intent 생성
         val intent = Intent(requireContext(), ContestDetailActivity::class.java).apply {
             putExtra("contestName", contestName)
             putExtra("contestField", contestField)
@@ -79,21 +80,14 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
             putExtra("contestprecautions", contestprecautions)
         }
 
+        // Activity 시작
         startActivity(intent)
     }
 
     private suspend fun loadDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val contestCollection = db.collection("Contest")
-
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val currentDate = Calendar.getInstance().time
-                val querySnapshot = contestCollection
-                    .whereGreaterThanOrEqualTo("접수마감", currentDate) // 현재 시간 이후의 접수마감일
-                    .orderBy("접수마감", Query.Direction.ASCENDING) // 접수마감일 오름차순 정렬
-                    .get().await()
-
+                val querySnapshot = getContestQueryFromFirestore().get().await()
                 for (document in querySnapshot.documents) {
                     contestList.add(document)
                 }
@@ -103,6 +97,12 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
                 e.printStackTrace()
             }
         }
+    }
+
+    private suspend fun getContestQueryFromFirestore(): Query {
+        val db = FirebaseFirestore.getInstance()
+        val contestCollection = db.collection("Contest")
+        return contestCollection.orderBy("추가순서", Query.Direction.DESCENDING)
     }
 
     private fun calculateDDay(eventDate: Date): String {

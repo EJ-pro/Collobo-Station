@@ -1,4 +1,4 @@
-package com.example.collobo_station.Adapter
+package com.example.collobo_station.Adapter.Home
 
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -10,10 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.R
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.IOException
 
 class ViewPager2Adapter(private var imageUrls: List<String>, private val context: android.content.Context) : RecyclerView.Adapter<ViewPager2Adapter.ViewHolder>() {
 

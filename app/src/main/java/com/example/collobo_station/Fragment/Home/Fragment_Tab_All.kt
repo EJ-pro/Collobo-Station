@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment.Tab
+package com.example.collobo_station.Fragment.Home
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.collobo_station.Adapter.TabAllAdapter
-import com.example.collobo_station.Adapter.TabFieldAdapter
-import com.example.collobo_station.ContestDetailActivity
+import com.example.collobo_station.Adapter.Tab.TabAllAdapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,10 +18,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
-class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
+class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tabAllAdapter: TabAllAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
@@ -32,7 +29,7 @@ class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_tab_field, container, false)
+        val view = inflater.inflate(R.layout.fragment_tab_all, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         tabAllAdapter = TabAllAdapter(contestList)
@@ -100,6 +97,8 @@ class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
             }
         }
     }
+
+
 
     private suspend fun getContestQueryFromFirestore(): Query {
         val db = FirebaseFirestore.getInstance()

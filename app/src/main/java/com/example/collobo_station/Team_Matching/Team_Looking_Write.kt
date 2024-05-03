@@ -1,4 +1,4 @@
-package com.example.collobo_station.Main
+package com.example.collobo_station.Team_Matching
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

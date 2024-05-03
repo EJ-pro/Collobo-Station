@@ -1,4 +1,4 @@
-package com.example.collobo_station.Adapter
+package com.example.collobo_station.Adapter.Tab
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

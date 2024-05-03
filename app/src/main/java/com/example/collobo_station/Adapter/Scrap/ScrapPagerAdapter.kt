@@ -1,8 +1,9 @@
-package com.example.collobo_station.Adapter
+package com.example.collobo_station.Adapter.Scrap
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.collobo_station.Adapter.ViewHolder
 import com.example.collobo_station.Data.Model
 import com.example.collobo_station.databinding.ItemTextBinding
 

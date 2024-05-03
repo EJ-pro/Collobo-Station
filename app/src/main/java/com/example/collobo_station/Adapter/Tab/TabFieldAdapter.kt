@@ -1,4 +1,4 @@
-package com.example.collobo_station.Adapter
+package com.example.collobo_station.Adapter.Tab
 
 import android.graphics.BitmapFactory
 import android.util.Log

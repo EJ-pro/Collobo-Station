@@ -1,3 +1,5 @@
+package com.example.collobo_station.Adapter.Login
+
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter

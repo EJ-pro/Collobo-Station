@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment.Bottom
+package com.example.collobo_station.Fragment.Scrap
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Adapter.ScrapPagerAdapter
+import com.example.collobo_station.Adapter.Scrap.ScrapPagerAdapter
 import com.example.collobo_station.Data.Model
-import com.example.collobo_station.Fragment.Scrap.SliderTransformer
 import com.example.collobo_station.R
 
 class Fragment_Scrap : Fragment() {

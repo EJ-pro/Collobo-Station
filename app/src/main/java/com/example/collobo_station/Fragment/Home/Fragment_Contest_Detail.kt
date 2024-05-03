@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment.Tab
+package com.example.collobo_station.Fragment.Home
 
 import android.os.Bundle
 import android.view.LayoutInflater

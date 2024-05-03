@@ -1,4 +1,4 @@
-package com.example.collobo_station.Adapter
+package com.example.collobo_station.Adapter.Home
 
 import android.view.LayoutInflater
 import android.view.View

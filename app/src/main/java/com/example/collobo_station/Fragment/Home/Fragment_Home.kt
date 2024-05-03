@@ -1,4 +1,4 @@
-package com.example.collobo_station.Fragment.Bottom
+package com.example.collobo_station.Fragment.Home
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
@@ -18,14 +18,10 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Adapter.ViewPager2Adapter
+import com.example.collobo_station.Adapter.Home.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
-import android.widget.Toast
-import com.example.collobo_station.Adapter.TabAdapter
-import com.example.collobo_station.Fragment.Tab.Fragment_Tab_All
-import com.example.collobo_station.Fragment.Tab.Fragment_Tab_DeadLine
-import com.example.collobo_station.Fragment.Tab.Fragment_Tab_Field
+import com.example.collobo_station.Adapter.Tab.TabAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Firebase
