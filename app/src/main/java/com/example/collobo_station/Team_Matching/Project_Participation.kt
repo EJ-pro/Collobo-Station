@@ -65,6 +65,7 @@ class Project_Participation : AppCompatActivity()  {
             // Team_Write_Activity로 이동
             val intent = Intent(this, Team_Write_Activity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 

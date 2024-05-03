@@ -9,6 +9,7 @@ import com.example.collobo_station.Data.DataInfo
 import com.example.collobo_station.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Team_Write_Activity : AppCompatActivity() {
@@ -41,7 +42,7 @@ class Team_Write_Activity : AppCompatActivity() {
     private fun writeDataToFirestore() {
         val title = titleEditText.text.toString().trim()
         val content = contentEditText.text.toString().trim()
-        val timestamp = Calendar.getInstance().timeInMillis
+        val timestamp = getCurrentDateTime()
         // DataInfo에서 사용자 정보 가져오기
         val userInfo = DataInfo.getUserInfo()
         val nickname = userInfo?.nickname ?: ""
@@ -63,5 +64,10 @@ class Team_Write_Activity : AppCompatActivity() {
                 // 저장 실패한 경우
                 // 여기에 실패 처리 코드 추가
             }
+    }
+    private fun getCurrentDateTime(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = Date()
+        return dateFormat.format(date)
     }
 }

@@ -23,6 +23,8 @@ import com.example.collobo_station.Adapter.Home.ViewPager2Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.collobo_station.Adapter.Tab.TabAdapter
+import com.example.collobo_station.Data.DataInfo
+import com.example.collobo_station.Data.UserInfo
 import com.example.collobo_station.Team_Matching.Team_Write_Activity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -82,6 +84,13 @@ class Fragment_Home : Fragment() {
                             val nickname = document.getString("nickname")
                             if (nickname != null) {
                                 textViewUserName.text = nickname
+                                val userInfo = UserInfo(
+                                    email = document.getString("email") ?:"",
+                                    nickname = nickname,
+                                    phoneNumber = document.getString("phone_number") ?: ""
+                                )
+                                DataInfo.setUserInfo(userInfo)
+
                             } else {
                                 textViewUserName.text = "사용자"
                             }

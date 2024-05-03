@@ -115,12 +115,6 @@ class LoginActivity : AppCompatActivity() {
                     val document = documents.documents[0]
                     val nickname = document.getString("nickname")
                     if (nickname != null) {
-                        val userInfo = UserInfo(
-                            email = email,
-                            nickname = nickname,
-                            phoneNumber = document.getString("phone_number") ?: ""
-                        )
-                        DataInfo.setUserInfo(userInfo)
                         Toast.makeText(this, "안녕하세요, $nickname 님!", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this, "사용자 정보에 닉네임이 없습니다.", Toast.LENGTH_SHORT).show()
