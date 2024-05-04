@@ -14,24 +14,49 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:gravity="center"
-                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_margin="20dp"
-                    android:src="@drawable/image_meunbar_maincolor"/>
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_margin="20dp"
-                    android:src="@drawable/image_alarm"/>
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_margin="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/image_meunbar_maincolor"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/image_team_dot"
+                        android:layout_gravity="top"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        android:text="Collobo"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="20dp"
+                        android:src="@drawable/image_alarm"/>
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
@@ -145,6 +170,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:layout_marginTop="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:id="@+id/Team_recyclerview"/>

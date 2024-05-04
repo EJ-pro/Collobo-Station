@@ -91,8 +91,8 @@ class Project_Participation : AppCompatActivity()  {
             .addOnSuccessListener { documents ->
                 val dataList = mutableListOf<String>()
                 for (document in documents) {
-                    val text1 = document.getString("content") ?: ""
-                    val text2 = document.getString("title") ?: ""
+                    val text1 = document.getString("title") ?: ""
+                    val text2 = document.getString("content") ?: ""
                     dataList.add("$text1, $text2")
                 }
                 // 어댑터에 데이터 설정
