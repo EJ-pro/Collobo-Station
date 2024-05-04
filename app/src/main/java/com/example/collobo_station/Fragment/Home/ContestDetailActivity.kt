@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -100,7 +101,7 @@ class ContestDetailActivity : AppCompatActivity() {
         contestHomepageUrlTextView.text = contestHomepageUrl
         contestprecautionsTextView.text = contestprecautions
 
-        val shareBtn: Button = findViewById(R.id.shareBtn)
+        val shareBtn: ImageButton = findViewById(R.id.shareBtn)
         shareBtn.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
             intent.type = "text/plain"
