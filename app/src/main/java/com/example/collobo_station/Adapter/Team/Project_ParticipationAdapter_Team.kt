@@ -1,4 +1,4 @@
-package com.example.collobo_station.Adapter.Home
+package com.example.collobo_station.Adapter.Team
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,17 +7,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.R
 
-class Project_ParticipationAdapter_Developer :
-    RecyclerView.Adapter<Project_ParticipationAdapter_Developer.ViewHolder>() {
+class Project_ParticipationAdapter_Team :
+    RecyclerView.Adapter<Project_ParticipationAdapter_Team.ViewHolder>() {
 
     private var dataList = listOf<String>()
     private var itemClickListener: ((String) -> Unit)? = null
 
     // ViewHolder 클래스 정의
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView1: TextView = itemView.findViewById(R.id.text1)
-        val textView2: TextView = itemView.findViewById(R.id.text2)
-        val textView3: TextView = itemView.findViewById(R.id.text3)
+        val textView1: TextView = itemView.findViewById(R.id.Text_Title)
+        val textView2: TextView = itemView.findViewById(R.id.Text_Contest)
 
         init {
             itemView.setOnClickListener {
@@ -34,7 +33,7 @@ class Project_ParticipationAdapter_Developer :
     // onCreateViewHolder: 뷰 홀더를 생성하고 레이아웃을 연결합니다.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_project_team, parent, false)
+            .inflate(R.layout.team_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -43,7 +42,6 @@ class Project_ParticipationAdapter_Developer :
         val data = dataList[position].split(", ")
         holder.textView1.text = data[0]
         holder.textView2.text = data[1]
-        holder.textView3.text = data[2]
     }
 
     // getItemCount: 데이터의 개수를 반환합니다.

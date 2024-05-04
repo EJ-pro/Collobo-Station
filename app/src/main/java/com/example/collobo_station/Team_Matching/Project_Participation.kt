@@ -6,8 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.collobo_station.Adapter.Home.Project_ParticipationAdapter
-import com.example.collobo_station.Adapter.Home.Project_ParticipationAdapter_Developer
+import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter
+import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter_Developer
+import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter_Team
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,8 +16,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 class Project_Participation : AppCompatActivity()  {
     private lateinit var Designer_recyclerView: RecyclerView
     private lateinit var Developer_recyclerView: RecyclerView
+    private lateinit var Team_recyclerView: RecyclerView
     private lateinit var Designer_adapter: Project_ParticipationAdapter
     private lateinit var Developer_adapter: Project_ParticipationAdapter_Developer
+    private lateinit var Team_adapter: Project_ParticipationAdapter_Team
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +29,7 @@ class Project_Participation : AppCompatActivity()  {
         // 리사이클러뷰를 XML에서 찾아옵니다.
         Designer_recyclerView = findViewById(R.id.Designer_recyclerview)
         Developer_recyclerView = findViewById(R.id.Developer_recyclerview)
+        Team_recyclerView = findViewById(R.id.Team_recyclerview)
 
         // 가로로 스크롤되는 레이아웃 매니저를 설정합니다.
         val Designer_layoutManager = GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false)
@@ -34,16 +38,22 @@ class Project_Participation : AppCompatActivity()  {
         val Developer_layoutManager = GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false)
         Developer_recyclerView.layoutManager = Developer_layoutManager
 
+        val Team_layoutManager = GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false)
+        Team_recyclerView.layoutManager = Team_layoutManager
+
         // 어댑터를 생성하고 리사이클러뷰에 연결합니다.
         Designer_adapter = Project_ParticipationAdapter()
         Developer_adapter = Project_ParticipationAdapter_Developer()
+        Team_adapter = Project_ParticipationAdapter_Team()
 
         Designer_recyclerView.adapter = Designer_adapter
         Developer_recyclerView.adapter = Developer_adapter
+        Team_recyclerView.adapter = Team_adapter
 
         // Firestore에서 데이터 가져오기
         fetchDataFromFirestore_Designer()
         fetchDataFromFirestore_Developer()
+        fetchDataFromFirestore_Team()
 
         // 리사이클러뷰 아이템 클릭 리스너 설정
         Designer_adapter.setItemClickListener { item ->
@@ -58,7 +68,11 @@ class Project_Participation : AppCompatActivity()  {
             intent.putExtra("item_data", item)
             startActivity(intent)
         }
-
+        Team_adapter.setItemClickListener { item ->
+            // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
+            val intent = Intent(this, Team_Looking_Write::class.java)
+            startActivity(intent)
+        }
         // 플로팅 액션 버튼 클릭 리스너 설정
         val fabButton: FloatingActionButton = findViewById(R.id.team_plus_btn)
         fabButton.setOnClickListener {
@@ -69,6 +83,25 @@ class Project_Participation : AppCompatActivity()  {
         }
     }
 
+    private fun fetchDataFromFirestore_Team() {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("Team_Matching")
+
+        collectionRef.get()
+            .addOnSuccessListener { documents ->
+                val dataList = mutableListOf<String>()
+                for (document in documents) {
+                    val text1 = document.getString("content") ?: ""
+                    val text2 = document.getString("title") ?: ""
+                    dataList.add("$text1, $text2")
+                }
+                // 어댑터에 데이터 설정
+                Team_adapter.setData(dataList)
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
+            }
+    }
     private fun fetchDataFromFirestore_Designer() {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Looking")
@@ -88,7 +121,8 @@ class Project_Participation : AppCompatActivity()  {
             .addOnFailureListener { exception ->
                 // 실패 시 처리
             }
-    }private fun fetchDataFromFirestore_Developer() {
+    }
+    private fun fetchDataFromFirestore_Developer() {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Looking_Developer")
 
