@@ -110,7 +110,7 @@ class Fragment_Tab_DeadLine : Fragment(), TabDeadLine_Adapter.OnItemClickListene
         return if (days >= 0) {
             "D-${days + 1}"
         } else {
-            "D+${-days}"
+            "마감"
         }
     }
 }

@@ -113,7 +113,7 @@ class Fragment_Tab_Field : Fragment(), TabFieldAdapter.OnItemClickListener {
         return if (days >= 0) {
             "D-${days + 1}"
         } else {
-            "D+${-days}"
+            "마감"
         }
     }
 }

@@ -224,22 +224,5 @@ class Fragment_Home : Fragment() {
             tab.text = tabAdapter.getPageTitle(position)
         }.attach()
 
-        // TabLayout의 OnTabSelectedListener 설정
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                // 선택된 탭의 위치를 가져와 ViewPager2의 해당 페이지로 이동
-                tab?.let {
-                    viewPagerTabs.setCurrentItem(it.position, true)
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                // Unselected 상태일 때의 동작
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                // Reselected 상태일 때의 동작
-            }
-        })
     }
 }

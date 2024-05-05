@@ -227,10 +227,6 @@
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
@@ -240,5 +236,4 @@
             android:paddingBottom="50dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_weight="1"/>
-    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

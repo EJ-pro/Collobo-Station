@@ -30,10 +30,10 @@ class TabAllAdapter(private val items: MutableList<DocumentSnapshot>) :
         val currentDate = Calendar.getInstance().time
         val diff = eventDate.time - currentDate.time
         val days = diff / (1000 * 60 * 60 * 24)
-        return if (days >= 0) {
-            "D-${days + 1}"
-        } else {
-            "D+${-days}"
+        return when {
+            days > 0 -> "D-${days + 1}"
+            days == 0L -> "D-day"
+            else -> "마감"
         }
     }
     override fun onBindViewHolder(holder: TabAllViewHolder, position: Int) {
