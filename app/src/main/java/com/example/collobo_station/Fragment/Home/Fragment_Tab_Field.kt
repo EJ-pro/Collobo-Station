@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.Adapter.Tab.TabAllAdapter
+import com.example.collobo_station.Adapter.Tab.TabFieldAdapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,9 +22,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 
-class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
+class Fragment_Tab_Field : Fragment(), TabFieldAdapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var tabAllAdapter: TabAllAdapter
+    private lateinit var tabFieldAdapter: TabFieldAdapter
     private var contestList = mutableListOf<DocumentSnapshot>()
 
     override fun onCreateView(
@@ -33,14 +34,14 @@ class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
         val view = inflater.inflate(R.layout.fragment_tab_field, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        tabAllAdapter = TabAllAdapter(contestList)
-        recyclerView.adapter = tabAllAdapter
+        tabFieldAdapter = TabFieldAdapter(contestList)
+        recyclerView.adapter = tabFieldAdapter
 
         GlobalScope.launch(Dispatchers.Main) {
             loadDataFromFirestore()
         }
 
-        tabAllAdapter.setOnItemClickListener(this)
+        tabFieldAdapter.setOnItemClickListener(this)
         return view
     }
 
@@ -91,8 +92,8 @@ class Fragment_Tab_Field : Fragment(), TabAllAdapter.OnItemClickListener {
                 for (document in querySnapshot.documents) {
                     contestList.add(document)
                 }
-                tabAllAdapter.setItems(contestList)
-                tabAllAdapter.notifyDataSetChanged()
+                tabFieldAdapter.setItems(contestList)
+                tabFieldAdapter.notifyDataSetChanged()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

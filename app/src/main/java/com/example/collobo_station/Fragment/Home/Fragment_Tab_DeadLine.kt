@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.collobo_station.Adapter.Tab.TabAllAdapter
+import com.example.collobo_station.Adapter.Tab.TabDeadLine_Adapter
 import com.example.collobo_station.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,26 +20,26 @@ import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
+class Fragment_Tab_DeadLine : Fragment(), TabDeadLine_Adapter.OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var tabAllAdapter: TabAllAdapter
+    private lateinit var tabDeadLineAdapter: TabDeadLine_Adapter
     private var contestList = mutableListOf<DocumentSnapshot>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_tab_all, container, false)
+        val view = inflater.inflate(R.layout.fragment_tab_deadline, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        tabAllAdapter = TabAllAdapter(contestList)
-        recyclerView.adapter = tabAllAdapter
+        tabDeadLineAdapter = TabDeadLine_Adapter(contestList)
+        recyclerView.adapter = tabDeadLineAdapter
 
         GlobalScope.launch(Dispatchers.Main) {
             loadDataFromFirestore()
         }
 
-        tabAllAdapter.setOnItemClickListener(this)
+        tabDeadLineAdapter.setOnItemClickListener(this)
         return view
     }
 
@@ -95,8 +95,8 @@ class Fragment_Tab_DeadLine : Fragment(), TabAllAdapter.OnItemClickListener {
                 for (document in querySnapshot.documents) {
                     contestList.add(document)
                 }
-                tabAllAdapter.setItems(contestList)
-                tabAllAdapter.notifyDataSetChanged()
+                tabDeadLineAdapter.setItems(contestList)
+                tabDeadLineAdapter.notifyDataSetChanged()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

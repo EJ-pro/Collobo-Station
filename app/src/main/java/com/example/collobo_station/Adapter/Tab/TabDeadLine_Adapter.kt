@@ -1,7 +1,6 @@
 package com.example.collobo_station.Adapter.Tab
 
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +16,14 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
-    RecyclerView.Adapter<TabFieldAdapter.TabFieldViewHolder>() {
+class TabDeadLine_Adapter(private val items: MutableList<DocumentSnapshot>) :
+    RecyclerView.Adapter<TabDeadLine_Adapter.TabDeadLineViewHolder>() {
     private var itemList = mutableListOf<DocumentSnapshot>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabFieldViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TabDeadLineViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_home_contest, parent, false)
 
-        return TabFieldViewHolder(view)
+        return TabDeadLineViewHolder(view)
     }
 
     private fun calculateDDay(eventDate: Date): String {
@@ -37,7 +36,7 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
             "D+${-days}"
         }
     }
-    override fun onBindViewHolder(holder: TabFieldViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TabDeadLineViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
@@ -64,7 +63,7 @@ class TabFieldAdapter(private val items: MutableList<DocumentSnapshot>) :
         this.itemClickListener = listener
     }
 
-    inner class TabFieldViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TabDeadLineViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val contestImage: ImageView = itemView.findViewById(R.id.contest_image)
         private val contestName: TextView = itemView.findViewById(R.id.Contest_name)
         private val contestDayStart: TextView = itemView.findViewById(R.id.Contest_Day_Start)
