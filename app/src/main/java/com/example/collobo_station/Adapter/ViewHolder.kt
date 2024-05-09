@@ -6,7 +6,4 @@ import com.example.collobo_station.databinding.ItemTextBinding
 
 class ViewHolder(private val binding: ItemTextBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: Model) {
-        binding.textView.text = item.text
-    }
 }
