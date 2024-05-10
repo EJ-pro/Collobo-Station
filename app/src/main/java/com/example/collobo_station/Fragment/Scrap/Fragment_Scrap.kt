@@ -27,19 +27,10 @@ class Fragment_Scrap : Fragment() {
 
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         viewPager.offscreenPageLimit = 4
-        viewPager.setPageTransformer { page, position ->
-            val verticalMarginPx = resources.getDimensionPixelOffset(R.dimen.page_vertical_margin)
-            val offsetPx = resources.getDimensionPixelOffset(R.dimen.page_offset)
 
-            val offset = position * -(2 * offsetPx + verticalMarginPx)
-            page.translationY = offset
-
-            // 페이지의 크기를 조정하여 겹치는 효과를 줍니다.
-            val scaleFactor = 1 - (0.1f * abs(position))
-            page.scaleY = scaleFactor
-        }
-
-
+        // VerticalTransformer 적용
+        val verticalTransformer = VerticalTransformer(viewPager.offscreenPageLimit)
+        viewPager.setPageTransformer(verticalTransformer)
         return view
     }
 

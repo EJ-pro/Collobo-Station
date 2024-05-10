@@ -9,7 +9,7 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
 
     companion object {
         private const val DEFAULT_TRANSLATION_Y = .0f
-        private const val DEFAULT_TRANSLATION_FACTOR = 1.1f
+        private const val DEFAULT_TRANSLATION_FACTOR = 1.2f
         // 상자들이 겹치는 정도를 제어합니다.
         // 값이 작을수록 상자들이 더 많이 겹칩니다.
         // 예: 0.5f로 설정하면 겹치는 정도가 더 커집니다.
@@ -23,7 +23,7 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
         // 예: 1f로 설정하면 페이지가 원래 크기로 표시됩니다.
         // 예: 0.8f로 설정하면 페이지가 기본적으로 80% 너비로 표시됩니다.
 
-        private const val DEFAULT_SCALE_Y = 0.8f   // 페이지의 기본 높이 크기를 결정합니다.
+        private const val DEFAULT_SCALE_Y = 1f   // 페이지의 기본 높이 크기를 결정합니다.
         // 예: 1f로 설정하면 페이지가 원래 크기로 표시됩니다.
         // 예: 0.9f로 설정하면 페이지가 기본적으로 90% 높이로 표시됩니다.
 
@@ -43,7 +43,8 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
             ViewCompat.setElevation(page, -abs(position))
 
             // 페이지의 크기 및 투명도 변화를 계산합니다.
-            val scaleYFactor = -SCALE_FACTOR * position + DEFAULT_SCALE_Y
+            val scaleYFactor = DEFAULT_SCALE_Y // 페이지의 높이를 고정시킵니다.
+
             val alphaFactor = -ALPHA_FACTOR * position + DEFAULT_ALPHA
 
             when {
@@ -56,6 +57,7 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
                 position <= offscreenPageLimit -> {
                     // 다음 페이지들의 경우
                     translationY = (height / DEFAULT_TRANSLATION_FACTOR) * position
+
                     scaleY = scaleYFactor
                     alpha = alphaFactor
                 }
