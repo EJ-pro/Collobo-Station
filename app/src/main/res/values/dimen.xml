@@ -6,4 +6,10 @@
     <dimen name="standard_125">125dp</dimen>
     <dimen name="standard_185">185dp</dimen>
     <dimen name="tab_layout_margin">25dp</dimen>
+
+    <!-- 페이지 사이의 수직 간격 -->
+    <dimen name="page_vertical_margin">16dp</dimen>
+
+    <!-- 페이지들의 수평 간격 -->
+    <dimen name="page_offset">8dp</dimen>
 </resources>

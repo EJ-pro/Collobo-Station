@@ -3,6 +3,7 @@ package com.example.collobo_station.Adapter.Scrap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.Data.Model
@@ -23,8 +24,10 @@ class ScrapPagerAdapter(private val dataList: List<Model>) :
 
     override fun onBindViewHolder(holder: ScrapViewHolder, position: Int) {
         val model = dataList[position]
+        holder.itemView.findViewById<TextView>(R.id.text).text = "Page ${position + 1}"
         holder.itemView.findViewById<CardView>(R.id.itemCard).setCardBackgroundColor(model.color)
     }
+
 
     override fun getItemCount(): Int {
         return dataList.size

@@ -14,7 +14,7 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
         // 값이 작을수록 상자들이 더 많이 겹칩니다.
         // 예: 0.5f로 설정하면 겹치는 정도가 더 커집니다.
 
-        private const val SCALE_FACTOR = 0f
+        private const val SCALE_FACTOR = 0.2f
         // 페이지 스케일(크기)을 줄이는 정도를 제어합니다.
         // 값이 커질수록 페이지가 작아집니다.
         // 예: 0.2f로 설정하면 페이지 크기가 더 작아집니다.
@@ -48,16 +48,15 @@ class VerticalTransformer(private val offscreenPageLimit: Int) : ViewPager2.Page
 
             when {
                 position <= 0f -> {
-                    // 현재 페이지의 경우
-                    translationY = DEFAULT_TRANSLATION_Y
-                    scaleX = DEFAULT_SCALE_X
-                    scaleY = DEFAULT_SCALE_Y
-                    alpha = DEFAULT_ALPHA + position
-                }
-                position <= offscreenPageLimit - 1 -> {
-                    // 첫 번째 오프스크린 페이지의 경우
+                    // 첫 번째 페이지의 경우
+                    translationY = (height / DEFAULT_TRANSLATION_FACTOR) * abs(position)
                     scaleY = scaleYFactor
-                    translationY = -(height / DEFAULT_TRANSLATION_FACTOR) * position
+                    alpha = alphaFactor
+                }
+                position <= offscreenPageLimit -> {
+                    // 다음 페이지들의 경우
+                    translationY = (height / DEFAULT_TRANSLATION_FACTOR) * position
+                    scaleY = scaleYFactor
                     alpha = alphaFactor
                 }
                 else -> {

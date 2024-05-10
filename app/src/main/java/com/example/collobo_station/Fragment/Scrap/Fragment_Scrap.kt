@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.collobo_station.Adapter.Scrap.ScrapPagerAdapter
 import com.example.collobo_station.Data.Model
 import com.example.collobo_station.R
+import kotlin.math.abs
 import kotlin.random.Random
 
 class Fragment_Scrap : Fragment() {
@@ -25,12 +26,19 @@ class Fragment_Scrap : Fragment() {
         viewPager.adapter = adapter
 
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-        viewPager.offscreenPageLimit = 10
-        viewPager.setPageTransformer(VerticalTransformer(10))
+        viewPager.offscreenPageLimit = 4
+        viewPager.setPageTransformer { page, position ->
+            val verticalMarginPx = resources.getDimensionPixelOffset(R.dimen.page_vertical_margin)
+            val offsetPx = resources.getDimensionPixelOffset(R.dimen.page_offset)
 
-        // VerticalTransformer 적용
-        val verticalTransformer = VerticalTransformer(viewPager.offscreenPageLimit)
-        viewPager.setPageTransformer(verticalTransformer)
+            val offset = position * -(2 * offsetPx + verticalMarginPx)
+            page.translationY = offset
+
+            // 페이지의 크기를 조정하여 겹치는 효과를 줍니다.
+            val scaleFactor = 1 - (0.1f * abs(position))
+            page.scaleY = scaleFactor
+        }
+
 
         return view
     }
