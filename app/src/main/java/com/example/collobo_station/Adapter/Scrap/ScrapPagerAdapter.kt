@@ -24,7 +24,7 @@ class ScrapPagerAdapter(private val dataList: List<Model>) :
 
     override fun onBindViewHolder(holder: ScrapViewHolder, position: Int) {
         val model = dataList[position]
-        holder.itemView.findViewById<TextView>(R.id.text).text = "Page ${position + 1}"
+        holder.itemView.findViewById<TextView>(R.id.scrap_name).text = "Page ${position + 1}"
         holder.itemView.findViewById<CardView>(R.id.itemCard).setCardBackgroundColor(model.color)
     }
 

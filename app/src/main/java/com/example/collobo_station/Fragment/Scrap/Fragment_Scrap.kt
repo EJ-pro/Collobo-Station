@@ -28,6 +28,9 @@ class Fragment_Scrap : Fragment() {
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         viewPager.offscreenPageLimit = 4
 
+        val startingPage = 9 // 시작 페이지의 인덱스 (0부터 시작)
+        viewPager.setCurrentItem(startingPage, false) // 시작 페이지로 이동
+
         // VerticalTransformer 적용
         val verticalTransformer = VerticalTransformer(viewPager.offscreenPageLimit)
         viewPager.setPageTransformer(verticalTransformer)
