@@ -2,6 +2,7 @@ package com.example.collobo_station.Fragment.Splash
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,11 +44,20 @@ class Fragment_User: Fragment() {
             activity?.finish() // 현재 화면 종료
         }
         binding.push.setOnClickListener {
-
+            val url = "https://open.kakao.com/o/gKu50Arg"
+            if (url != null) {
+                openWebPage(url)
+            }
         }
         return view
     }
+    private fun openWebPage(url: String) {
+        val webpage = Uri.parse(url)
 
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webpage.toString()))
+        startActivity(intent)
+
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
