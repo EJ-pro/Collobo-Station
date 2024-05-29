@@ -55,6 +55,7 @@
                 <!-- EditView -->
                 <!-- TextView -->
 
+                <!-- 첫 번째 Button 그룹 -->
                 <EditText
                     android:id="@+id/editTextTitle"
                     android:layout_width="match_parent"
@@ -67,7 +68,6 @@
                     android:padding="10dp"
                     android:textColorHint="#7E7E7E" />
 
-                <!-- 첫 번째 Button 그룹 -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
                     android:background="@drawable/team_write_background"
-                    android:hint="URL"
+                    android:hint="  URL"
                     android:inputType="text"
                     android:padding="10dp"
                     android:textColorHint="#7E7E7E" />

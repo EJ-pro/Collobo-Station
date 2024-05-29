@@ -24,40 +24,28 @@ class Fragment_User: Fragment() {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // 로그아웃 버튼 클릭 리스너 설정
-        binding.logoutBtn.setOnClickListener {
-            // Firebase에서 로그아웃
-            FirebaseAuth.getInstance().signOut()
-
-            // SharedPreferences에서 자동 로그인 정보 삭제
-            val sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
-            with(sharedPreferences.edit()) {
-                putBoolean("isLoggedIn", false)
-                remove("username")
-                remove("password")
-                apply()
-            }
-
-            // 로그인 화면으로 이동
-            val intent = Intent(activity, LoginActivity::class.java)
-            startActivity(intent)
-            activity?.finish() // 현재 화면 종료
-        }
-        binding.push.setOnClickListener {
-            val url = "https://open.kakao.com/o/gKu50Arg"
-            if (url != null) {
-                openWebPage(url)
-            }
-        }
+//        // 로그아웃 버튼 클릭 리스너 설정
+//        binding.logoutBtn.setOnClickListener {
+//            // Firebase에서 로그아웃
+//            FirebaseAuth.getInstance().signOut()
+//
+//            // SharedPreferences에서 자동 로그인 정보 삭제
+//            val sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
+//            with(sharedPreferences.edit()) {
+//                putBoolean("isLoggedIn", false)
+//                remove("username")
+//                remove("password")
+//                apply()
+//            }
+//
+//            // 로그인 화면으로 이동
+//            val intent = Intent(activity, LoginActivity::class.java)
+//            startActivity(intent)
+//            activity?.finish() // 현재 화면 종료
+//        }
         return view
     }
-    private fun openWebPage(url: String) {
-        val webpage = Uri.parse(url)
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webpage.toString()))
-        startActivity(intent)
-
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
