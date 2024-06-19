@@ -40,7 +40,7 @@
             android:name=".Login.CreateActivity"
             android:screenOrientation="portrait"
             android:exported="true" />
-
+        <activity android:name=".Main.MemoComposeActivity"/>
         <activity android:name=".Login.ID_PW_Find" />
         <activity android:name=".Main.Portfolio_management"/>
         <activity android:name=".Team_Matching.Project_Participation"/>

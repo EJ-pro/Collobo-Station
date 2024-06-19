@@ -46,6 +46,16 @@ class Fragment_Home : Fragment() {
     private lateinit var viewPagerTabs: ViewPager2
     private lateinit var tabadapter: ViewPager2Adapter
     private lateinit var menu : ImageView
+    private lateinit var mContext: Context
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        // Context를 해제하거나 필요에 따라 초기화
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
