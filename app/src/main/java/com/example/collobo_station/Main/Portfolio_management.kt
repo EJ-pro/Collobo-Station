@@ -41,12 +41,14 @@ class Portfolio_management : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
         gson = Gson()
 
-        memoAdapter = MemoAdapter(memoList)
+        memoAdapter = MemoAdapter(memoList, this) { position ->
+            deleteMemo(position)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = memoAdapter
 
-        convertOldData()  // 추가된 부분
+        convertOldData()
         loadMemos()
 
         fabAddMemo.setOnClickListener {
@@ -81,12 +83,31 @@ class Portfolio_management : AppCompatActivity() {
         }
     }
 
+    private fun deleteMemo(position: Int) {
+        if (position >= 0 && position < memoList.size) {
+            memoList.removeAt(position) // memoList에서 아이템 제거
+            memoAdapter.notifyItemRemoved(position) // RecyclerView에 제거된 위치 알림
+            saveMemos() // 삭제된 메모를 SharedPreferences에 저장
+
+            // 추가적으로, 메모 리스트가 비어있을 경우 백 스택(popBackStack) 처리
+            if (memoList.isEmpty()) {
+                supportFragmentManager.popBackStack()
+            }
+        }
+    }
+
+    private fun saveMemos() {
+        val jsonString = gson.toJson(memoList)
+        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ADD_MEMO && resultCode == Activity.RESULT_OK) {
             data?.getParcelableExtra<Memo>("memo")?.let {
                 memoList.add(it)
                 memoAdapter.notifyDataSetChanged()
+                saveMemos()
             }
         }
     }
