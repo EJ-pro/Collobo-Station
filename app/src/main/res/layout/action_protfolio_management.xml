@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -14,51 +15,36 @@
         app:layout_constraintBottom_toTopOf="@+id/fabAddMemo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/white"
+        android:elevation="4dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMemo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/image_plus_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:backgroundTint="@color/maincolor"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="-33dp"
-        app:fabSize="normal" />
-    <!-- 수정 화면을 위한 레이아웃 -->
+        android:layout_margin="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/icon_add"
+        app:backgroundTint="@color/maincolor"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="8dp"/>
+
     <LinearLayout
         android:id="@+id/editLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@drawable/edit_layout_background"
         android:orientation="vertical"
         android:padding="16dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/fabAddMemo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/editTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="제목을 입력하세요"/>
-
-        <EditText
-            android:id="@+id/editContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="내용을 입력하세요"
-            android:minLines="3"
-            android:inputType="textMultiLine"/>
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="저장"/>
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="8dp">
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

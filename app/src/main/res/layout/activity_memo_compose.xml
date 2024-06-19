@@ -2,30 +2,70 @@
 <!-- activity_memo_compose.xml -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F5F5F5">
 
-    <EditText
-        android:id="@+id/etTitle"
+    <!-- Title CardView -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="제목을 입력하세요"
-        android:inputType="text"/>
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardElevation="4dp">
 
-    <EditText
-        android:id="@+id/etContent"
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="제목을 입력하세요"
+            style="@style/EditTextNoUnderline"
+            android:inputType="text"
+            android:padding="8dp"
+            android:textSize="18sp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Content CardView -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:hint="내용을 입력하세요"
-        android:inputType="textMultiLine"
-        android:minLines="3"/>
+        android:padding="8dp"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardElevation="4dp">
 
-    <Button
-        android:id="@+id/btnSave"
+        <EditText
+            android:id="@+id/etContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="내용을 입력하세요"
+            style="@style/EditTextNoUnderline"
+            android:inputType="textMultiLine"
+            android:padding="8dp"
+            android:minLines="3"
+            android:gravity="top"
+            android:textSize="16sp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Save Button CardView -->
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="저장"/>
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardElevation="4dp">
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="저장"
+            android:padding="12dp"
+            android:textSize="16sp"/>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>
