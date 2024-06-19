@@ -10,16 +10,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
-import com.example.collobo_station.Adapter.Scrap.ScrapPagerAdapter
-import com.example.collobo_station.Data.Model
-import com.example.collobo_station.Fragment.Scrap.VerticalTransformer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter
+import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter_Developer
+import com.example.collobo_station.Global.Global_Team_Looking_Developer
 import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.R
+import com.example.collobo_station.Global.Global_Team_Looking_Designer
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Fragment_Chat  : Fragment() {
     private lateinit var menu : ImageView
+    private lateinit var Designer_recyclerView: RecyclerView
+    private lateinit var Developer_recyclerView: RecyclerView
+    private lateinit var Designer_adapter: Project_ParticipationAdapter
+    private lateinit var Developer_adapter: Project_ParticipationAdapter_Developer
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,7 +40,81 @@ class Fragment_Chat  : Fragment() {
         menu.setOnClickListener {
             showMenuDialog()
         }
+
+        Designer_recyclerView = view.findViewById(R.id.Designer_recyclerview)
+        Developer_recyclerView = view.findViewById(R.id.Developer_recyclerview)
+        // Set LayoutManagers for RecyclerViews
+        val Designer_layoutManager = GridLayoutManager(requireContext(), 1, GridLayoutManager.HORIZONTAL, false)
+        Designer_recyclerView.layoutManager = Designer_layoutManager
+
+        val Developer_layoutManager = GridLayoutManager(requireContext(), 1, GridLayoutManager.HORIZONTAL, false)
+        Developer_recyclerView.layoutManager = Developer_layoutManager
+
+        // Initialize Adapters
+        Designer_adapter = Project_ParticipationAdapter()
+        Developer_adapter = Project_ParticipationAdapter_Developer()
+
+        // Set Adapters to RecyclerViews
+        Designer_recyclerView.adapter = Designer_adapter
+        Developer_recyclerView.adapter = Developer_adapter
+
+        // Set click listeners
+        Designer_adapter.setItemClickListener { item ->
+            val intent = Intent(requireContext(), Global_Team_Looking_Designer::class.java)
+            intent.putExtra("item_data", item)
+            startActivity(intent)
+        }
+
+        Developer_adapter.setItemClickListener { item ->
+            val intent = Intent(requireContext(), Global_Team_Looking_Developer::class.java)
+            intent.putExtra("item_data", item)
+            startActivity(intent)
+        }
+
+        // Fetch data from Firestore
+        fetchDataFromFirestore_Designer()
+        fetchDataFromFirestore_Developer()
         return view
+    }
+    // Firestore data fetching methods
+    private fun fetchDataFromFirestore_Designer() {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("Global_Team_Looking")
+
+        collectionRef.get()
+            .addOnSuccessListener { documents ->
+                val dataList = mutableListOf<String>()
+                for (document in documents) {
+                    val text1 = document.getString("text1") ?: ""
+                    val text2 = document.getString("text2") ?: ""
+                    val text3 = document.getString("text3") ?: ""
+                    dataList.add("$text1, $text2, $text3")
+                }
+                Designer_adapter.setData(dataList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+    }
+
+    private fun fetchDataFromFirestore_Developer() {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("Team_Looking_Developer")
+
+        collectionRef.get()
+            .addOnSuccessListener { documents ->
+                val dataList = mutableListOf<String>()
+                for (document in documents) {
+                    val text1 = document.getString("text1") ?: ""
+                    val text2 = document.getString("text2") ?: ""
+                    val text3 = document.getString("text3") ?: ""
+                    dataList.add("$text1, $text2, $text3")
+                }
+                Developer_adapter.setData(dataList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
     }
     private fun showMenuDialog() {
         val builder = AlertDialog.Builder(requireContext())

@@ -47,6 +47,8 @@
         <activity android:name=".Fragment.Home.ContestDetailActivity"/>
         <activity android:name=".Team_Matching.Team_Looking_Write"/>
         <activity android:name=".Team_Matching.Team_Write_Activity"/>
+        <activity android:name=".Global.Global_Team_Looking_Developer"/>
+        <activity android:name=".Global.Global_Team_Looking_Designer"/>
     </application>
 
 </manifest>
