@@ -3,12 +3,14 @@ package com.example.collobo_station.Team_Matching
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter
 import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter_Developer
 import com.example.collobo_station.Adapter.Team.Project_ParticipationAdapter_Team
+import com.example.collobo_station.Main.MainActivity
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,7 +22,7 @@ class Project_Participation : AppCompatActivity()  {
     private lateinit var Designer_adapter: Project_ParticipationAdapter
     private lateinit var Developer_adapter: Project_ParticipationAdapter_Developer
     private lateinit var Team_adapter: Project_ParticipationAdapter_Team
-
+    private lateinit var backbtn : ImageView
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,7 @@ class Project_Participation : AppCompatActivity()  {
         Designer_recyclerView = findViewById(R.id.Designer_recyclerview)
         Developer_recyclerView = findViewById(R.id.Developer_recyclerview)
         Team_recyclerView = findViewById(R.id.Team_recyclerview)
+        backbtn = findViewById(R.id.backbtn)
 
         // 가로로 스크롤되는 레이아웃 매니저를 설정합니다.
         val Designer_layoutManager = GridLayoutManager(this, 1, GridLayoutManager.HORIZONTAL, false)
@@ -80,6 +83,10 @@ class Project_Participation : AppCompatActivity()  {
             val intent = Intent(this, Team_Write_Activity::class.java)
             startActivity(intent)
             finish()
+        }
+        backbtn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 

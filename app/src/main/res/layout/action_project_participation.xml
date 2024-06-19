@@ -25,7 +25,8 @@
                         android:layout_height="25dp"
                         android:layout_margin="20dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/image_meunbar_maincolor"/>
+                        android:id="@+id/backbtn"
+                        android:src="@drawable/create_back_button_image"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -51,12 +52,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="end"
                     android:layout_weight="1">
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="20dp"
-                        android:src="@drawable/image_alarm"/>
                 </LinearLayout>
             </LinearLayout>
 
