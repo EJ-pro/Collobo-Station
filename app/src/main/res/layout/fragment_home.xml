@@ -32,15 +32,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"/>
+
                     <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/image_alarm"/>
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:id="@+id/meunbar"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_margin="20dp"
-                        android:src="@drawable/image_meunbar"/>
+                        android:src="@drawable/image_menu" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

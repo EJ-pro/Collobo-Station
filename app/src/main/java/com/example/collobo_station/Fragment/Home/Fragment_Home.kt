@@ -1,6 +1,7 @@
 package com.example.collobo_station.Fragment.Home
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
@@ -25,13 +26,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.example.collobo_station.Adapter.Tab.TabAdapter
 import com.example.collobo_station.Data.DataInfo
 import com.example.collobo_station.Data.UserInfo
+import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.Team_Matching.Team_Write_Activity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
-
+import android.content.Context
 class Fragment_Home : Fragment() {
 
     private lateinit var viewPager: ViewPager2
@@ -42,6 +45,7 @@ class Fragment_Home : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPagerTabs: ViewPager2
     private lateinit var tabadapter: ViewPager2Adapter
+    private lateinit var menu : ImageView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -67,6 +71,40 @@ class Fragment_Home : Fragment() {
         layoutOnBoardingIndicators = view.findViewById(R.id.indicators)
         textViewContestName = view.findViewById(R.id.textViewContestName)
         textViewUserName = view.findViewById(R.id.textViewUserName)
+        menu = view.findViewById(R.id.meunbar)  // Assuming you have an ImageView with this ID
+
+        // Set an OnClickListener for the menu ImageView
+        menu.setOnClickListener {
+            showMenuDialog()
+        }
+    }
+    private fun showMenuDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("메뉴")
+        builder.setItems(R.array.menu_items) { dialog, which ->
+            when (which) {
+                0 -> {
+                    FirebaseAuth.getInstance().signOut()
+
+                    // SharedPreferences에서 자동 로그인 정보 삭제
+                    val sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
+                    // SharedPreferences 수정
+                    with(sharedPreferences.edit()) {
+                        putBoolean("isLoggedIn", false) // 로그인 상태를 false로 설정
+                        remove("username") // username 키의 값을 제거
+                        remove("password") // password 키의 값을 제거
+                        apply() // 변경사항을 저장
+                    }
+
+                    // 로그인 화면으로 이동
+                    val intent = Intent(activity, LoginActivity::class.java)
+                    startActivity(intent)
+                    activity?.finish() // 현재 화면 종료
+                }
+                1 -> Toast.makeText(requireContext(), "Action Two", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.show()
     }
 
     private fun fetchUserInfo() {

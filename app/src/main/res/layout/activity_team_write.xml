@@ -7,6 +7,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="none"
         android:gravity="center">
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +23,7 @@
                     android:gravity="center"
                     android:paddingTop="10dp"
                     android:orientation="horizontal">
-
+                    
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -236,6 +237,7 @@
                     android:textColorHint="#9B9797"
                     android:gravity="top"
                     android:background="@drawable/team_write_background_2"
+                    android:layout_marginBottom="16dp"
                     android:inputType="textMultiLine"
                     android:padding="10dp"
                     android:lines="5"/>

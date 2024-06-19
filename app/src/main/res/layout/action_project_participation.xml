@@ -192,6 +192,6 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:src="@drawable/icon_add"
-        app:backgroundTint="#9800CCE8"
+        app:backgroundTint="#00CCE8"
         app:fabSize="normal"/>
 </RelativeLayout>
