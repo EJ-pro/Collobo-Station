@@ -27,6 +27,10 @@ class Fragment_Chat  : Fragment() {
     private lateinit var Developer_recyclerView: RecyclerView
     private lateinit var Designer_adapter: Project_ParticipationAdapter
     private lateinit var Developer_adapter: Project_ParticipationAdapter_Developer
+
+    private fun sanitizeDocumentId(documentId: String): String {
+        return documentId.replace(" ", "_").replace(",", "")
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,16 +62,17 @@ class Fragment_Chat  : Fragment() {
         Designer_recyclerView.adapter = Designer_adapter
         Developer_recyclerView.adapter = Developer_adapter
 
-        // Set click listeners
         Designer_adapter.setItemClickListener { item ->
+            val text1 = item.split(",")[0].trim() // 예시: "text1, text2, text3"에서 첫 번째 값 가져오기
             val intent = Intent(requireContext(), Global_Team_Looking_Designer::class.java)
-            intent.putExtra("item_data", item)
+            intent.putExtra("text1", text1)
             startActivity(intent)
         }
 
+
         Developer_adapter.setItemClickListener { item ->
             val intent = Intent(requireContext(), Global_Team_Looking_Developer::class.java)
-            intent.putExtra("item_data", item)
+            intent.putExtra("documentid", item)
             startActivity(intent)
         }
 
@@ -144,4 +149,5 @@ class Fragment_Chat  : Fragment() {
         }
         builder.show()
     }
+
 }
