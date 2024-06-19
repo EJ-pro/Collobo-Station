@@ -13,15 +13,18 @@ import com.example.collobo_station.Data.Memo
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 
-class Portfolio_management : AppCompatActivity()  {
+class Portfolio_management : AppCompatActivity() {
     private val memoList = mutableListOf<Memo>()
     private lateinit var memoAdapter: MemoAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var fabAddMemo : FloatingActionButton
+    private lateinit var fabAddMemo: FloatingActionButton
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var gson: Gson
+
     companion object {
         private const val REQUEST_ADD_MEMO = 1
         private const val PREFS_FILENAME = "com.example.collobo_station.memo"
@@ -32,45 +35,57 @@ class Portfolio_management : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.action_protfolio_management)
 
-        // XML에서 RecyclerView와 FloatingActionButton 초기화
         recyclerView = findViewById(R.id.recyclerView)
         fabAddMemo = findViewById(R.id.fabAddMemo)
-        gson = Gson() // Gson 객체 초기화
-        // MemoAdapter 초기화
+
+        sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
+        gson = Gson()
+
         memoAdapter = MemoAdapter(memoList)
 
-        // RecyclerView 설정
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = memoAdapter
 
-        sharedPreferences = getSharedPreferences(Companion.PREFS_FILENAME, Context.MODE_PRIVATE)
-
-        // 이전에 저장된 Memo 데이터 불러오기
-        loadMemo()
+        convertOldData()  // 추가된 부분
+        loadMemos()
 
         fabAddMemo.setOnClickListener {
-            // MemoComposeActivity를 시작하여 새 메모 추가
             val intent = Intent(this, MemoComposeActivity::class.java)
             startActivityForResult(intent, REQUEST_ADD_MEMO)
         }
     }
-    private fun loadMemo() {
-        val gson = Gson()
-        val jsonMemo = sharedPreferences.getString(Companion.MEMO_KEY, null)
-        if (jsonMemo != null) {
-            val memo = gson.fromJson(jsonMemo, Memo::class.java)
-            memoList.add(memo)
+
+    private fun convertOldData() {
+        val memoJson = sharedPreferences.getString(MEMO_KEY, null) ?: return
+
+        // 기존 데이터가 객체인지 배열인지 확인
+        try {
+            val memo = gson.fromJson(memoJson, Memo::class.java)
+            if (memo != null) {
+                // 객체 데이터를 배열로 변환
+                val memoList = mutableListOf(memo)
+                sharedPreferences.edit().putString(MEMO_KEY, gson.toJson(memoList)).apply()
+            }
+        } catch (e: JsonSyntaxException) {
+            // 이미 배열 형식이면 변환 필요 없음
+        }
+    }
+
+    private fun loadMemos() {
+        val memoListJson = sharedPreferences.getString(MEMO_KEY, null)
+        if (memoListJson != null) {
+            val type = object : TypeToken<MutableList<Memo>>() {}.type
+            val savedMemos: MutableList<Memo> = gson.fromJson(memoListJson, type)
+            memoList.addAll(savedMemos)
             memoAdapter.notifyDataSetChanged()
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_ADD_MEMO && resultCode == Activity.RESULT_OK) {
-            // MemoComposeActivity에서 전달받은 Memo 객체를 리스트에 추가
-            val memo = data?.getParcelableExtra<Memo>(/* name = */ "memo")
-            if (memo != null) {
-                memoList.add(memo)
+            data?.getParcelableExtra<Memo>("memo")?.let {
+                memoList.add(it)
                 memoAdapter.notifyDataSetChanged()
             }
         }

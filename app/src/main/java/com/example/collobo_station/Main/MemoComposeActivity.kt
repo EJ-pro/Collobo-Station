@@ -7,12 +7,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.collobo_station.Data.Memo
 import com.example.collobo_station.R
-import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MemoComposeActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
@@ -22,6 +21,11 @@ class MemoComposeActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var gson: Gson
 
+    companion object {
+        private const val PREFS_FILENAME = "com.example.collobo_station.memo"
+        private const val MEMO_KEY = "memo_list"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo_compose)
@@ -29,20 +33,18 @@ class MemoComposeActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         etTitle = findViewById(R.id.etTitle)
         etContent = findViewById(R.id.etContent)
-        // SharedPreferences 초기화
+
         sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
-        gson = Gson() // Gson 객체 초기화
+        gson = Gson()
+
         btnSave.setOnClickListener {
             val title = etTitle.text.toString()
             val content = etContent.text.toString()
 
             if (title.isNotEmpty() && content.isNotEmpty()) {
                 val memo = Memo(System.currentTimeMillis(), title, content)
-
-                // Memo 객체를 SharedPreferences에 저장
                 saveMemo(memo)
 
-                // Intent에 Memo 객체를 담아서 이전 액티비티로 전달
                 val resultIntent = Intent()
                 resultIntent.putExtra("memo", memo)
                 setResult(Activity.RESULT_OK, resultIntent)
@@ -52,16 +54,18 @@ class MemoComposeActivity : AppCompatActivity() {
             finish()
         }
     }
+
     private fun saveMemo(memo: Memo) {
-        val jsonMemo = gson.toJson(memo)
+        val memoListJson = sharedPreferences.getString(MEMO_KEY, null)
+        val memoList: MutableList<Memo> = if (memoListJson != null) {
+            val type = object : TypeToken<MutableList<Memo>>() {}.type
+            gson.fromJson(memoListJson, type)
+        } else {
+            mutableListOf()
+        }
 
-        val prefsEditor = sharedPreferences.edit()
-        prefsEditor.putString(MEMO_KEY, jsonMemo)
-        prefsEditor.apply()
-    }
-
-    companion object {
-        private const val PREFS_FILENAME = "com.example.collobo_station.memo"
-        private const val MEMO_KEY = "memo_list"
+        memoList.add(memo)
+        val jsonString = gson.toJson(memoList)
+        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
     }
 }
