@@ -1,6 +1,7 @@
 package com.example.collobo_station.Fragment.Home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -35,6 +36,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import android.content.Context
+import android.provider.MediaStore
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
+
 class Fragment_Home : Fragment() {
 
     private lateinit var viewPager: ViewPager2
@@ -47,6 +53,11 @@ class Fragment_Home : Fragment() {
     private lateinit var tabadapter: ViewPager2Adapter
     private lateinit var menu : ImageView
     private lateinit var mContext: Context
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var profileImage: de.hdodenhof.circleimageview.CircleImageView
+    private var selectedImageUri: Uri? = null
+    private lateinit var profileImageView: de.hdodenhof.circleimageview.CircleImageView
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -55,6 +66,24 @@ class Fragment_Home : Fragment() {
     override fun onDetach() {
         super.onDetach()
         // Context를 해제하거나 필요에 따라 초기화
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 이미지 선택 ActivityResultLauncher 등록
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                selectedImageUri = data?.data // 선택한 이미지의 URI 가져오기
+                if (selectedImageUri != null) {
+                    updateProfileImage(selectedImageUri!!)
+                } else {
+                    Toast.makeText(requireContext(), "이미지를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.e("ImagePicker", "이미지 선택 취소")
+            }
+        }
     }
 
     @SuppressLint("MissingInflatedId")
@@ -76,6 +105,17 @@ class Fragment_Home : Fragment() {
         return view
     }
 
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        imagePickerLauncher.launch(intent)
+    }
+
+    private fun updateProfileImage(uri: Uri) {
+        // Glide를 사용하여 이미지를 CircleImageView에 로드
+        Glide.with(this)
+            .load(uri)
+            .into(profileImage)
+    }
     private fun initView(view: View) {
         viewPager = view.findViewById(R.id.viewpager2)
         layoutOnBoardingIndicators = view.findViewById(R.id.indicators)
@@ -86,6 +126,12 @@ class Fragment_Home : Fragment() {
         // Set an OnClickListener for the menu ImageView
         menu.setOnClickListener {
             showMenuDialog()
+        }
+        profileImage = view.findViewById(R.id.image_test)
+
+        // 클릭 이벤트 추가
+        profileImage.setOnClickListener {
+            openGallery()
         }
     }
     private fun showMenuDialog() {
