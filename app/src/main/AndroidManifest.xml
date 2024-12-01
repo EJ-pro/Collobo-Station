@@ -20,6 +20,7 @@
         <activity
             android:name=".Splash.SplashActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,31 +29,49 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Team_Matching.AutoUploadActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+
+        </activity>
         <activity
             android:name=".Main.MainActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
         </activity>
 
         <activity
             android:name=".Login.LoginActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
         </activity>
 
         <activity
             android:name=".Login.CreateActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true" />
-        <activity android:name=".Main.MemoComposeActivity"/>
-        <activity android:name=".Login.ID_PW_Find" />
-        <activity android:name=".Main.Portfolio_management"/>
-        <activity android:name=".Team_Matching.Project_Participation"/>
-        <activity android:name=".Fragment.Home.ContestDetailActivity"/>
-        <activity android:name=".Team_Matching.Team_Looking_Write"/>
-        <activity android:name=".Team_Matching.Team_Write_Activity"/>
-        <activity android:name=".Global.Global_Team_Looking_Developer"/>
-        <activity android:name=".Global.Global_Team_Looking_Designer"/>
+        <activity android:name=".Main.MemoComposeActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Login.ID_PW_Find"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Main.Portfolio_management"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Team_Matching.Project_Participation"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Fragment.Home.ContestDetailActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Team_Matching.Team_Looking_Write"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Team_Matching.Team_Write_Activity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Global.Global_Team_Looking_Developer"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".Global.Global_Team_Looking_Designer"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>

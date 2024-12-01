@@ -152,12 +152,12 @@
                     <Button
                         android:id="@+id/uxUiButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="UX/UI"
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
@@ -165,36 +165,36 @@
                     <Button
                         android:id="@+id/mediaButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:text="Graphic"
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
                     <Button
                         android:id="@+id/contestButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="3D 디자인"
+                        android:layout_height="match_parent"
+                        android:text="3D DESIGN"
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
                     <Button
                         android:id="@+id/illustrationButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="일러스트"
+                        android:layout_height="match_parent"
+                        android:text="ILLUSTRATION"
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
                 </LinearLayout>

@@ -113,8 +113,8 @@ class Team_Write_Activity : AppCompatActivity() {
     private fun updateTopicsForDesigner() {
         uxUiButton.text = "UXUI"
         mediaButton.text = "Graphic"
-        contestButton.text = "3D디자인"
-        illustrationButton.text = "illustration"
+        contestButton.text = "3D Design"
+        illustrationButton.text = "Illustration"
     }
     private fun navigateToProjectParticipation() {
         val intent = Intent(this, Project_Participation::class.java)

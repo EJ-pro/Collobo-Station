@@ -15,6 +15,9 @@ import com.example.collobo_station.Main.MainActivity
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class Project_Participation : AppCompatActivity()  {
     private lateinit var Designer_recyclerView: RecyclerView
@@ -93,24 +96,35 @@ class Project_Participation : AppCompatActivity()  {
 
         collectionRef.get()
             .addOnSuccessListener { documents ->
-                val dataList = mutableListOf<String>()
+                val dataList = mutableListOf<Pair<String, String>>() // 데이터와 timestamp를 함께 저장
                 for (document in documents) {
                     val text1 = document.getString("title") ?: ""
                     val text2 = document.getString("content") ?: ""
                     val text3 = document.getString("nickname") ?: ""
-                    val text4 = document.getString("timestamp") ?: ""
+                    val text4 = document.getString("timestamp") ?: "" // 문자열 형태의 timestamp
                     val text5 = document.getString("url") ?: ""
                     val text6 = document.getString("field") ?: ""
                     val text7 = document.getString("topic") ?: ""
-                    dataList.add("$text1, $text2, $text3, $text4, $text5, $text6, $text7")
+                    val combinedData = "$text1, $text2, $text3, $text4, $text5, $text6, $text7"
+
+                    dataList.add(Pair(combinedData, text4))
                 }
-                // 어댑터에 데이터 설정
-                Team_adapter.setData(dataList)
+
+                // timestamp 기준으로 최신순 정렬 (내림차순)
+                val sortedDataList = dataList.sortedByDescending {
+                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(it.second)
+                }.map { it.first }
+
+                // 어댑터에 정렬된 데이터 설정
+                Team_adapter.setData(sortedDataList)
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리
+                Toast.makeText(this, "데이터 가져오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                exception.printStackTrace()
             }
     }
+
     private fun fetchDataFromFirestore_Designer() {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Looking")
@@ -155,27 +169,38 @@ class Project_Participation : AppCompatActivity()  {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Matching")
 
-        collectionRef.whereEqualTo("topic", selectedText1) // topic과 선택된 text4 비교
+        collectionRef.whereEqualTo("topic", selectedText1) // topic 조건
             .get()
             .addOnSuccessListener { documents ->
-                val filteredDataList = mutableListOf<String>()
+                val filteredDataList = mutableListOf<Pair<String, String>>() // 데이터와 timestamp를 함께 저장
                 for (document in documents) {
                     val text1 = document.getString("title") ?: ""
                     val text2 = document.getString("content") ?: ""
                     val text3 = document.getString("nickname") ?: ""
-                    val text4 = document.getString("timestamp") ?: ""
+                    val text4 = document.getString("timestamp") ?: "" // 문자열 형태의 timestamp
                     val text5 = document.getString("url") ?: ""
                     val text6 = document.getString("field") ?: ""
                     val text7 = document.getString("topic") ?: ""
-                    filteredDataList.add("$text1, $text2, $text3, $text4, $text5, $text6, $text7")
+                    val combinedData = "$text1, $text2, $text3, $text4, $text5, $text6, $text7"
+
+                    filteredDataList.add(Pair(combinedData, text4))
                 }
-                // 필터링된 데이터를 Team_adapter에 설정
-                Team_adapter.setData(filteredDataList)
+
+                // timestamp 기준으로 최신순 정렬 (내림차순)
+                val sortedDataList = filteredDataList.sortedByDescending {
+                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(it.second)
+                }.map { it.first }
+
+                // 정렬된 데이터를 Team_adapter에 설정
+                Team_adapter.setData(sortedDataList)
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리
+                Toast.makeText(this, "데이터 가져오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 exception.printStackTrace()
             }
     }
+
+
 
 }

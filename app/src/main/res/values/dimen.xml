@@ -6,7 +6,9 @@
     <dimen name="standard_125">125dp</dimen>
     <dimen name="standard_185">185dp</dimen>
     <dimen name="tab_layout_margin">25dp</dimen>
-
+    <dimen name="viewpager_page_margin">1dp</dimen>
+    <!-- ViewPager2 페이지 높낮이 차이 -->
+    <dimen name="viewpager_page_offset">20dp</dimen>
     <!-- 페이지 사이의 수직 간격 -->
     <dimen name="page_vertical_margin">16dp</dimen>
 
