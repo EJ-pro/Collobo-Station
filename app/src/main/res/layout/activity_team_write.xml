@@ -23,34 +23,42 @@
                     android:gravity="center"
                     android:paddingTop="10dp"
                     android:orientation="horizontal">
-                    
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/create_back_button_image"
-                        android:layout_weight="1"/>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="글쓰기"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
+                        android:gravity="center"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/create_back_button_image"/>
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:gravity="center"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="글쓰기"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="18sp"/>
+                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1">
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Save"
-                        android:layout_weight="1"
                         android:background="@android:color/transparent"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- EditView -->
@@ -88,26 +96,29 @@
                     android:layout_marginBottom="50dp">
 
                     <Button
+                        android:id="@+id/designerButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="디자이너"
-                        android:textColor="#C6C6C6"
+                        android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
+                        android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
                     <Button
+                        android:id="@+id/developerButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#C6C6C6"
+                        android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
+                        android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"
                         android:text="개발자"/>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -139,45 +150,52 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/uxUiButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="UX/UI"
-                        android:textColor="#C6C6C6"
+                        android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
+                        android:background="@drawable/unselected_button_background"
+                        android:layout_marginRight="9dp"/>
+
+
+                    <Button
+                        android:id="@+id/mediaButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Graphic"
+                        android:textColor="@android:color/black"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
                     <Button
+                        android:id="@+id/contestButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="영상/미디어"
-                        android:textColor="#C6C6C6"
+                        android:text="3D 디자인"
+                        android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
+                        android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
+
                     <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="공모전"
-                        android:textColor="#C6C6C6"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
-                        android:layout_marginRight="9dp"/>
-                    <Button
+                        android:id="@+id/illustrationButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="일러스트"
-                        android:textColor="#C6C6C6"
+                        android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:background="@drawable/team_wrtie_stroke"
+                        android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
                 </LinearLayout>
 
@@ -214,12 +232,14 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:id="@+id/cameraButton"
                         android:layout_width="25dp"
                         android:layout_height="21dp"
                         android:src="@drawable/image_camera"
                         android:background="@android:color/transparent"/>
 
                     <ImageButton
+                        android:id="@+id/fileButton"
                         android:layout_width="25dp"
                         android:layout_height="21dp"
                         android:src="@drawable/image_folder"

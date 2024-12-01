@@ -17,6 +17,8 @@ class Project_ParticipationAdapter_Team :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView1: TextView = itemView.findViewById(R.id.Text_Title)
         val textView2: TextView = itemView.findViewById(R.id.Text_Contest)
+        val textView3: TextView = itemView.findViewById(R.id.time)
+        val textView4: TextView = itemView.findViewById(R.id.name)
 
         init {
             itemView.setOnClickListener {
@@ -42,6 +44,8 @@ class Project_ParticipationAdapter_Team :
         val data = dataList[position].split(", ")
         holder.textView1.text = data[0]
         holder.textView2.text = data[1]
+        holder.textView3.text = data[2]
+        holder.textView4.text = data[3]
     }
 
     // getItemCount: 데이터의 개수를 반환합니다.

@@ -100,7 +100,12 @@ class Project_Participation : AppCompatActivity()  {
                 for (document in documents) {
                     val text1 = document.getString("title") ?: ""
                     val text2 = document.getString("content") ?: ""
-                    dataList.add("$text1, $text2")
+                    val text3 = document.getString("nickname") ?: ""
+                    val text4 = document.getString("timestamp") ?: ""
+                    val text5 = document.getString("url") ?: ""
+                    val text6 = document.getString("field") ?: ""
+                    val text7 = document.getString("topic") ?: ""
+                    dataList.add("$text1, $text2, $text3, $text4, $text5, $text6, $text7")
                 }
                 // 어댑터에 데이터 설정
                 Team_adapter.setData(dataList)
