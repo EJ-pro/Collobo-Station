@@ -25,7 +25,8 @@ class Project_ParticipationAdapter_Developer :
                 if (position != RecyclerView.NO_POSITION) {
                     val item = dataList[position]
                     // 클릭된 아이템의 데이터를 인터페이스를 통해 외부로 전달
-                    itemClickListener?.invoke(item)
+                    val selectedText1 = item.split(", ").getOrNull(0) ?: "N/A"
+                    itemClickListener?.invoke(selectedText1)
                 }
             }
         }

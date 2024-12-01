@@ -104,17 +104,17 @@ class Team_Write_Activity : AppCompatActivity() {
     }
 
     private fun updateTopicsForDeveloper() {
-        uxUiButton.text = "게임"
-        mediaButton.text = "프론트엔드"
-        contestButton.text = "백엔드"
-        illustrationButton.text = "App"
+        uxUiButton.text = "Game Engine"
+        mediaButton.text = "Web Front"
+        contestButton.text = "Web Back"
+        illustrationButton.text = "Android / IOS"
     }
 
     private fun updateTopicsForDesigner() {
-        uxUiButton.text = "UX/UI"
-        mediaButton.text = "영상/미디어"
-        contestButton.text = "공모전"
-        illustrationButton.text = "일러스트"
+        uxUiButton.text = "UXUI"
+        mediaButton.text = "Graphic"
+        contestButton.text = "3D디자인"
+        illustrationButton.text = "illustration"
     }
     private fun navigateToProjectParticipation() {
         val intent = Intent(this, Project_Participation::class.java)

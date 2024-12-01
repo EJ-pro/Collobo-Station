@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,18 +60,14 @@ class Project_Participation : AppCompatActivity()  {
         fetchDataFromFirestore_Team()
 
         // 리사이클러뷰 아이템 클릭 리스너 설정
-        Designer_adapter.setItemClickListener { item ->
-            // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
-            val intent = Intent(this, Team_Looking_Write::class.java)
-            intent.putExtra("item_data", item)
-            startActivity(intent)
+        Designer_adapter.setItemClickListener { selectedText1 ->
+            fetchFilteredTeamMatchingData(selectedText1)
         }
-        Developer_adapter.setItemClickListener { item ->
-            // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
-            val intent = Intent(this, Team_Looking_Write::class.java)
-            intent.putExtra("item_data", item)
-            startActivity(intent)
+
+        Developer_adapter.setItemClickListener { selectedText1 ->
+            fetchFilteredTeamMatchingData(selectedText1)
         }
+
         Team_adapter.setItemClickListener { item ->
             // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
             val intent = Intent(this, Team_Looking_Write::class.java)
@@ -154,4 +151,31 @@ class Project_Participation : AppCompatActivity()  {
                 // 실패 시 처리
             }
     }
+    private fun fetchFilteredTeamMatchingData(selectedText1: String) {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("Team_Matching")
+
+        collectionRef.whereEqualTo("topic", selectedText1) // topic과 선택된 text4 비교
+            .get()
+            .addOnSuccessListener { documents ->
+                val filteredDataList = mutableListOf<String>()
+                for (document in documents) {
+                    val text1 = document.getString("title") ?: ""
+                    val text2 = document.getString("content") ?: ""
+                    val text3 = document.getString("nickname") ?: ""
+                    val text4 = document.getString("timestamp") ?: ""
+                    val text5 = document.getString("url") ?: ""
+                    val text6 = document.getString("field") ?: ""
+                    val text7 = document.getString("topic") ?: ""
+                    filteredDataList.add("$text1, $text2, $text3, $text4, $text5, $text6, $text7")
+                }
+                // 필터링된 데이터를 Team_adapter에 설정
+                Team_adapter.setData(filteredDataList)
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리
+                exception.printStackTrace()
+            }
+    }
+
 }
