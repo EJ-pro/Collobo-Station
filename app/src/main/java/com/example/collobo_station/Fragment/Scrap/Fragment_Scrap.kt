@@ -17,77 +17,121 @@ import com.example.collobo_station.Data.Model
 import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.abs
 import kotlin.random.Random
 
 class Fragment_Scrap : Fragment() {
 
-    private lateinit var menu : ImageView
+    private lateinit var menu: ImageView
+    private lateinit var viewPager: ViewPager2
+    private lateinit var firestore: FirebaseFirestore
+    private var dataList: MutableList<Model> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_scrap, container, false)
-        val viewPager: ViewPager2 = view.findViewById(R.id.Scrap_viewPager)
+        viewPager = view.findViewById(R.id.Scrap_viewPager)
+        menu = view.findViewById(R.id.meunbar)
 
-        // 어댑터 생성 및 설정
-        val adapter = ScrapPagerAdapter(getDummyData()) // getDummyData()는 가상의 데이터를 반환하는 메서드입니다.
-        viewPager.adapter = adapter
+        // Firestore 초기화
+        firestore = FirebaseFirestore.getInstance()
 
-        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-        viewPager.offscreenPageLimit = 4
+        // 데이터 가져오기
+        fetchContestData()
 
-        val startingPage = 9 // 시작 페이지의 인덱스 (0부터 시작)
-        viewPager.setCurrentItem(startingPage, false) // 시작 페이지로 이동
-
-        // VerticalTransformer 적용
-        val verticalTransformer = VerticalTransformer(viewPager.offscreenPageLimit)
-        viewPager.setPageTransformer(verticalTransformer)
-
-        menu = view.findViewById(R.id.meunbar)  // Assuming you have an ImageView with this ID
-
-        // Set an OnClickListener for the menu ImageView
+        // 메뉴 버튼 클릭 이벤트
         menu.setOnClickListener {
             showMenuDialog()
         }
 
         return view
     }
+
     private fun showMenuDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("메뉴")
-        builder.setItems(R.array.menu_items) { dialog, which ->
+        builder.setItems(R.array.menu_items) { _, which ->
             when (which) {
                 0 -> {
                     FirebaseAuth.getInstance().signOut()
 
-                    // SharedPreferences에서 자동 로그인 정보 삭제
-                    val sharedPreferences = requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
-                    // SharedPreferences 수정
+                    val sharedPreferences =
+                        requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
-                        putBoolean("isLoggedIn", false) // 로그인 상태를 false로 설정
-                        remove("username") // username 키의 값을 제거
-                        remove("password") // password 키의 값을 제거
-                        apply() // 변경사항을 저장
+                        putBoolean("isLoggedIn", false)
+                        remove("username")
+                        remove("password")
+                        apply()
                     }
 
-                    // 로그인 화면으로 이동
                     val intent = Intent(activity, LoginActivity::class.java)
                     startActivity(intent)
-                    activity?.finish() // 현재 화면 종료
+                    activity?.finish()
                 }
                 1 -> Toast.makeText(requireContext(), "Action Two", Toast.LENGTH_SHORT).show()
             }
         }
         builder.show()
     }
-    // 가상의 데이터를 반환하는 메서드
-    private fun getDummyData(): List<Model> {
-        val dataList = mutableListOf<Model>()
-        for (i in 1..10) {
-            dataList.add(Model("Item $i", getRandomColor()))
+
+    private fun fetchContestData() {
+        val contestCollection = firestore.collection("Contest")
+
+        contestCollection.get()
+            .addOnSuccessListener { documents ->
+                val dataList = mutableListOf<Model>()
+
+                for (document in documents) {
+                    val title = document.getString("대회명") ?: "Untitled"
+                    val imageUrl = document.getString("이미지") ?: ""
+                    val pageUrl = document.getString("홈페이지url") ?: ""
+                    val randomColor = getRandomColor()
+                    dataList.add(Model(title, imageUrl, pageUrl, title, randomColor))
+                }
+
+                if (dataList.isNotEmpty()) {
+                    setupViewPager(dataList)
+                } else {
+                    Toast.makeText(requireContext(), "데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+
+                viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+                viewPager.offscreenPageLimit = 4
+
+
+                val startingPage = dataList.size - 1 // 시작 페이지의 인덱스 (0부터 시작)
+                viewPager.setCurrentItem(startingPage, false) // 시작 페이지로 이동
+
+                // VerticalTransformer 적용
+                val verticalTransformer = VerticalTransformer(viewPager.offscreenPageLimit)
+                viewPager.setPageTransformer(verticalTransformer)
+            }
+
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun setupViewPager(dataList: List<Model>) {
+        val adapter = ScrapPagerAdapter(dataList)
+        viewPager.adapter = adapter
+        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        viewPager.offscreenPageLimit = 4
+
+        // 마지막 페이지로 이동
+        val startingPage = dataList.size - 1
+        viewPager.setCurrentItem(startingPage, false)
+
+        // 페이지 전환 애니메이션 설정
+        viewPager.setPageTransformer { page, position ->
+            val scaleFactor = 0.85f.coerceAtLeast(1 - abs(position))
+            page.scaleY = scaleFactor
+            page.alpha = scaleFactor
         }
-        return dataList
     }
 
     private fun getRandomColor(): Int {
