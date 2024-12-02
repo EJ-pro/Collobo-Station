@@ -11,7 +11,7 @@
         android:title=""/>
     <item
         android:id="@+id/navigation_item2"
-        android:icon="@drawable/world"
+        android:icon="@drawable/image_action_1"
         android:enabled="true"
         android:state_selected="true"
         app:itemIconSize="30dp"

@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_item2 -> {
-                    replaceFragment(Fragment_Chat())
+                    val intent = Intent(this, Project_Participation::class.java)
+                    startActivity(intent)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_item3 -> {
