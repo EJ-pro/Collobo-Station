@@ -69,8 +69,7 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/image_dot"
+                android:background="@drawable/scrap_out_icon"
                 android:contentDescription="Delete" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
