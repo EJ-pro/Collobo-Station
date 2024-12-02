@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -14,7 +15,9 @@ import com.bumptech.glide.Glide
 import com.example.collobo_station.Data.Model
 import com.example.collobo_station.R
 
-class ScrapPagerAdapter(private val dataList: List<Model>) :
+class ScrapPagerAdapter(private val dataList: List<Model>,  private val onDeleteClick: (Model) -> Unit
+ ) :
+
     RecyclerView.Adapter<ScrapPagerAdapter.ScrapViewHolder>() {
 
     inner class ScrapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -22,6 +25,7 @@ class ScrapPagerAdapter(private val dataList: List<Model>) :
         val image: ImageView = itemView.findViewById(R.id.scrap_image)
         val url: TextView = itemView.findViewById(R.id.scrap_description)
         val itemCard: CardView = itemView.findViewById(R.id.itemCard)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.btn_delete_scrap)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScrapViewHolder {
@@ -41,6 +45,9 @@ class ScrapPagerAdapter(private val dataList: List<Model>) :
         // CardView 배경 색상 설정
         holder.itemCard.setCardBackgroundColor(item.color)
 
+        holder.deleteButton.setOnClickListener {
+            onDeleteClick(item)
+        }
         // 클릭 시 URL로 이동
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context

@@ -50,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
             <ImageButton
+                android:id="@+id/btn_add_contest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/image_scrap_plus_btn"
