@@ -1,10 +1,10 @@
 package com.example.collobo_station.Main
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +13,6 @@ import com.example.collobo_station.Data.Memo
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
 class Portfolio_management : AppCompatActivity() {
@@ -26,7 +25,6 @@ class Portfolio_management : AppCompatActivity() {
     private lateinit var gson: Gson
 
     companion object {
-        private const val REQUEST_ADD_MEMO = 1
         private const val PREFS_FILENAME = "com.example.collobo_station.memo"
         private const val MEMO_KEY = "memo_list"
     }
@@ -41,36 +39,100 @@ class Portfolio_management : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
         gson = Gson()
 
-        memoAdapter = MemoAdapter(memoList, this) { position ->
+        memoAdapter = MemoAdapter(memoList, this, { position ->
             deleteMemo(position)
-        }
+        }, { position ->
+            editMemo(position)
+        })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = memoAdapter
 
-        convertOldData()
         loadMemos()
 
         fabAddMemo.setOnClickListener {
-            val intent = Intent(this, MemoComposeActivity::class.java)
-            startActivityForResult(intent, REQUEST_ADD_MEMO)
+            showAddMemoDialog()
         }
     }
 
-    private fun convertOldData() {
-        val memoJson = sharedPreferences.getString(MEMO_KEY, null) ?: return
+    fun confirmDelete(position: Int) {
+        val memo = memoList[position]
 
-        // 기존 데이터가 객체인지 배열인지 확인
-        try {
-            val memo = gson.fromJson(memoJson, Memo::class.java)
-            if (memo != null) {
-                // 객체 데이터를 배열로 변환
-                val memoList = mutableListOf(memo)
-                sharedPreferences.edit().putString(MEMO_KEY, gson.toJson(memoList)).apply()
-            }
-        } catch (e: JsonSyntaxException) {
-            // 이미 배열 형식이면 변환 필요 없음
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("메모 삭제")
+        builder.setMessage("정말 '${memo.title}' 메모를 삭제하시겠습니까?")
+        builder.setPositiveButton("삭제") { _, _ ->
+            deleteMemo(position) // 확인하면 삭제 수행
         }
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss() // 취소하면 다이얼로그 닫기
+        }
+        builder.show()
+    }
+
+    private fun showAddMemoDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_memo, null)
+        val editTitle = dialogView.findViewById<EditText>(R.id.editMemoTitle)
+        val editContent = dialogView.findViewById<EditText>(R.id.editMemoContent)
+
+        AlertDialog.Builder(this)
+            .setTitle("메모 작성")
+            .setView(dialogView)
+            .setPositiveButton("추가") { _, _ ->
+                val title = editTitle.text.toString().trim()
+                val content = editContent.text.toString().trim()
+
+                if (title.isNotEmpty() && content.isNotEmpty()) {
+                    val newMemo = Memo(System.currentTimeMillis(), title, content)
+                    memoList.add(0, newMemo) // 리스트의 맨 앞에 추가
+                    memoAdapter.notifyDataSetChanged() // 데이터 변경 알림
+                    saveMemos()
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun editMemo(position: Int) {
+        val memo = memoList[position]
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_memo, null)
+        val editTitle = dialogView.findViewById<EditText>(R.id.editMemoTitle)
+        val editContent = dialogView.findViewById<EditText>(R.id.editMemoContent)
+
+        editTitle.setText(memo.title)
+        editContent.setText(memo.content)
+
+        AlertDialog.Builder(this)
+            .setTitle("메모 수정")
+            .setView(dialogView)
+            .setPositiveButton("수정") { _, _ ->
+                val newTitle = editTitle.text.toString()
+                val newContent = editContent.text.toString()
+
+                memo.title = newTitle
+                memo.content = newContent
+                memoList.removeAt(position)
+                memoList.add(0, memo) // 수정된 메모를 맨 앞에 추가
+                memoAdapter.notifyDataSetChanged() // 변경 사항 반영
+
+                saveMemos()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun deleteMemo(position: Int) {
+        if (position >= 0 && position < memoList.size) {
+            memoList.removeAt(position)
+            memoAdapter.notifyItemRemoved(position)
+            saveMemos()
+        }
+    }
+
+    private fun saveMemos() {
+        val jsonString = gson.toJson(memoList)
+        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
     }
 
     private fun loadMemos() {
@@ -80,35 +142,6 @@ class Portfolio_management : AppCompatActivity() {
             val savedMemos: MutableList<Memo> = gson.fromJson(memoListJson, type)
             memoList.addAll(savedMemos)
             memoAdapter.notifyDataSetChanged()
-        }
-    }
-
-    private fun deleteMemo(position: Int) {
-        if (position >= 0 && position < memoList.size) {
-            memoList.removeAt(position) // memoList에서 아이템 제거
-            memoAdapter.notifyItemRemoved(position) // RecyclerView에 제거된 위치 알림
-            saveMemos() // 삭제된 메모를 SharedPreferences에 저장
-
-            // 추가적으로, 메모 리스트가 비어있을 경우 백 스택(popBackStack) 처리
-            if (memoList.isEmpty()) {
-                supportFragmentManager.popBackStack()
-            }
-        }
-    }
-
-    private fun saveMemos() {
-        val jsonString = gson.toJson(memoList)
-        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_ADD_MEMO && resultCode == Activity.RESULT_OK) {
-            data?.getParcelableExtra<Memo>("memo")?.let {
-                memoList.add(it)
-                memoAdapter.notifyDataSetChanged()
-                saveMemos()
-            }
         }
     }
 }

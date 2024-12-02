@@ -308,7 +308,6 @@ class Fragment_Home : Fragment() {
         var tabAdapter = TabAdapter(childFragmentManager, lifecycle)
 
         tabAdapter.addFragment(Fragment_Tab_All(), "전체보기")
-        tabAdapter.addFragment(Fragment_Tab_Field(), "분야별")
         tabAdapter.addFragment(Fragment_Tab_DeadLine(), "마감순")
 
         viewPagerTabs.adapter = tabAdapter
