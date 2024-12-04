@@ -20,6 +20,7 @@ import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlin.math.abs
 import kotlin.random.Random
@@ -154,29 +155,43 @@ class Fragment_Scrap : Fragment() {
                             return@setPositiveButton
                         }
 
-                        // Firebase Storage에서 이미지 다운로드 URL 생성
-                        storage.reference.child(imagePath).downloadUrl
-                            .addOnSuccessListener { imageUrl ->
-                                val scrapData = hashMapOf(
-                                    "title" to title,
-                                    "imageUrl" to imagePath,
-                                    "pageUrl" to pageUrl,
-                                    "color" to randomColor,
-                                    "nickname" to (FirebaseAuth.getInstance().currentUser?.email ?: "")
-                                )
+                        // Firestore에서 현재 최대 추가순서 값 가져오기
+                        firestore.collection("Scrap")
+                            .orderBy("추가순서", Query.Direction.DESCENDING)
+                            .limit(1) // 가장 마지막 순서를 가져옴
+                            .get()
+                            .addOnSuccessListener { snapshot ->
+                                val currentOrder = snapshot.documents.firstOrNull()?.getLong("추가순서") ?: 0L
+                                val newOrder = currentOrder + 1
 
-                                firestore.collection("Scrap").add(scrapData)
-                                    .addOnSuccessListener {
-                                        dataList.add(Model(title, imageUrl.toString(), pageUrl, title, randomColor))
-                                        setupViewPager(dataList)
-                                        Toast.makeText(requireContext(), "대회가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                                // Firebase Storage에서 이미지 다운로드 URL 생성
+                                storage.reference.child(imagePath).downloadUrl
+                                    .addOnSuccessListener { imageUrl ->
+                                        val scrapData = hashMapOf(
+                                            "title" to title,
+                                            "imageUrl" to imagePath,
+                                            "pageUrl" to pageUrl,
+                                            "color" to randomColor,
+                                            "nickname" to (FirebaseAuth.getInstance().currentUser?.email ?: ""),
+                                            "추가순서" to newOrder // 새로운 추가순서 지정
+                                        )
+
+                                        firestore.collection("Scrap").add(scrapData)
+                                            .addOnSuccessListener {
+                                                dataList.add(Model(title, imageUrl.toString(), pageUrl, title, randomColor))
+                                                setupViewPager(dataList)
+                                                Toast.makeText(requireContext(), "대회가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Toast.makeText(requireContext(), "스크랩 추가에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                            }
                                     }
                                     .addOnFailureListener { e ->
-                                        Toast.makeText(requireContext(), "스크랩 추가에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(requireContext(), "이미지 URL을 가져오는 데 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
                                     }
                             }
                             .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "이미지 URL을 가져오는 데 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "추가순서 가져오기에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
                     }
                     builder.setNegativeButton("취소") { dialog, _ ->
@@ -190,6 +205,7 @@ class Fragment_Scrap : Fragment() {
                 Toast.makeText(requireContext(), "대회 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
     }
+
 
 
     private fun getUserNickname(onNicknameFetched: (String?) -> Unit) {
@@ -251,21 +267,42 @@ class Fragment_Scrap : Fragment() {
 
         scrapCollection
             .whereEqualTo("nickname", currentUserEmail)
+            .orderBy("추가순서", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 dataList.clear() // 기존 데이터 초기화
+
+                if (documents.isEmpty) {
+                    setupViewPager(dataList) // 문서가 없는 경우에도 ViewPager 초기화
+                    return@addOnSuccessListener
+                }
+
                 for (document in documents) {
                     val title = document.getString("title") ?: "Untitled"
-                    val imagePath  = document.getString("imageUrl") ?: ""
+                    val imagePath = document.getString("imageUrl") ?: ""
                     val pageUrl = document.getString("pageUrl") ?: ""
                     val color = document.getLong("color")?.toInt() ?: Color.WHITE
-                    dataList.add(Model(title, imagePath, pageUrl, title, color))
 
+                    // Firebase Storage에서 다운로드 URL 생성
+                    storage.reference.child(imagePath).downloadUrl
+                        .addOnSuccessListener { imageUrl ->
+                            dataList.add(Model(title, imageUrl.toString(), pageUrl, title, color))
+
+                            // 데이터 로드 후 ViewPager 갱신
+                            if (dataList.size == documents.size()) {
+                                setupViewPager(dataList)
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("FirebaseStorage", "이미지 URL 생성 실패: ${e.message}")
+                        }
                 }
-                setupViewPager(dataList)
+
             }
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("FirebaseStorage", "이미지 URL 생성 실패: ${e.message}")
+
             }
     }
 

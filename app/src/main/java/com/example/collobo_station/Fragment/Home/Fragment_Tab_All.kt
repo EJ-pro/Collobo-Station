@@ -44,7 +44,6 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        // 클릭된 아이템의 위치(position)을 통해 원하는 동작을 수행
         val clickedItem = contestList[position]
         val contestName = clickedItem.getString("대회명") ?: ""
         val contestField = clickedItem.getString("분야") ?: ""
@@ -61,7 +60,6 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         val contestHomepageUrl = clickedItem.getString("홈페이지url") ?: ""
         val contestprecautions = clickedItem.getString("주의사항") ?: ""
 
-        // 데이터를 담을 Intent 생성
         val intent = Intent(requireContext(), ContestDetailActivity::class.java).apply {
             putExtra("contestName", contestName)
             putExtra("contestField", contestField)
@@ -79,31 +77,29 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
             putExtra("contestprecautions", contestprecautions)
         }
 
-        // Activity 시작
         startActivity(intent)
     }
 
     private suspend fun loadDataFromFirestore() {
-        GlobalScope.launch(Dispatchers.Main) {
-            try {
-                val querySnapshot = getContestQueryFromFirestore().get().await()
-                for (document in querySnapshot.documents) {
-                    contestList.add(document)
-                }
-                tabAllAdapter.setItems(contestList)
-                tabAllAdapter.notifyDataSetChanged()
-            } catch (e: Exception) {
-                e.printStackTrace()
+        try {
+            // Firestore에서 모든 데이터를 가져오기
+            val db = FirebaseFirestore.getInstance()
+            val contestCollection = db.collection("Contest")
+
+            val querySnapshot = contestCollection.get().await() // 모든 데이터 가져오기
+            contestList.clear()
+            contestList.addAll(querySnapshot.documents)
+
+            // 접수마감 필드를 기준으로 정렬
+            contestList.sortBy { document ->
+                document.getTimestamp("접수마감")?.toDate()
             }
+
+            tabAllAdapter.setItems(contestList)
+            tabAllAdapter.notifyDataSetChanged()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-    }
-
-
-
-    private suspend fun getContestQueryFromFirestore(): Query {
-        val db = FirebaseFirestore.getInstance()
-        val contestCollection = db.collection("Contest")
-        return contestCollection.orderBy("추가순서", Query.Direction.DESCENDING)
     }
 
     private fun calculateDDay(eventDate: Date): String {
@@ -117,3 +113,4 @@ class Fragment_Tab_All : Fragment(), TabAllAdapter.OnItemClickListener {
         }
     }
 }
+

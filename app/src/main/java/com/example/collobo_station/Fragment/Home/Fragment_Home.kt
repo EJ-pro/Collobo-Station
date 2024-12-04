@@ -40,6 +40,7 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 
 class Fragment_Home : Fragment() {
 
@@ -111,11 +112,68 @@ class Fragment_Home : Fragment() {
     }
 
     private fun updateProfileImage(uri: Uri) {
-        // Glide를 사용하여 이미지를 CircleImageView에 로드
-        Glide.with(this)
-            .load(uri)
-            .into(profileImage)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val storageRef = FirebaseStorage.getInstance().reference
+
+        // Firestore에서 닉네임 가져오기
+        db.collection("Users").whereEqualTo("email", user.email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val nickname = documents.documents[0].getString("nickname") ?: "default_user"
+
+                    // 닉네임 기반으로 이미지 저장
+                    val imageRef = storageRef.child("profile_images/$nickname.jpg")
+                    imageRef.putFile(uri)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "프로필 이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+
+                            // 저장된 이미지를 다시 로드
+                            imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                                Glide.with(this)
+                                    .load(downloadUri)
+                                    .into(profileImage)
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(requireContext(), "이미지 업로드에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(requireContext(), "닉네임을 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "닉네임 조회에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
+    private fun loadProfileImage(nickname: String) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("profile_images/$nickname.jpg")
+
+        imageRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                // Glide로 이미지 로드 (캐시를 적극 활용)
+                Glide.with(this)
+                    .load(uri)
+                    .placeholder(R.drawable.image_test) // 로딩 중 표시할 기본 이미지
+                    .error(R.drawable.image_test) // 에러 시 표시할 기본 이미지
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL) // 캐싱 전략 설정
+                    .into(profileImage)
+            }
+            .addOnFailureListener {
+                // 이미지 로드 실패 시 기본 이미지 설정
+                profileImage.setImageResource(R.drawable.image_test)
+            }
+    }
+
+
     private fun initView(view: View) {
         viewPager = view.findViewById(R.id.viewpager2)
         layoutOnBoardingIndicators = view.findViewById(R.id.indicators)
@@ -164,45 +222,47 @@ class Fragment_Home : Fragment() {
     }
 
     private fun fetchUserInfo() {
-        val user = Firebase.auth.currentUser
-        if (user != null) {
-            val userEmail = user.email
-            if (userEmail != null) {
-                val db = Firebase.firestore
-                db.collection("Users")
-                    .whereEqualTo("email", userEmail)
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        if (!documents.isEmpty) {
-                            val document = documents.documents[0]
-                            val nickname = document.getString("nickname")
-                            if (nickname != null) {
-                                textViewUserName.text = nickname
-                                val userInfo = UserInfo(
-                                    email = document.getString("email") ?:"",
-                                    nickname = nickname,
-                                    phoneNumber = document.getString("phone_number") ?: ""
-                                )
-                                DataInfo.setUserInfo(userInfo)
-
-                            } else {
-                                textViewUserName.text = "사용자"
-                            }
-                        } else {
-                            textViewUserName.text = "사용자"
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "Error getting document", e)
-                        textViewUserName.text = "로그인 필요"
-                    }
-            } else {
-                textViewUserName.text = "로그인 필요"
-            }
-        } else {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
             textViewUserName.text = "로그인 필요"
+            profileImage.setImageResource(R.drawable.image_test)
+            return
         }
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Users").whereEqualTo("email", user.email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val document = documents.documents[0]
+                    val nickname = document.getString("nickname") ?: "default_user"
+                    val profileUrl = document.getString("profileUrl") // Firestore에 저장된 프로필 이미지 URL
+
+                    textViewUserName.text = nickname
+
+                    if (profileUrl != null) {
+                        // 저장된 URL로 바로 이미지 로드
+                        Glide.with(this)
+                            .load(profileUrl)
+                            .placeholder(R.drawable.image_test)
+                            .error(R.drawable.image_test)
+                            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                            .into(profileImage)
+                    } else {
+                        // URL이 없으면 Firebase Storage에서 가져오기
+                        loadProfileImage(nickname)
+                    }
+                } else {
+                    textViewUserName.text = "사용자"
+                    profileImage.setImageResource(R.drawable.image_test)
+                }
+            }
+            .addOnFailureListener {
+                textViewUserName.text = "로그인 필요"
+                profileImage.setImageResource(R.drawable.image_test)
+            }
     }
+
 
 
     private fun setupViewPager() {
