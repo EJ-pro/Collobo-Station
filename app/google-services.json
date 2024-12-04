@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "471262308904",
+    "firebase_url": "https://collobo-station-default-rtdb.firebaseio.com",
+    "project_id": "collobo-station",
+    "storage_bucket": "collobo-station.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471262308904:android:f2bd9a6fa51f2125ebe31d",
+        "android_client_info": {
+          "package_name": "com.example.collobo_station"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471262308904-u1lq43uv37v4crrolb9d3j4ap3782rf8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.collobo_station",
+            "certificate_hash": "be3c5185c44fc320619e0bb0ec555f1df1f277c9"
+          }
+        },
+        {
+          "client_id": "471262308904-ig6s2t6o66ccnfn6n005kccmgcmffsnj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJG5O__5Gek1Kq3S9uRlca5zd1KuRNRhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471262308904-ig6s2t6o66ccnfn6n005kccmgcmffsnj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

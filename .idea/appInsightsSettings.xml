@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.collobo_station" />
+                  <option name="mobileSdkAppId" value="1:471262308904:android:f2bd9a6fa51f2125ebe31d" />
+                  <option name="projectId" value="collobo-station" />
+                  <option name="projectNumber" value="471262308904" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

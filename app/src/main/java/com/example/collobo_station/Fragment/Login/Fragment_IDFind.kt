@@ -146,23 +146,28 @@ class Fragment_IDFind : Fragment() {
     }
 
     private fun fetchEmailFromPhoneNumber(phoneNumber: String) {
+
+        val formattedPhoneNumber = formatPhoneNumberForFirestore(phoneNumber)
         firestore.collection("Users")
-            .whereEqualTo("phone_number", phoneNumber) // Firestore 포맷으로 조회
+            .whereEqualTo("phone_number", formattedPhoneNumber)
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
-                    val email = documents.documents[0].getString("email")
+                    val document = documents.documents[0]
+                    val email = document.getString("email")
+
+                    // 이메일을 다이얼로그로 표시
                     showEmailDialog(email)
                 } else {
+                    Log.e(TAG, "formattedPhoneNumber 검색 실패: ${formattedPhoneNumber}")
                     Toast.makeText(requireContext(), "해당 전화번호로 등록된 계정을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Firestore 조회 실패: ${e.message}")
+                Log.e(TAG, "Firestore 검색 실패: ${e.message}")
                 Toast.makeText(requireContext(), "계정 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     private fun showEmailDialog(email: String?) {
         val message = email ?: "등록된 이메일이 없습니다."
