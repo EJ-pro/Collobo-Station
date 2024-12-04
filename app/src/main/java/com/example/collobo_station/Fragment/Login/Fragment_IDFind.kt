@@ -1,25 +1,27 @@
 package com.example.collobo_station.Fragment.Login
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.collobo_station.R
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.example.collobo_station.R
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.*
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.concurrent.TimeUnit
 
 class Fragment_IDFind : Fragment() {
 
-    private lateinit var verificationId: String
+    private var verificationId: String? = null
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+    private var currentPhoneNumber: String? = null // phoneNumber 저장용 변수
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,81 +31,168 @@ class Fragment_IDFind : Fragment() {
 
         // Firebase 인증 객체 초기화
         firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         val phoneNumberEditText = view.findViewById<EditText>(R.id.findid_ph)
         val sendVerificationButton = view.findViewById<Button>(R.id.findid_ph_ckbtn)
         val verifyCodeButton = view.findViewById<Button>(R.id.findid_code_ckbtn)
+        val verificationCodeEditText = view.findViewById<EditText>(R.id.findid_code)
 
         // 전화번호 인증 요청 버튼 클릭 리스너
         sendVerificationButton.setOnClickListener {
             val phoneNumber = phoneNumberEditText.text.toString().trim()
 
-            // 전화번호를 인증 요청하는 함수 호출
-            startPhoneNumberVerification(phoneNumber)
+            if (phoneNumber.isEmpty()) {
+                Toast.makeText(requireContext(), "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 전화번호를 Firestore 형식에 맞게 변환
+            val formattedPhoneNumber = if (phoneNumber.startsWith("+")) {
+                phoneNumber // 이미 국제 형식
+            } else {
+                "+82" + phoneNumber.removePrefix("0") // 대한민국 국가 코드 추가
+            }
+
+            // 인증 요청 함수 호출 시 phoneNumber 전달
+            startPhoneNumberVerification(formattedPhoneNumber)
         }
 
         // 인증 코드 확인 버튼 클릭 리스너
         verifyCodeButton.setOnClickListener {
-            val code = "사용자가 입력한 인증 코드" // 사용자가 입력한 인증 코드를 가져오는 코드가 필요합니다.
+            val code = verificationCodeEditText.text.toString().trim()
 
-            // 사용자가 입력한 인증 코드를 확인하는 함수 호출
+            if (verificationId.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "인증 코드가 전송되지 않았습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (code.isEmpty()) {
+                Toast.makeText(requireContext(), "인증 코드를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             verifyPhoneNumberWithCode(code)
         }
 
         return view
     }
 
-    // 전화번호로 인증 코드를 요청하는 함수
     private fun startPhoneNumberVerification(phoneNumber: String) {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            phoneNumber,
-            60,
-            TimeUnit.SECONDS,
-            requireActivity(),
-            object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                    // 자동으로 인증이 완료된 경우 처리할 코드
-                    signInWithPhoneAuthCredential(credential)
-                }
+        // 인증용 포맷
+        val formattedPhoneNumberForAuth = formatPhoneNumberForAuth(phoneNumber)
+        currentPhoneNumber = formatPhoneNumberForFirestore(phoneNumber) // Firestore 조회용 포맷 저장
 
-                override fun onVerificationFailed(e: FirebaseException) {
-                    // 인증 실패 시 처리할 코드
-                    Log.e(TAG, "Verification failed: $e")
-                }
+        Log.d(TAG, "Formatted for Auth: $formattedPhoneNumberForAuth")
+        Log.d(TAG, "Formatted for Firestore: $currentPhoneNumber")
 
-                override fun onCodeSent(
-                    verificationId: String,
-                    token: PhoneAuthProvider.ForceResendingToken
-                ) {
-                    // 인증 코드가 성공적으로 전송된 경우 처리할 코드
-                    this@Fragment_IDFind.verificationId = verificationId
-                }
-            })
+        PhoneAuthProvider.verifyPhoneNumber(
+            PhoneAuthOptions.newBuilder(firebaseAuth)
+                .setPhoneNumber(formattedPhoneNumberForAuth) // 인증용 포맷 사용
+                .setTimeout(60L, TimeUnit.SECONDS)
+                .setActivity(requireActivity())
+                .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                        signInWithPhoneAuthCredential(credential)
+                    }
+
+                    override fun onVerificationFailed(e: FirebaseException) {
+                        Log.e(TAG, "인증 실패: ${e.message}")
+                        Toast.makeText(requireContext(), "인증 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onCodeSent(
+                        verificationId: String,
+                        token: PhoneAuthProvider.ForceResendingToken
+                    ) {
+                        this@Fragment_IDFind.verificationId = verificationId
+                        Toast.makeText(requireContext(), "인증 코드가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                })
+                .build()
+        )
     }
 
-    // 사용자가 입력한 인증 코드를 확인하는 함수
+
+
     private fun verifyPhoneNumberWithCode(code: String) {
-        val credential = PhoneAuthProvider.getCredential(verificationId, code)
-        signInWithPhoneAuthCredential(credential)
+        try {
+            val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+            signInWithPhoneAuthCredential(credential)
+        } catch (e: Exception) {
+            Log.e(TAG, "잘못된 인증 코드: ${e.message}")
+            Toast.makeText(requireContext(), "잘못된 인증 코드입니다.", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    // PhoneAuthCredential을 사용하여 사용자를 인증하는 함수
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // 인증이 성공한 경우 처리할 코드
                     val user = task.result?.user
                     Log.d(TAG, "signInWithCredential:success, user: $user")
+
+                    // 현재 저장된 전화번호로 이메일 가져오기
+                    currentPhoneNumber?.let { phoneNumber ->
+                        fetchEmailFromPhoneNumber(phoneNumber)
+                    }
                 } else {
-                    // 인증이 실패한 경우 처리할 코드
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // 인증 코드가 유효하지 않은 경우
-                        // 사용자에게 메시지를 표시하거나 다른 조치를 취할 수 있습니다.
+                        Toast.makeText(requireContext(), "잘못된 인증 코드입니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+    }
+
+    private fun fetchEmailFromPhoneNumber(phoneNumber: String) {
+        firestore.collection("Users")
+            .whereEqualTo("phone_number", phoneNumber) // Firestore 포맷으로 조회
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val email = documents.documents[0].getString("email")
+                    showEmailDialog(email)
+                } else {
+                    Toast.makeText(requireContext(), "해당 전화번호로 등록된 계정을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Firestore 조회 실패: ${e.message}")
+                Toast.makeText(requireContext(), "계정 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun showEmailDialog(email: String?) {
+        val message = email ?: "등록된 이메일이 없습니다."
+        val builder = AlertDialog.Builder(requireContext())
+
+        builder.setTitle("계정 정보")
+            .setMessage("이메일: $message")
+            .setPositiveButton("확인") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun formatPhoneNumberForAuth(phoneNumber: String): String {
+        // Firebase 인증용 국제 번호 형식으로 변환
+        return if (!phoneNumber.startsWith("+82")) {
+            "+82" + phoneNumber.removePrefix("0") // "01012345678" → "+821012345678"
+        } else {
+            phoneNumber // 이미 국제 형식인 경우 그대로 반환
+        }
+    }
+
+    private fun formatPhoneNumberForFirestore(phoneNumber: String): String {
+        // Firestore 조회용 하이픈 포함 형식으로 변환
+        return if (!phoneNumber.contains("-")) {
+            phoneNumber.replaceFirst("(\\d{3})(\\d{4})(\\d{4})".toRegex(), "$1-$2-$3")
+        } else {
+            phoneNumber // 이미 하이픈이 포함된 경우 그대로 반환
+        }
     }
 
     companion object {
