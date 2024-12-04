@@ -20,6 +20,7 @@ import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -28,6 +29,7 @@ class Fragment_Scrap : Fragment() {
     private lateinit var menu: ImageView
     private lateinit var viewPager: ViewPager2
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
     private var dataList: MutableList<Model> = mutableListOf()
     private lateinit var addButton: ImageButton
 
@@ -42,6 +44,7 @@ class Fragment_Scrap : Fragment() {
 
         // Firestore 초기화
         firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
 
         // 데이터 가져오기
         fetchScrapData()
@@ -132,50 +135,62 @@ class Fragment_Scrap : Fragment() {
     }
 
     private fun addContestToScrap(selectedContest: String) {
-        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: ""
-        getUserNickname { nickname ->
-            if (nickname == null) return@getUserNickname
+        firestore.collection("Contest").whereEqualTo("대회명", selectedContest).get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val title = document.getString("대회명") ?: "Untitled"
+                    val imagePath = document.getString("이미지") ?: ""
+                    val pageUrl = document.getString("홈페이지url") ?: ""
+                    val randomColor = getRandomColor()
 
-            firestore.collection("Contest").whereEqualTo("대회명", selectedContest).get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val title = document.getString("대회명") ?: "Untitled"
-                        val imageUrl = document.getString("이미지") ?: ""
-                        val pageUrl = document.getString("접수url") ?: ""
-                        val randomColor = getRandomColor()
-
+                    // 사용자 확인 다이얼로그
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setTitle("대회 추가 확인")
+                    builder.setMessage("대회를 추가하시겠습니까?\n\n대회명: $title")
+                    builder.setPositiveButton("추가") { _, _ ->
                         // 중복 여부 확인
                         if (dataList.any { it.title == title }) {
                             Toast.makeText(requireContext(), "이미 추가된 대회입니다.", Toast.LENGTH_SHORT).show()
-                            return@addOnSuccessListener
+                            return@setPositiveButton
                         }
 
-                        // 새로운 스크랩 데이터 추가
-                        val scrapData = hashMapOf(
-                            "title" to title,
-                            "imageUrl" to imageUrl,
-                            "pageUrl" to pageUrl,
-                            "color" to randomColor,
-                            "nickname" to currentUserEmail
-                        )
+                        // Firebase Storage에서 이미지 다운로드 URL 생성
+                        storage.reference.child(imagePath).downloadUrl
+                            .addOnSuccessListener { imageUrl ->
+                                val scrapData = hashMapOf(
+                                    "title" to title,
+                                    "imageUrl" to imagePath,
+                                    "pageUrl" to pageUrl,
+                                    "color" to randomColor,
+                                    "nickname" to (FirebaseAuth.getInstance().currentUser?.email ?: "")
+                                )
 
-                        firestore.collection("Scrap").add(scrapData)
-                            .addOnSuccessListener {
-                                dataList.add(Model(title, imageUrl, pageUrl, title, randomColor))
-                                setupViewPager(dataList)
-                                Toast.makeText(requireContext(), "대회가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                                firestore.collection("Scrap").add(scrapData)
+                                    .addOnSuccessListener {
+                                        dataList.add(Model(title, imageUrl.toString(), pageUrl, title, randomColor))
+                                        setupViewPager(dataList)
+                                        Toast.makeText(requireContext(), "대회가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(requireContext(), "스크랩 추가에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
                             }
                             .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "스크랩 추가에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "이미지 URL을 가져오는 데 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
                     }
+                    builder.setNegativeButton("취소") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    builder.show()
                 }
-                .addOnFailureListener { exception ->
-                    exception.printStackTrace()
-                    Toast.makeText(requireContext(), "대회 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-        }
+            }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                Toast.makeText(requireContext(), "대회 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
     private fun getUserNickname(onNicknameFetched: (String?) -> Unit) {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
@@ -241,10 +256,11 @@ class Fragment_Scrap : Fragment() {
                 dataList.clear() // 기존 데이터 초기화
                 for (document in documents) {
                     val title = document.getString("title") ?: "Untitled"
-                    val imageUrl = document.getString("imageUrl") ?: ""
+                    val imagePath  = document.getString("imageUrl") ?: ""
                     val pageUrl = document.getString("pageUrl") ?: ""
                     val color = document.getLong("color")?.toInt() ?: Color.WHITE
-                    dataList.add(Model(title, imageUrl, pageUrl, title, color))
+                    dataList.add(Model(title, imagePath, pageUrl, title, color))
+
                 }
                 setupViewPager(dataList)
             }
