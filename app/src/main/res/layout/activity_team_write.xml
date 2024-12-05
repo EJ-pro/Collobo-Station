@@ -16,49 +16,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <!-- 상단 영역 -->
+
+                <!-- 중앙 제목 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:paddingTop="10dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
+                    android:gravity="center"
+                    android:layout_weight="1">
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_weight="1">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/create_back_button_image"/>
-                    </LinearLayout>
-                    <LinearLayout
+                        android:src="@drawable/image_team_dot"
+                        android:layout_gravity="top" />
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_weight="1">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="글쓰기"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:textSize="18sp"/>
-                    </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:layout_weight="1">
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Save"
-                        android:background="@android:color/transparent"/>
-                    </LinearLayout>
+                        android:textColor="@color/black"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        android:text="Collobo" />
                 </LinearLayout>
 
                 <!-- EditView -->
@@ -69,7 +47,7 @@
                     android:id="@+id/editTextTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="60dp"
+                    android:layout_marginTop="30dp"
                     android:layout_marginBottom="30dp"
                     android:background="@drawable/team_write_background"
                     android:hint="  제목"
@@ -157,7 +135,7 @@
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
@@ -170,7 +148,7 @@
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
@@ -182,7 +160,7 @@
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
 
@@ -194,7 +172,7 @@
                         android:textColor="@android:color/black"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:background="@drawable/unselected_button_background"
                         android:layout_marginRight="9dp"/>
                 </LinearLayout>
@@ -207,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginBottom="15dp"
-                    android:text="링크"
+                    android:text="링크 (카카오톡 url)"
                     android:textColor="@color/maincolor"
                     android:textSize="16sp"
                     android:textStyle="bold" />

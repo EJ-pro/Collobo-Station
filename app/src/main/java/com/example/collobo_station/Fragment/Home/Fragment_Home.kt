@@ -55,7 +55,7 @@ class Fragment_Home : Fragment() {
     private lateinit var menu : ImageView
     private lateinit var mContext: Context
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
-    private lateinit var profileImage: de.hdodenhof.circleimageview.CircleImageView
+//    private lateinit var profileImage: de.hdodenhof.circleimageview.CircleImageView
     private var selectedImageUri: Uri? = null
     private lateinit var profileImageView: de.hdodenhof.circleimageview.CircleImageView
 
@@ -100,9 +100,9 @@ class Fragment_Home : Fragment() {
         // setupViewPager() - ViewPager를 설정하는 메서드입니다. Recommendation Contest 문서에서 이미지 URL을 가져와 ViewPager에 표시합니다.
         // setupTabLayout(view) - TabLayout을 설정하는 메서드입니다. ViewPagerTabs 어댑터를 생성하고 각 탭에 해당하는 Fragment를 추가합니다.
         initView(view)
-        fetchUserInfo()
         setupViewPager()
         setupTabLayout(view)
+        fetchUserInfo()
         return view
     }
 
@@ -165,11 +165,11 @@ class Fragment_Home : Fragment() {
                     .placeholder(R.drawable.image_test) // 로딩 중 표시할 기본 이미지
                     .error(R.drawable.image_test) // 에러 시 표시할 기본 이미지
                     .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL) // 캐싱 전략 설정
-                    .into(profileImage)
+//                    .into(profileImage)
             }
             .addOnFailureListener {
                 // 이미지 로드 실패 시 기본 이미지 설정
-                profileImage.setImageResource(R.drawable.image_test)
+//                profileImage.setImageResource(R.drawable.image_test)
             }
     }
 
@@ -221,7 +221,7 @@ class Fragment_Home : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
             textViewUserName.text = "로그인 필요"
-            profileImage.setImageResource(R.drawable.image_test)
+//            profileImage.setImageResource(R.drawable.image_test)
             return
         }
 
@@ -244,19 +244,19 @@ class Fragment_Home : Fragment() {
                             .placeholder(R.drawable.image_test)
                             .error(R.drawable.image_test)
                             .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
-                            .into(profileImage)
+//                            .into(profileImage)
                     } else {
                         // URL이 없을 경우 기본 이미지 로드
 //                        loadProfileImage(nickname)
                     }
                 } else {
                     textViewUserName.text = "사용자"
-                    profileImage.setImageResource(R.drawable.image_test)
+//                    profileImage.setImageResource(R.drawable.image_test)
                 }
             }
             .addOnFailureListener { e ->
                 textViewUserName.text = "로그인 필요"
-                profileImage.setImageResource(R.drawable.image_test)
+//                profileImage.setImageResource(R.drawable.image_test)
                 Log.e(TAG, "Firestore 프로필 불러오기 실패: ${e.message}")
             }
     }

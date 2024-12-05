@@ -156,44 +156,6 @@
         android:adjustViewBounds="true"
         app:layout_collapseMode="parallax"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginTop="40dp"
-            android:adjustViewBounds="true"
-            app:layout_collapseMode="parallax"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:layout_marginRight="5dp"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/icon_search"/>
-            <EditText
-                android:id="@+id/searchEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="검색"
-                android:padding="10dp"
-                android:background="@android:color/transparent"
-                android:textColor="@color/black"
-                android:textColorHint="#818181"
-                android:inputType="text"
-                android:drawablePadding="8dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:background="#8D8D8E"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="3dp"
-            android:adjustViewBounds="true"
-            app:layout_collapseMode="parallax"
-            android:layout_marginRight="20dp"/>
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="wrap_content"

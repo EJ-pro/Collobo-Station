@@ -289,9 +289,12 @@ class Fragment_User : Fragment() {
             }
     }
 
+    // 다이얼로그를 통해 데이터 수정
     private fun showEditProfileDialog() {
+        // 다이얼로그 레이아웃 인플레이션
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_profile, null)
 
+        // 다이얼로그 뷰에서 EditText 찾기
         val editNickname = dialogView.findViewById<EditText>(R.id.et_edit_nickname)
         val editName = dialogView.findViewById<EditText>(R.id.et_edit_name)
         val editDob = dialogView.findViewById<EditText>(R.id.et_edit_dob)
@@ -300,6 +303,7 @@ class Fragment_User : Fragment() {
         val editEducation = dialogView.findViewById<EditText>(R.id.et_edit_education)
         val editGrade = dialogView.findViewById<EditText>(R.id.et_edit_grade)
 
+        // Firebase에서 현재 데이터 가져오기
         val user = firebaseAuth.currentUser ?: return
         val userEmail = user.email ?: return
 
@@ -308,6 +312,7 @@ class Fragment_User : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
+                    // 현재 데이터를 다이얼로그에 설정
                     editNickname.setText(document.getString("nickname"))
                     editName.setText(document.getString("name"))
                     editDob.setText(document.getString("dob"))
@@ -319,15 +324,54 @@ class Fragment_User : Fragment() {
                     val awards = document.get("awards") as? List<String> ?: emptyList()
                     val skills = document.get("skills") as? List<String> ?: emptyList()
 
+                    // Initializing awards and skills in dialog
                     setupAwardsAndSkillsDialog(dialogView, awards, skills)
+                } else {
+                    Toast.makeText(requireContext(), "사용자 데이터를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
+            .addOnFailureListener { e ->
+                Log.e("Fragment_User", "사용자 데이터 로드 실패: ${e.message}")
+                Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
 
+        // 다이얼로그 생성
         AlertDialog.Builder(requireContext())
             .setTitle("내 정보 수정")
             .setView(dialogView)
             .setPositiveButton("저장") { _, _ ->
-                saveUpdatedAwardsAndSkillsToFirebase(dialogView)
+                // 수정된 데이터 가져오기
+                val newNickname = editNickname.text.toString().trim()
+                val newName = editName.text.toString().trim()
+                val newDob = editDob.text.toString().trim()
+                val newPhone = editPhone.text.toString().trim()
+                val newAddress = editAddress.text.toString().trim()
+                val newEducation = editEducation.text.toString().trim()
+                val newGrade = editGrade.text.toString().trim()
+                saveUpdatedAwardsAndSkillsToFirebase(dialogView) // Saving changes
+                // Firebase에 데이터 업데이트
+                val updatedData = mapOf(
+                    "nickname" to newNickname,
+                    "name" to newName,
+                    "dob" to newDob,
+                    "phone" to newPhone,
+                    "address" to newAddress,
+                    "education" to newEducation,
+                    "grade" to newGrade
+                )
+
+                firestore.collection("Users")
+                    .document(userEmail)
+                    .update(updatedData)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        // UI 업데이트
+                        fetchUserProfile()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Fragment_User", "사용자 정보 업데이트 실패: ${e.message}")
+                        Toast.makeText(requireContext(), "정보를 수정하는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
             }
             .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()
@@ -335,7 +379,6 @@ class Fragment_User : Fragment() {
             .create()
             .show()
     }
-
     private fun setupAwardsAndSkillsDialog(view: View, awards: List<String>, skills: List<String>) {
         val awardsContainer = view.findViewById<LinearLayout>(R.id.awards_container)
         val skillsContainer = view.findViewById<LinearLayout>(R.id.skills_container)

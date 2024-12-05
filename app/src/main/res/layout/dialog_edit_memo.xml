@@ -4,20 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F9F9F9"
+    android:elevation="4dp">
 
+    <!-- 제목 입력 필드 -->
     <EditText
         android:id="@+id/editMemoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="제목을 입력하세요"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="12dp" />
 
+    <!-- 내용 입력 필드 -->
     <EditText
         android:id="@+id/editMemoContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:hint="내용을 입력하세요"
         android:textSize="14sp"
-        android:layout_marginTop="8dp" />
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:gravity="top"
+        android:scrollbars="vertical"
+        android:inputType="textMultiLine" />
 </LinearLayout>

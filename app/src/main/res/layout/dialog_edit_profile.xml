@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -176,7 +176,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -202,7 +202,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -240,7 +240,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#EFEFEF"
+            android:background="@color/white"
             android:layout_marginBottom="8dp">
 
             <TextView
