@@ -23,17 +23,6 @@
             android:orientation="vertical">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_sub1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/bottom_navigation"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="16dp"
-                android:layout_marginBottom="-33dp"
-                android:src="@drawable/image_action_1"
-                app:backgroundTint="@color/maincolor" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_sub2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

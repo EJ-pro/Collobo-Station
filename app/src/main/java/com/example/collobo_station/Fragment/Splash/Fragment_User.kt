@@ -1,15 +1,23 @@
 package com.example.collobo_station.Fragment.Splash
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.renderscript.Allocation
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -18,6 +26,7 @@ import com.example.collobo_station.databinding.FragmentMyPageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import jp.wasabeef.blurry.Blurry
 import java.util.*
 
 class Fragment_User : Fragment() {
@@ -34,6 +43,7 @@ class Fragment_User : Fragment() {
             if (result.resultCode == android.app.Activity.RESULT_OK) {
                 selectedImageUri = result.data?.data
                 if (selectedImageUri != null) {
+                    // 다이얼로그 띄우기
                     showUrlInputDialog()
                 } else {
                     Toast.makeText(requireContext(), "이미지를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -42,6 +52,36 @@ class Fragment_User : Fragment() {
                 Log.e("ImagePicker", "이미지 선택 취소")
             }
         }
+
+
+    private fun showUrlInputDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_url_input, null)
+        val urlEditText = dialogView.findViewById<EditText>(R.id.et_url_input)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("포트폴리오 URL 입력")
+            .setView(dialogView)
+            .setPositiveButton("저장") { _, _ ->
+                var url = urlEditText.text.toString().trim()
+
+                if (url.isNotEmpty()) {
+                    // URL이 "http://" 또는 "https://"로 시작하지 않으면 "https://" 추가
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://$url"
+                    }
+
+                    savePortfolioImageAndUrl(url)
+                } else {
+                    Toast.makeText(requireContext(), "URL을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
 
     private val profileImagePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -65,20 +105,23 @@ class Fragment_User : Fragment() {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        // 프로필 정보 불러오기
         fetchUserProfile()
 
+        // 프로필 사진 클릭 리스너
         binding.ivProfileImage.setOnClickListener {
             openGalleryForProfileImage()
         }
 
+        // 포트폴리오 이미지 변경 리스너
         binding.ivProfileCover.setOnClickListener {
             openGalleryForPortfolioImage()
         }
 
+        // 보러가기 버튼 클릭 리스너
         binding.btnOpenPortfolio.setOnClickListener {
             openPortfolioUrl()
         }
-
         binding.btnEditProfile.setOnClickListener {
             showEditProfileDialog()
         }
@@ -94,31 +137,6 @@ class Fragment_User : Fragment() {
     private fun openGalleryForProfileImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         profileImagePickerLauncher.launch(intent)
-    }
-
-    private fun showUrlInputDialog() {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_url_input, null)
-        val urlEditText = dialogView.findViewById<EditText>(R.id.et_url_input)
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("포트폴리오 URL 입력")
-            .setView(dialogView)
-            .setPositiveButton("저장") { _, _ ->
-                var url = urlEditText.text.toString().trim()
-                if (url.isNotEmpty()) {
-                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        url = "https://$url"
-                    }
-                    savePortfolioImageAndUrl(url)
-                } else {
-                    Toast.makeText(requireContext(), "URL을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
     }
 
     private fun updateProfileImage(uri: Uri) {
@@ -189,6 +207,7 @@ class Fragment_User : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
+                    // Firestore에서 데이터 가져오기
                     val nickname = document.getString("nickname") ?: "닉네임 없음"
                     val name = document.getString("name") ?: "이름 없음"
                     val dob = document.getString("dob") ?: "생년월일 없음"
@@ -199,11 +218,11 @@ class Fragment_User : Fragment() {
                     val awards = document.get("awards") as? List<String> ?: emptyList()
                     val skills = document.get("skills") as? List<String> ?: emptyList()
 
-                    // 포트폴리오 URL 및 이미지가 이미 존재하면 가져옴
+                    // 추가: profileUrl 가져오기
+                    val profileUrl = document.getString("profileUrl") ?: ""
+                    val profileCoverUrl = document.getString("profile_cover") ?: ""
                     val existingUrl = document.getString("url") ?: ""
-                    portfolioUrl = existingUrl // 이 값이 있으면 openPortfolioUrl에서 바로 사용 가능
-
-                    val coverImageUrl = document.getString("profile_cover") ?: ""
+                    portfolioUrl = existingUrl
 
                     // UI 업데이트
                     binding.tvEducation.text = education
@@ -220,12 +239,27 @@ class Fragment_User : Fragment() {
                     binding.tvAwards.text = awards.joinToString(separator = "\n\n")
                     binding.tvSkills.text = skills.joinToString(separator = " / ")
 
-                    if (coverImageUrl.isNotEmpty()) {
+                    // 프로필 이미지 업데이트
+                    if (profileUrl.isNotEmpty()) {
                         Glide.with(this)
-                            .load(coverImageUrl)
+                            .load(profileUrl)
+                            .placeholder(R.drawable.image_test)
+                            .error(R.drawable.image_test)
+                            .into(binding.ivProfileImage)
+                    } else {
+                        // URL이 없을 경우 기본 이미지 로딩
+                        binding.ivProfileImage.setImageResource(R.drawable.image_test)
+                    }
+
+                    // 포트폴리오 커버 이미지 업데이트
+                    if (profileCoverUrl.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(profileCoverUrl)
                             .placeholder(R.drawable.my_page_image)
                             .error(R.drawable.my_page_image)
                             .into(binding.ivProfileCover)
+                    } else {
+                        binding.ivProfileCover.setImageResource(R.drawable.my_page_image)
                     }
 
                 } else {
@@ -237,6 +271,8 @@ class Fragment_User : Fragment() {
                 Toast.makeText(requireContext(), "사용자 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
     }
+
+
 
     private fun savePortfolioImageAndUrl(url: String) {
         val user = firebaseAuth.currentUser
@@ -286,6 +322,7 @@ class Fragment_User : Fragment() {
 
     private fun showEditProfileDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_profile, null)
+
         val editNickname = dialogView.findViewById<EditText>(R.id.et_edit_nickname)
         val editName = dialogView.findViewById<EditText>(R.id.et_edit_name)
         val editDob = dialogView.findViewById<EditText>(R.id.et_edit_dob)
@@ -302,6 +339,7 @@ class Fragment_User : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
+                    // 현재 사용자 정보 다이얼로그에 설정
                     editNickname.setText(document.getString("nickname"))
                     editName.setText(document.getString("name"))
                     editDob.setText(document.getString("dob"))
@@ -314,6 +352,30 @@ class Fragment_User : Fragment() {
                     val skills = document.get("skills") as? List<String> ?: emptyList()
 
                     setupAwardsAndSkillsDialog(dialogView, awards, skills)
+
+                    // 다이얼로그 생성
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("내 정보 수정")
+                        .setView(dialogView)
+                        .setPositiveButton("저장") { _, _ ->
+                            val newNickname = editNickname.text.toString().trim()
+                            val newName = editName.text.toString().trim()
+                            val newDob = editDob.text.toString().trim()
+                            val newPhone = editPhone.text.toString().trim()
+                            val newAddress = editAddress.text.toString().trim()
+                            val newEducation = editEducation.text.toString().trim()
+                            val newGrade = editGrade.text.toString().trim()
+
+                            // Awards, Skills 업데이트
+                            saveUpdatedAwardsAndSkillsToFirebase(dialogView)
+
+                            // 닉네임 중복 체크 로직 추가
+                            checkNicknameDuplicateAndUpdate(userEmail, newNickname, newName, newDob, newPhone, newAddress, newEducation, newGrade)
+                        }
+                        .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
+                        .create()
+                        .show()
+
                 } else {
                     Toast.makeText(requireContext(), "사용자 데이터를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -322,46 +384,90 @@ class Fragment_User : Fragment() {
                 Log.e("Fragment_User", "사용자 데이터 로드 실패: ${e.message}")
                 Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
+    }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("내 정보 수정")
-            .setView(dialogView)
-            .setPositiveButton("저장") { _, _ ->
-                val newNickname = editNickname.text.toString().trim()
-                val newName = editName.text.toString().trim()
-                val newDob = editDob.text.toString().trim()
-                val newPhone = editPhone.text.toString().trim()
-                val newAddress = editAddress.text.toString().trim()
-                val newEducation = editEducation.text.toString().trim()
-                val newGrade = editGrade.text.toString().trim()
+    private fun checkNicknameDuplicateAndUpdate(
+        userEmail: String,
+        newNickname: String,
+        newName: String,
+        newDob: String,
+        newPhone: String,
+        newAddress: String,
+        newEducation: String,
+        newGrade: String
+    ) {
+        // 닉네임이 비어있으면 그냥 저장
+        if (newNickname.isEmpty()) {
+            updateUserProfileData(userEmail, newNickname, newName, newDob, newPhone, newAddress, newEducation, newGrade)
+            return
+        }
 
-                saveUpdatedAwardsAndSkillsToFirebase(dialogView)
+        // 현재 사용자 documentId 찾기
+        firestore.collection("Users")
+            .document(userEmail)
+            .get()
+            .addOnSuccessListener { currentUserDoc ->
+                val currentDocumentId = currentUserDoc.id
 
-                val updatedData = mapOf(
-                    "nickname" to newNickname,
-                    "name" to newName,
-                    "dob" to newDob,
-                    "phone" to newPhone,
-                    "address" to newAddress,
-                    "education" to newEducation,
-                    "grade" to newGrade
-                )
-
+                // 같은 닉네임을 가진 다른 사용자 존재 여부 확인
                 firestore.collection("Users")
-                    .document(userEmail)
-                    .update(updatedData)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                        fetchUserProfile()
+                    .whereEqualTo("nickname", newNickname)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        // 같은 닉네임을 가진 문서가 존재
+                        val duplicateDocs = querySnapshot.documents
+                        if (duplicateDocs.isNotEmpty()) {
+                            // 같은 닉네임을 사용하는데, 그 문서가 자기 자신이 아닌 경우
+                            val isUsedByOther = duplicateDocs.any { it.id != currentDocumentId }
+                            if (isUsedByOther) {
+                                Toast.makeText(requireContext(), "이미 사용중인 닉네임입니다.", Toast.LENGTH_SHORT).show()
+                                return@addOnSuccessListener
+                            }
+                        }
+                        // 중복되지 않거나 자기 자신이 사용하는 닉네임이면 업데이트 가능
+                        updateUserProfileData(userEmail, newNickname, newName, newDob, newPhone, newAddress, newEducation, newGrade)
                     }
                     .addOnFailureListener { e ->
-                        Log.e("Fragment_User", "사용자 정보 업데이트 실패: ${e.message}")
-                        Toast.makeText(requireContext(), "정보를 수정하는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "닉네임 중복 확인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
             }
-            .setNegativeButton("취소") { dialog, _ -> dialog.dismiss() }
-            .create()
-            .show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "사용자 정보 확인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateUserProfileData(
+        userEmail: String,
+        newNickname: String,
+        newName: String,
+        newDob: String,
+        newPhone: String,
+        newAddress: String,
+        newEducation: String,
+        newGrade: String
+    ) {
+        val updatedData = mapOf(
+            "nickname" to newNickname,
+            "name" to newName,
+            "dob" to newDob,
+            "phone" to newPhone,
+            "address" to newAddress,
+            "education" to newEducation,
+            "grade" to newGrade
+        )
+
+        firestore.collection("Users")
+            .document(userEmail)
+            .update(updatedData)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "정보가 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                // UI 업데이트
+                fetchUserProfile()
+            }
+            .addOnFailureListener { e ->
+                Log.e("Fragment_User", "사용자 정보 업데이트 실패: ${e.message}")
+                Toast.makeText(requireContext(), "정보를 수정하는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupAwardsAndSkillsDialog(view: View, awards: List<String>, skills: List<String>) {
@@ -370,6 +476,7 @@ class Fragment_User : Fragment() {
         val addAwardButton = view.findViewById<Button>(R.id.btn_add_award)
         val addSkillButton = view.findViewById<Button>(R.id.btn_add_skill)
 
+        // 초기 데이터 추가
         fun addAwardField(value: String = "") {
             val editText = EditText(context).apply {
                 layoutParams = LinearLayout.LayoutParams(
@@ -394,13 +501,14 @@ class Fragment_User : Fragment() {
             skillsContainer.addView(editText)
         }
 
+        // Awards 초기화
         awards.forEach { addAwardField(it) }
         addAwardButton.setOnClickListener { addAwardField() }
 
+        // Skills 초기화
         skills.forEach { addSkillField(it) }
         addSkillButton.setOnClickListener { addSkillField() }
     }
-
     private fun saveUpdatedAwardsAndSkillsToFirebase(view: View) {
         val awardsContainer = view.findViewById<LinearLayout>(R.id.awards_container)
         val skillsContainer = view.findViewById<LinearLayout>(R.id.skills_container)
@@ -408,12 +516,14 @@ class Fragment_User : Fragment() {
         val updatedAwards = mutableListOf<String>()
         val updatedSkills = mutableListOf<String>()
 
+        // Awards 데이터 수집
         for (i in 0 until awardsContainer.childCount) {
             val editText = awardsContainer.getChildAt(i) as EditText
             val text = editText.text.toString().trim()
             if (text.isNotEmpty()) updatedAwards.add(text)
         }
 
+        // Skills 데이터 수집
         for (i in 0 until skillsContainer.childCount) {
             val editText = skillsContainer.getChildAt(i) as EditText
             val text = editText.text.toString().trim()
@@ -429,7 +539,6 @@ class Fragment_User : Fragment() {
         firestore.collection("Users").document(userEmail)
             .update(updates)
             .addOnSuccessListener {
-
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, "저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
