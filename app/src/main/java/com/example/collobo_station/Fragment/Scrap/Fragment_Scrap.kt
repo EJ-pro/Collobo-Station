@@ -314,7 +314,7 @@ class Fragment_Scrap : Fragment() {
         }
         viewPager.adapter = adapter
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-        viewPager.offscreenPageLimit = 4
+        viewPager.offscreenPageLimit = 3
 
         // 마지막 페이지로 이동
         if (dataList.isNotEmpty()) {

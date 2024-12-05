@@ -1,10 +1,15 @@
 package com.example.collobo_station.Fragment.Splash
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.renderscript.Allocation
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +24,7 @@ import com.example.collobo_station.databinding.FragmentMyPageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import jp.wasabeef.blurry.Blurry
 import java.util.*
 
 class Fragment_User : Fragment() {
@@ -44,6 +50,8 @@ class Fragment_User : Fragment() {
                 Log.e("ImagePicker", "이미지 선택 취소")
             }
         }
+
+
     private fun showUrlInputDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_url_input, null)
         val urlEditText = dialogView.findViewById<EditText>(R.id.et_url_input)
