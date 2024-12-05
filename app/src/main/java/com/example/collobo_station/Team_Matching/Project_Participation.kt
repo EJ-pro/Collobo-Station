@@ -97,11 +97,6 @@ class Project_Participation : AppCompatActivity()  {
                                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                                 startActivity(browserIntent)
                             }
-
-                            if (kakaoIntent.resolveActivity(packageManager) != null) {
-                                startActivity(kakaoIntent)
-                            } else {
-                            }
                         } else {
                             Toast.makeText(this, "URL이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -134,7 +129,7 @@ class Project_Participation : AppCompatActivity()  {
 
         collectionRef.get()
             .addOnSuccessListener { documents ->
-                val dataList = mutableListOf<Pair<String, String>>() // 데이터와 timestamp를 함께 저장
+                val dataList = mutableListOf<Pair<String, String>>()
                 for (document in documents) {
                     val text1 = document.getString("title") ?: ""
                     val text2 = document.getString("content") ?: ""
@@ -148,21 +143,25 @@ class Project_Participation : AppCompatActivity()  {
                     dataList.add(Pair(combinedData, text4))
                 }
 
-                // timestamp 기준으로 최신순 정렬 (내림차순)
-                val sortedDataList = dataList.sortedByDescending {
-                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(it.second)
-                }.map { it.first }
-
-                // 어댑터에 정렬된 데이터 설정
+                // 정렬 후 데이터 설정
+                val sortedDataList = sortDataByTimestamp(dataList)
                 Team_adapter.setData(sortedDataList)
+                Team_adapter.notifyDataSetChanged() // 데이터 변경 알림
             }
             .addOnFailureListener { exception ->
-                // 실패 시 처리
                 Toast.makeText(this, "데이터 가져오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                exception.printStackTrace()
+                Log.e("FirestoreError", "Error: ${exception.message}")
             }
     }
-
+    private fun sortDataByTimestamp(dataList: List<Pair<String, String>>): List<String> {
+        return dataList.sortedByDescending {
+            try {
+                SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(it.second)
+            } catch (e: Exception) {
+                null // 잘못된 날짜는 맨 뒤로
+            }
+        }.map { it.first }
+    }
     private fun fetchDataFromFirestore_Designer() {
         val db = FirebaseFirestore.getInstance()
         val collectionRef = db.collection("Team_Looking")

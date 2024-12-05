@@ -18,6 +18,7 @@
             android:textStyle="bold"
             android:textColor="#4D4C4C"
             android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
             android:layout_marginTop="12dp"/>
         <TextView
             android:layout_width="match_parent"
@@ -28,6 +29,7 @@
             android:textStyle="bold"
             android:textColor="#767676"
             android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"/>
         <LinearLayout

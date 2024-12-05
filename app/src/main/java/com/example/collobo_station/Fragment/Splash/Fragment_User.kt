@@ -14,7 +14,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -120,6 +122,9 @@ class Fragment_User : Fragment() {
         binding.btnOpenPortfolio.setOnClickListener {
             openPortfolioUrl()
         }
+        binding.btnEditProfile.setOnClickListener {
+            showEditProfileDialog()
+        }
 
         return view
     }
@@ -137,6 +142,7 @@ class Fragment_User : Fragment() {
     private fun updateProfileImage(uri: Uri) {
         val user = firebaseAuth.currentUser ?: return
         val userEmail = user.email ?: return
+
         val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/${UUID.randomUUID()}.jpg")
 
         storageRef.putFile(uri)
@@ -202,6 +208,7 @@ class Fragment_User : Fragment() {
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     // Firestore에서 데이터 가져오기
+                    val nickname = document.getString("nickname") ?: "닉네임 없음"
                     val name = document.getString("name") ?: "이름 없음"
                     val dob = document.getString("dob") ?: "생년월일 없음"
                     val phone = document.getString("phone") ?: "연락처 없음"
@@ -214,7 +221,7 @@ class Fragment_User : Fragment() {
                     // UI 업데이트
                     binding.tvEducation.text = education
                     binding.tvGrade.text = grade
-                    binding.tvProfileName.text = name
+                    binding.tvProfileName.text = nickname
                     binding.tvProfileEmail.text = userEmail
                     binding.tvdob.text = dob
                     binding.tvphone.text = phone
@@ -279,6 +286,129 @@ class Fragment_User : Fragment() {
             .addOnFailureListener { e ->
                 Log.e("Fragment_User", "포트폴리오 이미지 업로드 실패: ${e.message}")
                 Toast.makeText(requireContext(), "포트폴리오 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun showEditProfileDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_profile, null)
+
+        val editNickname = dialogView.findViewById<EditText>(R.id.et_edit_nickname)
+        val editName = dialogView.findViewById<EditText>(R.id.et_edit_name)
+        val editDob = dialogView.findViewById<EditText>(R.id.et_edit_dob)
+        val editPhone = dialogView.findViewById<EditText>(R.id.et_edit_phone)
+        val editAddress = dialogView.findViewById<EditText>(R.id.et_edit_address)
+        val editEducation = dialogView.findViewById<EditText>(R.id.et_edit_education)
+        val editGrade = dialogView.findViewById<EditText>(R.id.et_edit_grade)
+
+        val user = firebaseAuth.currentUser ?: return
+        val userEmail = user.email ?: return
+
+        firestore.collection("Users")
+            .document(userEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    editNickname.setText(document.getString("nickname"))
+                    editName.setText(document.getString("name"))
+                    editDob.setText(document.getString("dob"))
+                    editPhone.setText(document.getString("phone"))
+                    editAddress.setText(document.getString("address"))
+                    editEducation.setText(document.getString("education"))
+                    editGrade.setText(document.getString("grade"))
+
+                    val awards = document.get("awards") as? List<String> ?: emptyList()
+                    val skills = document.get("skills") as? List<String> ?: emptyList()
+
+                    setupAwardsAndSkillsDialog(dialogView, awards, skills)
+                }
+            }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("내 정보 수정")
+            .setView(dialogView)
+            .setPositiveButton("저장") { _, _ ->
+                saveUpdatedAwardsAndSkillsToFirebase(dialogView)
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun setupAwardsAndSkillsDialog(view: View, awards: List<String>, skills: List<String>) {
+        val awardsContainer = view.findViewById<LinearLayout>(R.id.awards_container)
+        val skillsContainer = view.findViewById<LinearLayout>(R.id.skills_container)
+        val addAwardButton = view.findViewById<Button>(R.id.btn_add_award)
+        val addSkillButton = view.findViewById<Button>(R.id.btn_add_skill)
+
+        // 초기 데이터 추가
+        fun addAwardField(value: String = "") {
+            val editText = EditText(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setText(value)
+                hint = "수상 경력 입력"
+            }
+            awardsContainer.addView(editText)
+        }
+
+        fun addSkillField(value: String = "") {
+            val editText = EditText(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setText(value)
+                hint = "기술 스택 입력"
+            }
+            skillsContainer.addView(editText)
+        }
+
+        // Awards 초기화
+        awards.forEach { addAwardField(it) }
+        addAwardButton.setOnClickListener { addAwardField() }
+
+        // Skills 초기화
+        skills.forEach { addSkillField(it) }
+        addSkillButton.setOnClickListener { addSkillField() }
+    }
+    private fun saveUpdatedAwardsAndSkillsToFirebase(view: View) {
+        val awardsContainer = view.findViewById<LinearLayout>(R.id.awards_container)
+        val skillsContainer = view.findViewById<LinearLayout>(R.id.skills_container)
+
+        val updatedAwards = mutableListOf<String>()
+        val updatedSkills = mutableListOf<String>()
+
+        // Awards 데이터 수집
+        for (i in 0 until awardsContainer.childCount) {
+            val editText = awardsContainer.getChildAt(i) as EditText
+            val text = editText.text.toString().trim()
+            if (text.isNotEmpty()) updatedAwards.add(text)
+        }
+
+        // Skills 데이터 수집
+        for (i in 0 until skillsContainer.childCount) {
+            val editText = skillsContainer.getChildAt(i) as EditText
+            val text = editText.text.toString().trim()
+            if (text.isNotEmpty()) updatedSkills.add(text)
+        }
+
+        val userEmail = firebaseAuth.currentUser?.email ?: return
+        val updates = mapOf(
+            "awards" to updatedAwards,
+            "skills" to updatedSkills
+        )
+
+        firestore.collection("Users").document(userEmail)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(context, "수상 경력과 기술 스택이 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
