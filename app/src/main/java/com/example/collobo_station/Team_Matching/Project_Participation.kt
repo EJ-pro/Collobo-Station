@@ -2,7 +2,9 @@ package com.example.collobo_station.Team_Matching
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -72,10 +74,46 @@ class Project_Participation : AppCompatActivity()  {
         }
 
         Team_adapter.setItemClickListener { item ->
-            // 클릭된 아이템의 데이터를 가지고 다음 페이지로 이동
-            val intent = Intent(this, Team_Looking_Write::class.java)
-            startActivity(intent)
+            val title = item.split(",")[0].trim() // "title" 부분만 추출
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("Team_Matching")
+                .whereEqualTo("title", title)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.isEmpty) {
+                        Toast.makeText(this, "해당 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val document = documents.documents[0]
+                        val url = document.getString("url")
+
+                        if (!url.isNullOrEmpty()) {
+                            val kakaoIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            kakaoIntent.setPackage("com.kakao.talk")
+                            try {
+                                startActivity(kakaoIntent)
+                            } catch (e: Exception) {
+                                // 카카오톡 앱이 없으면 기본 브라우저로 링크 열기
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                startActivity(browserIntent)
+                            }
+
+                            if (kakaoIntent.resolveActivity(packageManager) != null) {
+                                startActivity(kakaoIntent)
+                            } else {
+                            }
+                        } else {
+                            Toast.makeText(this, "URL이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "데이터 로드 실패: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
         }
+
+
+
         // 플로팅 액션 버튼 클릭 리스너 설정
         val fabButton: FloatingActionButton = findViewById(R.id.team_plus_btn)
         fabButton.setOnClickListener {
