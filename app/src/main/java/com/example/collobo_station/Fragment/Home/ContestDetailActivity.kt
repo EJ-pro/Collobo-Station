@@ -3,16 +3,22 @@ package com.example.collobo_station.Fragment.Home
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.collobo_station.R
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.ktx.storage
 import com.google.firebase.storage.storage
+private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
 class ContestDetailActivity : AppCompatActivity() {
     private lateinit var contestImageView: ImageView
@@ -112,8 +118,74 @@ class ContestDetailActivity : AppCompatActivity() {
             val chooserTitle = "친구에게 공유하기"
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
+        // 스크랩 버튼 클릭 이벤트
+        val scrapButton: ImageButton = findViewById(R.id.scrap_add)
+        scrapButton.setOnClickListener {
+            val title = contestName ?: "Untitled"
+            val imageUrl = contestImage ?: ""
+            val pageUrl = contestHomepageUrl ?: ""
+            val color = getRandomColor()
+
+            addToScrapCollection(title, imageUrl, pageUrl, color)
+        }
+    }
+    private fun addToScrapCollection(title: String, imageUrl: String, pageUrl: String, color: Int) {
+        val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: "unknown_user"
+
+        // Firestore에서 중복 확인
+        firestore.collection("Scrap")
+            .whereEqualTo("title", title)
+            .whereEqualTo("nickname", userEmail)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    // 이미 존재하는 데이터 처리
+                    Toast.makeText(this, "이미 스크랩에 추가된 항목입니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // `order` 필드의 최대값 계산
+                    firestore.collection("Scrap")
+                        .get()
+                        .addOnSuccessListener { allDocuments ->
+                            val maxOrder = allDocuments.maxOfOrNull { it.getLong("order") ?: 0L } ?: 0L
+                            val newOrder = maxOrder + 1
+
+                            val scrapData = mapOf(
+                                "title" to title,
+                                "imageUrl" to imageUrl,
+                                "pageUrl" to pageUrl,
+                                "color" to color,
+                                "nickname" to userEmail,
+                                "추가순서" to newOrder // 새로운 순서값 설정
+                            )
+
+                            firestore.collection("Scrap")
+                                .add(scrapData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "스크랩에 추가되었습니다!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(this, "스크랩 추가 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "order 값 불러오기 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "중복 확인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
+
+
+    // 랜덤 색상 생성
+    private fun getRandomColor(): Int {
+        val r = (180..255).random()
+        val g = (180..255).random()
+        val b = (180..255).random()
+        return Color.rgb(r, g, b)
+    }
     // 웹페이지 열기
     private fun openWebPage(url: String) {
         val webpage = Uri.parse(url)
