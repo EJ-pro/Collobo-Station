@@ -129,21 +129,21 @@ class Fragment_Home : Fragment() {
                     val nickname = documents.documents[0].getString("nickname") ?: "default_user"
 
                     // 닉네임 기반으로 이미지 저장
-                    val imageRef = storageRef.child("profile_images/$nickname.jpg")
-                    imageRef.putFile(uri)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "프로필 이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()
-
-                            // 저장된 이미지를 다시 로드
-                            imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                                Glide.with(this)
-                                    .load(downloadUri)
-                                    .into(profileImage)
-                            }
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(requireContext(), "이미지 업로드에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
+//                    val imageRef = storageRef.child("profile_images/$nickname.jpg")
+//                    imageRef.putFile(uri)
+//                        .addOnSuccessListener {
+//                            Toast.makeText(requireContext(), "프로필 이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+//
+//                            // 저장된 이미지를 다시 로드
+//                            imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+//                                Glide.with(this)
+//                                    .load(downloadUri)
+//                                    .into(profileImage)
+//                            }
+//                        }
+//                        .addOnFailureListener { e ->
+//                            Toast.makeText(requireContext(), "이미지 업로드에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+//                        }
                 } else {
                     Toast.makeText(requireContext(), "닉네임을 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -185,7 +185,6 @@ class Fragment_Home : Fragment() {
         menu.setOnClickListener {
             showMenuDialog()
         }
-        profileImage = view.findViewById(R.id.image_test)
 
 
     }
@@ -248,7 +247,7 @@ class Fragment_Home : Fragment() {
                             .into(profileImage)
                     } else {
                         // URL이 없을 경우 기본 이미지 로드
-                        loadProfileImage(nickname)
+//                        loadProfileImage(nickname)
                     }
                 } else {
                     textViewUserName.text = "사용자"

@@ -197,35 +197,34 @@ class Fragment_User : Fragment() {
         }
 
         firestore.collection("Users")
-            .whereEqualTo("email", userEmail)
+            .document(userEmail)
             .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val document = documents.documents[0]
-                    val nickname = document.getString("nickname") ?: "닉네임 없음"
-                    val profileImageUrl = document.getString("profileUrl") ?: ""
-                    val profileCoverUrl = document.getString("profile_cover") ?: ""
-                    portfolioUrl = document.getString("url") ?: ""
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Firestore에서 데이터 가져오기
+                    val name = document.getString("name") ?: "이름 없음"
+                    val dob = document.getString("dob") ?: "생년월일 없음"
+                    val phone = document.getString("phone") ?: "연락처 없음"
+                    val address = document.getString("address") ?: "주소 없음"
+                    val education = document.getString("education") ?: "학력 없음"
+                    val grade = document.getString("grade") ?: "학년 없음"
+                    val awards = document.get("awards") as? List<String> ?: emptyList()
+                    val skills = document.get("skills") as? List<String> ?: emptyList()
 
                     // UI 업데이트
-                    binding.tvProfileName.text = nickname
+                    binding.tvEducation.text = education
+                    binding.tvGrade.text = grade
+                    binding.tvProfileName.text = name
                     binding.tvProfileEmail.text = userEmail
+                    binding.tvdob.text = dob
+                    binding.tvphone.text = phone
+                    binding.tvaddress.text = address
+                    binding.tvemail.text = userEmail
+                    binding.tvname.text = name
+                    binding.tveducationAbout.text = education
 
-                    if (profileImageUrl.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(profileImageUrl)
-                            .placeholder(R.drawable.image_test)
-                            .error(R.drawable.image_test)
-                            .into(binding.ivProfileImage)
-                    }
-
-                    if (profileCoverUrl.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(profileCoverUrl)
-                            .placeholder(R.drawable.my_page_image)
-                            .error(R.drawable.my_page_image)
-                            .into(binding.ivProfileCover)
-                    }
+                    binding.tvAwards.text = awards.joinToString(separator = "\n\n")
+                    binding.tvSkills.text = skills.joinToString(separator = " / ")
                 } else {
                     Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -235,6 +234,7 @@ class Fragment_User : Fragment() {
                 Toast.makeText(requireContext(), "사용자 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun savePortfolioImageAndUrl(url: String) {
         val user = firebaseAuth.currentUser

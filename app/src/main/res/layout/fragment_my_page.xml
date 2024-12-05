@@ -200,14 +200,14 @@
                         android:layout_height="wrap_content"
                         android:text="Education"
                         android:textSize="17dp"
-                        android:textColor="#C7C7C7"
+                        android:textColor="@color/maincolor"
                         android:layout_weight="1"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Grade"
                         android:textSize="17dp"
-                        android:textColor="#C7C7C7"
+                        android:textColor="@color/maincolor"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
@@ -220,16 +220,18 @@
                     android:layout_marginRight="18dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/tv_education"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="목원대학교 컴퓨터공학과 재학"
+                        android:text="Loding..."
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:layout_weight="1"/>
                     <TextView
+                        android:id="@+id/tv_grade"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="4학년"
+                        android:text="Loding..."
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:layout_weight="2"/>
@@ -241,143 +243,14 @@
                     android:layout_marginTop="12dp"
                     android:text="Awards"
                     android:textSize="17dp"
-                    android:textColor="#C7C7C7"
+                    android:textColor="@color/maincolor"
                     android:layout_weight="1"/>
 
                 <TextView
+                    android:id="@+id/tv_awards"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="제25회 입사서류 경진대회 - 장려상                                                           "
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 진로 포트폴리오 경진대회 - 최우수상(1위)"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 글로벌 스타트업스쿨 - Leadership상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 모빌리티 드론코딩 경진대회 - 최우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 대전 대학생 공공기술 창업 아이디어 경진대회 - 우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 융합캡스톤디자인 논문 경진대회 - 한국프로젝트 경영학회장상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 산학협력 융합캡스톤디자인 성과발표회 - 대산협회장상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2024 산학협력 캡스톤디자인 논문 경진대회 - 우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 캡스톤디자인 내부경진대회 - 최우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 목원대학교 PEN 창업동아리 - PEN 혁신 창업가상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 대전권대학연합 산학협력 성과 공유 경진대회 - 대전권 대학연합 산학협력협의체 협회장상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 캡스톤디자인 Boot-Up 메이커톤 - 최우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 대전 스타트업 스쿨 - 우수상"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="2023 TikTok EFFECT HOUSE AR 필터 메이커톤 - 특별상"
+                    android:text="Loading..."
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:layout_marginTop="12dp"
@@ -389,15 +262,16 @@
                     android:layout_height="wrap_content"
                     android:text="Skills"
                     android:textSize="17dp"
-                    android:textColor="#C7C7C7"
+                    android:textColor="@color/maincolor"
                     android:layout_marginTop="12dp"
                     android:layout_weight="1"/>
+
                 <TextView
+                    android:id="@+id/tv_skills"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Android / Java / Kotlin / React / Firebase"
-                    android:textColor="@color/maincolor"
-                    android:textStyle="bold"
+                    android:text="Loding..."
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     android:layout_marginTop="12dp"
                     android:layout_marginLeft="18dp"
@@ -405,12 +279,13 @@
                     android:layout_weight="1"/>
 
                 <TextView
+                    android:id="@+id/tvAboutMe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="About me"
                     android:textSize="17dp"
                     android:layout_marginTop="12dp"
-                    android:textColor="#C7C7C7"
+                    android:textColor="@color/maincolor"
                     android:layout_weight="1"/>
             </LinearLayout>
             <LinearLayout
@@ -420,8 +295,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="vertical"
-                android:background="@drawable/my_page_button_background"
-                android:padding="16dp">
+                android:background="@drawable/my_page_button_background">
 
                 <!-- Grid Layout for Information -->
                 <GridLayout
@@ -437,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:layout_row="0"
                         android:layout_column="0"
-                        android:layout_columnWeight="1.5"
+                        android:layout_columnWeight="1.2"
                         android:orientation="vertical"
                         android:padding="8dp"
                         android:gravity="center">
@@ -456,9 +330,10 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tvname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="이재희"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
@@ -469,7 +344,7 @@
                         android:layout_height="wrap_content"
                         android:layout_row="1"
                         android:layout_column="0"
-                        android:layout_columnWeight="1.5"
+                        android:layout_columnWeight="1.2"
                         android:orientation="vertical"
                         android:padding="8dp"
                         android:gravity="center">
@@ -488,9 +363,10 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tvdob"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="00.09.20"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
@@ -501,7 +377,7 @@
                         android:layout_height="wrap_content"
                         android:layout_row="2"
                         android:layout_column="0"
-                        android:layout_columnWeight="1.5"
+                        android:layout_columnWeight="1.2"
                         android:orientation="vertical"
                         android:padding="8dp"
                         android:gravity="center">
@@ -520,9 +396,10 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tvaddress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="경기도 이천시"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
@@ -552,9 +429,10 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tvphone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="010-3951-1401"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
@@ -584,10 +462,11 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tvemail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="hss2522@naver.com"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
@@ -617,9 +496,10 @@
                             android:layout_marginTop="4dp"/>
 
                         <TextView
+                            android:id="@+id/tveducation_about"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="목원대학교 (컴퓨터공학과)"
+                            android:text="Loding..."
                             android:textColor="#767676"
                             android:layout_marginTop="4dp"/>
                     </LinearLayout>
