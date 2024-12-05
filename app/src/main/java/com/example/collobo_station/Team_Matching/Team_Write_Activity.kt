@@ -57,7 +57,6 @@ class Team_Write_Activity : AppCompatActivity() {
 
         submitButton.setOnClickListener {
             writeDataToFirestore()
-            navigateToProjectParticipation()
         }
     }
 
@@ -126,16 +125,31 @@ class Team_Write_Activity : AppCompatActivity() {
         val content = contentEditText.text.toString().trim()
         val url = urlEditText.text.toString().trim()
         val timestamp = getCurrentDateTime()
-        // 필드와 주제 선택 여부 확인
-        if (selectedField == null || selectedTopic == null) {
-            Toast.makeText(this, "분야와 주제를 선택하세요.", Toast.LENGTH_SHORT).show()
-            return
+
+        // 데이터 유효성 검사
+        when {
+            selectedField == null || selectedTopic == null -> {
+                Toast.makeText(this, "분야와 주제를 선택하세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            title.isEmpty() -> {
+                Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            content.isEmpty() -> {
+                Toast.makeText(this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            url.isEmpty() -> {
+                Toast.makeText(this, "URL을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
         }
 
-        // DataInfo에서 사용자 정보 가져오기
+        // 유효성 검사를 통과하면 데이터 저장
         val userInfo = DataInfo.getUserInfo()
-        val nickname = userInfo?.nickname ?: ""
-        // Firestore에 데이터 쓰기
+        val nickname = userInfo?.nickname ?: "UnknownUser"
+
         val documentName = "$nickname${System.currentTimeMillis()}"
         val data = hashMapOf(
             "title" to title,
@@ -146,16 +160,19 @@ class Team_Write_Activity : AppCompatActivity() {
             "field" to selectedField, // 선택된 분야
             "topic" to selectedTopic
         )
+
+        // Firestore에 데이터 저장
         firestore.collection("Team_Matching").document(documentName)
             .set(data)
             .addOnSuccessListener {
                 Toast.makeText(this, "성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
-                navigateToProjectParticipation()
+                navigateToProjectParticipation() // 데이터 저장 후에만 페이지 이동
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "저장에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
     private fun getCurrentDateTime(): String {
         val dateFormat = SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault())
         val date = Date()

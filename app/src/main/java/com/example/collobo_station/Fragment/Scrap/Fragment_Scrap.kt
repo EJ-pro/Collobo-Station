@@ -40,7 +40,7 @@ class Fragment_Scrap : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_scrap, container, false)
         viewPager = view.findViewById(R.id.Scrap_viewPager)
-        menu = view.findViewById(R.id.meunbar)
+//        menu = view.findViewById(R.id.meunbar)
         addButton = view.findViewById(R.id.btn_add_contest)
 
         // Firestore 초기화
@@ -51,9 +51,9 @@ class Fragment_Scrap : Fragment() {
         fetchScrapData()
 
         // 메뉴 버튼 클릭 이벤트
-        menu.setOnClickListener {
-            showMenuDialog()
-        }
+//        menu.setOnClickListener {
+//            showMenuDialog()
+//        }
 
         addButton.setOnClickListener {
             showAddContestDialog() // + 버튼 클릭 시 Dialog 표시
@@ -314,7 +314,7 @@ class Fragment_Scrap : Fragment() {
         }
         viewPager.adapter = adapter
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-        viewPager.offscreenPageLimit = 3
+        viewPager.offscreenPageLimit = 4
 
         // 마지막 페이지로 이동
         if (dataList.isNotEmpty()) {

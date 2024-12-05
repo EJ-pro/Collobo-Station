@@ -43,11 +43,27 @@
                 <!-- TextView -->
 
                 <!-- 첫 번째 Button 그룹 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="제목 입력"
+                        android:textColor="@color/maincolor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
                 <EditText
                     android:id="@+id/editTextTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
                     android:layout_marginBottom="30dp"
                     android:background="@drawable/team_write_background"
                     android:hint="  제목"
@@ -201,28 +217,21 @@
                     android:padding="10dp"
                     android:textColorHint="#7E7E7E" />
 
-                <!-- 마지막으로 이미지 버튼 2개 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/cameraButton"
-                        android:layout_width="25dp"
-                        android:layout_height="21dp"
-                        android:src="@drawable/image_camera"
-                        android:background="@android:color/transparent"/>
-
-                    <ImageButton
-                        android:id="@+id/fileButton"
-                        android:layout_width="25dp"
-                        android:layout_height="21dp"
-                        android:src="@drawable/image_folder"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:background="@android:color/transparent"/>
+                        android:layout_marginBottom="15dp"
+                        android:text="내용 입력"
+                        android:textColor="@color/maincolor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- 작성 내용 입력란 -->
