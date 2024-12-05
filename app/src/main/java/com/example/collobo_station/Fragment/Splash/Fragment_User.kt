@@ -1,7 +1,6 @@
 package com.example.collobo_station.Fragment.Splash
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.example.collobo_station.Login.LoginActivity
 import com.example.collobo_station.R
 import com.example.collobo_station.databinding.FragmentMyPageBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -30,59 +28,22 @@ class Fragment_User : Fragment() {
     private val firestore = FirebaseFirestore.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var selectedImageUri: Uri? = null
+    private var portfolioUrl: String? = null
 
     private val imagePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == android.app.Activity.RESULT_OK) {
                 selectedImageUri = result.data?.data
                 if (selectedImageUri != null) {
-                    saveProfileImage()
+                    // 다이얼로그 띄우기
+                    showUrlInputDialog()
                 } else {
-                    Toast.makeText(requireContext(), "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "이미지를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Log.e("ImagePicker", "이미지 선택 취소")
             }
         }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentMyPageBinding.inflate(inflater, container, false)
-        val view = binding.root
-
-        // 메뉴 아이콘 클릭 리스너 설정
-        binding.meunbar.setOnClickListener {
-            showMenuDialog()
-        }
-
-        // 사용자 프로필 정보 가져오기
-        setupFirestoreListener()
-
-
-        // 프로필 이미지 클릭 리스너 추가
-        binding.ivProfileImage.setOnClickListener {
-            openGalleryForProfileImage() // 프로필 이미지를 변경하기 위해 갤러리 오픈
-        }
-
-        // 포트폴리오 이미지 변경 리스너
-        binding.ivProfileCover.setOnClickListener {
-            openGallery() // 포트폴리오 이미지를 변경하기 위해 갤러리 오픈
-        }
-
-        // 보러가기 버튼 클릭 리스너
-        binding.btnOpenPortfolio.setOnClickListener {
-            openPortfolioLink()
-        }
-
-        return view
-    }
-
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        imagePickerLauncher.launch(intent)
-    }
-
     private fun showUrlInputDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_url_input, null)
         val urlEditText = dialogView.findViewById<EditText>(R.id.et_url_input)
@@ -91,8 +52,14 @@ class Fragment_User : Fragment() {
             .setTitle("포트폴리오 URL 입력")
             .setView(dialogView)
             .setPositiveButton("저장") { _, _ ->
-                val url = urlEditText.text.toString().trim()
+                var url = urlEditText.text.toString().trim()
+
                 if (url.isNotEmpty()) {
+                    // URL이 "http://" 또는 "https://"로 시작하지 않으면 "https://" 추가
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://$url"
+                    }
+
                     savePortfolioImageAndUrl(url)
                 } else {
                     Toast.makeText(requireContext(), "URL을 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -105,77 +72,68 @@ class Fragment_User : Fragment() {
             .show()
     }
 
-    private fun savePortfolioImageAndUrl(url: String) {
-        val user = firebaseAuth.currentUser
-        if (user == null || selectedImageUri == null) {
-            Toast.makeText(requireContext(), "로그인이 필요하거나 이미지를 선택해주세요.", Toast.LENGTH_SHORT).show()
-            return
+
+    private val profileImagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == android.app.Activity.RESULT_OK) {
+                selectedImageUri = result.data?.data
+                if (selectedImageUri != null) {
+                    updateProfileImage(selectedImageUri!!)
+                } else {
+                    Toast.makeText(requireContext(), "이미지를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.e("ProfileImagePicker", "이미지 선택 취소")
+            }
         }
 
-        val userEmail = user.email ?: return
-        val storageRef = FirebaseStorage.getInstance().reference.child("portfolio_images/${UUID.randomUUID()}.jpg")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentMyPageBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        // Firebase Storage에 포트폴리오 이미지 업로드
-        storageRef.putFile(selectedImageUri!!)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    updateFirestorePortfolioImage(userEmail, uri.toString(), url)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Fragment_User", "포트폴리오 이미지 업로드 실패: ${e.message}")
-                Toast.makeText(requireContext(), "포트폴리오 업로드 실패", Toast.LENGTH_SHORT).show()
-            }
+        // 프로필 정보 불러오기
+        fetchUserProfile()
+
+        // 프로필 사진 클릭 리스너
+        binding.ivProfileImage.setOnClickListener {
+            openGalleryForProfileImage()
+        }
+
+        // 포트폴리오 이미지 변경 리스너
+        binding.ivProfileCover.setOnClickListener {
+            openGalleryForPortfolioImage()
+        }
+
+        // 보러가기 버튼 클릭 리스너
+        binding.btnOpenPortfolio.setOnClickListener {
+            openPortfolioUrl()
+        }
+
+        return view
     }
 
-    private fun updateFirestorePortfolioImage(email: String, imageUrl: String, portfolioUrl: String) {
-        firestore.collection("Users")
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val documentId = documents.documents[0].id
-                    firestore.collection("Users")
-                        .document(documentId)
-                        .update(
-                            mapOf(
-                                "profile_cover" to imageUrl,
-                                "url" to portfolioUrl
-                            )
-                        )
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "포트폴리오 업데이트 완료!", Toast.LENGTH_SHORT).show()
-                            Glide.with(this)
-                                .load(imageUrl)
-                                .into(binding.ivProfileCover)
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("Fragment_User", "Firestore 업데이트 실패: ${e.message}")
-                            Toast.makeText(requireContext(), "업데이트 실패", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Fragment_User", "사용자 정보 가져오기 실패: ${e.message}")
-                Toast.makeText(requireContext(), "사용자 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
-    }
-    private fun openGalleryForProfileImage() {
+    private fun openGalleryForPortfolioImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         imagePickerLauncher.launch(intent)
     }
 
+    private fun openGalleryForProfileImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        profileImagePickerLauncher.launch(intent)
+    }
 
-    private fun saveProfileImage() {
+    private fun updateProfileImage(uri: Uri) {
         val user = firebaseAuth.currentUser ?: return
         val userEmail = user.email ?: return
-
         val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/${UUID.randomUUID()}.jpg")
-        storageRef.putFile(selectedImageUri!!)
+
+        storageRef.putFile(uri)
             .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     firestore.collection("Users")
                         .whereEqualTo("email", userEmail)
                         .get()
@@ -184,87 +142,39 @@ class Fragment_User : Fragment() {
                                 val documentId = documents.documents[0].id
                                 firestore.collection("Users")
                                     .document(documentId)
-                                    .update("profileUrl", uri.toString())
+                                    .update("profileUrl", downloadUri.toString())
                                     .addOnSuccessListener {
-                                        Toast.makeText(requireContext(), "프로필 이미지 업데이트 완료!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(requireContext(), "프로필 이미지가 업데이트되었습니다!", Toast.LENGTH_SHORT).show()
+                                        Glide.with(this)
+                                            .load(downloadUri)
+                                            .placeholder(R.drawable.image_test)
+                                            .error(R.drawable.image_test)
+                                            .into(binding.ivProfileImage)
                                     }
                             }
                         }
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("Fragment_User", "이미지 업로드 실패: ${e.message}")
-            }
-    }
-    private fun setupFirestoreListener() {
-        val user = firebaseAuth.currentUser
-        if (user == null) return
-
-        firestore.collection("Users")
-            .whereEqualTo("email", user.email)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Log.e("Fragment_User", "Firestore 리스너 오류: ${e.message}")
-                    return@addSnapshotListener
-                }
-
-                if (snapshots != null && !snapshots.isEmpty) { // 수정된 부분
-                    val document = snapshots.documents[0]
-                    val nickname = document.getString("nickname") ?: "닉네임 없음"
-                    val profileImageUrl = document.getString("profile_cover") ?: ""
-                    val profileAvatarUrl = document.getString("profile_avatar") ?: ""
-                    val email = document.getString("email") ?: "이메일 없음"
-
-                    // UI 업데이트
-                    binding.tvProfileName.text = nickname
-                    binding.tvProfileEmail.text = email
-
-                    if (profileImageUrl.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(profileImageUrl)
-                            .placeholder(R.drawable.my_page_image)
-                            .into(binding.ivProfileCover)
-                    }
-
-                    if (profileAvatarUrl.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(profileAvatarUrl)
-                            .placeholder(R.drawable.image_test)
-                            .into(binding.ivProfileImage)
-                    }
-                }
+                Log.e("Fragment_User", "프로필 이미지 업로드 실패: ${e.message}")
+                Toast.makeText(requireContext(), "프로필 이미지 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun updateFirestoreProfileImage(email: String, imageUrl: String) {
-        firestore.collection("Users")
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val documentId = documents.documents[0].id
-                    firestore.collection("Users")
-                        .document(documentId)
-                        .update("profile_avatar", imageUrl)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "프로필 이미지 업데이트 완료!", Toast.LENGTH_SHORT).show()
-                            Glide.with(this)
-                                .load(imageUrl)
-                                .into(binding.ivProfileImage)
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("Fragment_User", "Firestore 업데이트 실패: ${e.message}")
-                            Toast.makeText(requireContext(), "업데이트 실패", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-                }
+    private fun openPortfolioUrl() {
+        if (!portfolioUrl.isNullOrEmpty()) {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(portfolioUrl))
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("Fragment_User", "URL 열기 실패: ${e.message}")
+                Toast.makeText(requireContext(), "유효하지 않은 URL입니다.", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-                Log.e("Fragment_User", "사용자 정보 가져오기 실패: ${e.message}")
-                Toast.makeText(requireContext(), "사용자 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
+        } else {
+            Toast.makeText(requireContext(), "포트폴리오 URL이 없습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
+
     private fun fetchUserProfile() {
         val user = firebaseAuth.currentUser
         if (user == null) {
@@ -285,34 +195,28 @@ class Fragment_User : Fragment() {
                 if (!documents.isEmpty) {
                     val document = documents.documents[0]
                     val nickname = document.getString("nickname") ?: "닉네임 없음"
-                    val profileImageUrl = document.getString("profile_cover") // 프로필 커버 이미지
-                    val profileAvatarUrl = document.getString("profile_avatar") // 프로필 아바타 이미지
-                    val email = document.getString("email")
+                    val profileImageUrl = document.getString("profileUrl") ?: ""
+                    val profileCoverUrl = document.getString("profile_cover") ?: ""
+                    portfolioUrl = document.getString("url") ?: ""
 
                     // UI 업데이트
                     binding.tvProfileName.text = nickname
-                    binding.tvProfileEmail.text = email ?: "이메일 없음"
+                    binding.tvProfileEmail.text = userEmail
 
-                    // 프로필 커버 이미지 설정
-                    if (!profileImageUrl.isNullOrEmpty()) {
+                    if (profileImageUrl.isNotEmpty()) {
                         Glide.with(this)
                             .load(profileImageUrl)
-                            .placeholder(R.drawable.my_page_image)
-                            .error(R.drawable.my_page_image)
-                            .into(binding.ivProfileCover)
-                    } else {
-                        binding.ivProfileCover.setImageResource(R.drawable.my_page_image)
-                    }
-
-                    // 프로필 아바타 이미지 설정
-                    if (!profileAvatarUrl.isNullOrEmpty()) {
-                        Glide.with(this)
-                            .load(profileAvatarUrl)
                             .placeholder(R.drawable.image_test)
                             .error(R.drawable.image_test)
                             .into(binding.ivProfileImage)
-                    } else {
-                        binding.ivProfileImage.setImageResource(R.drawable.image_test)
+                    }
+
+                    if (profileCoverUrl.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(profileCoverUrl)
+                            .placeholder(R.drawable.my_page_image)
+                            .error(R.drawable.my_page_image)
+                            .into(binding.ivProfileCover)
                     }
                 } else {
                     Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
@@ -324,63 +228,50 @@ class Fragment_User : Fragment() {
             }
     }
 
-    private fun openPortfolioLink() {
-        firestore.collection("Users")
-            .whereEqualTo("email", firebaseAuth.currentUser?.email)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    var url = documents.documents[0].getString("url")
-                    if (url.isNullOrEmpty()) {
-                        Toast.makeText(requireContext(), "유효하지 않은 링크입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                            url = "https://$url"
-                        }
+    private fun savePortfolioImageAndUrl(url: String) {
+        val user = firebaseAuth.currentUser
+        if (user == null || selectedImageUri == null) {
+            Toast.makeText(requireContext(), "로그인이 필요하거나 이미지를 선택해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            startActivity(intent)
-                        } catch (e: Exception) {
-                            Log.e("Fragment_User", "링크 열기 실패: ${e.message}")
-                            Toast.makeText(requireContext(), "링크를 열 수 없습니다.", Toast.LENGTH_SHORT).show()
+        val userEmail = user.email ?: return
+        val storageRef = FirebaseStorage.getInstance().reference.child("portfolio_images/${UUID.randomUUID()}.jpg")
+
+        storageRef.putFile(selectedImageUri!!)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    firestore.collection("Users")
+                        .whereEqualTo("email", userEmail)
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            if (!documents.isEmpty) {
+                                val documentId = documents.documents[0].id
+                                firestore.collection("Users")
+                                    .document(documentId)
+                                    .update(
+                                        mapOf(
+                                            "profile_cover" to uri.toString(),
+                                            "url" to url
+                                        )
+                                    )
+                                    .addOnSuccessListener {
+                                        portfolioUrl = url
+                                        Toast.makeText(requireContext(), "포트폴리오가 업데이트되었습니다!", Toast.LENGTH_SHORT).show()
+                                        Glide.with(this)
+                                            .load(uri)
+                                            .placeholder(R.drawable.my_page_image)
+                                            .error(R.drawable.my_page_image)
+                                            .into(binding.ivProfileCover)
+                                    }
+                            }
                         }
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "URL 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("Fragment_User", "링크 열기 실패: ${e.message}")
-                Toast.makeText(requireContext(), "링크를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("Fragment_User", "포트폴리오 이미지 업로드 실패: ${e.message}")
+                Toast.makeText(requireContext(), "포트폴리오 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
-    }
-    private fun showMenuDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("메뉴")
-        builder.setItems(R.array.menu_items) { _, which ->
-            when (which) {
-                0 -> {
-                    // 로그아웃 처리
-                    FirebaseAuth.getInstance().signOut()
-
-                    // SharedPreferences에서 자동 로그인 정보 삭제
-                    val sharedPreferences =
-                        requireActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE)
-                    with(sharedPreferences.edit()) {
-                        clear() // 저장된 모든 데이터 삭제
-                        apply()
-                    }
-
-                    // 로그인 화면으로 이동
-                    val intent = Intent(activity, LoginActivity::class.java)
-                    startActivity(intent)
-                    activity?.finish()
-                }
-                1 -> Toast.makeText(requireContext(), "다른 메뉴 클릭", Toast.LENGTH_SHORT).show()
-            }
-        }
-        builder.show()
     }
 
     override fun onDestroyView() {
