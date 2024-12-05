@@ -11,7 +11,7 @@
 
     <!-- 메모 제목 -->
     <EditText
-        android:id="@+id/editMemoTitle"
+        android:id="@+id/addMemoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="메모 제목"
@@ -23,7 +23,7 @@
 
     <!-- 메모 내용 -->
     <EditText
-        android:id="@+id/editMemoContent"
+        android:id="@+id/addMemoContent"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:hint="메모 내용"

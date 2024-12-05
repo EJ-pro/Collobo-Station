@@ -3,28 +3,22 @@ package com.example.collobo_station.Main
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.collobo_station.Data.Memo
 import com.example.collobo_station.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MemoComposeActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
     private lateinit var etTitle: EditText
     private lateinit var etContent: EditText
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var gson: Gson
-
-    companion object {
-        private const val PREFS_FILENAME = "com.example.collobo_station.memo"
-        private const val MEMO_KEY = "memo_list"
-    }
+    private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,38 +28,64 @@ class MemoComposeActivity : AppCompatActivity() {
         etTitle = findViewById(R.id.etTitle)
         etContent = findViewById(R.id.etContent)
 
-        sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
-        gson = Gson()
-
         btnSave.setOnClickListener {
             val title = etTitle.text.toString()
             val content = etContent.text.toString()
 
             if (title.isNotEmpty() && content.isNotEmpty()) {
-                val memo = Memo(System.currentTimeMillis(), title, content)
-                saveMemo(memo)
-
-                val resultIntent = Intent()
-                resultIntent.putExtra("memo", memo)
-                setResult(Activity.RESULT_OK, resultIntent)
+                val currentUser = auth.currentUser
+                if (currentUser != null) {
+                    val userEmail = currentUser.email
+                    if (userEmail != null) {
+                        val memo = Memo(System.currentTimeMillis(), title, content)
+                        saveMemoToFirestore(userEmail, memo) {
+                            val resultIntent = Intent()
+                            resultIntent.putExtra("memo", memo)
+                            setResult(Activity.RESULT_OK, resultIntent)
+                            finish()
+                        }
+                    } else {
+                        setResult(Activity.RESULT_CANCELED)
+                        finish()
+                    }
+                } else {
+                    // 로그인 안된 경우
+                    setResult(Activity.RESULT_CANCELED)
+                    finish()
+                }
             } else {
                 setResult(Activity.RESULT_CANCELED)
+                finish()
             }
-            finish()
         }
     }
 
-    private fun saveMemo(memo: Memo) {
-        val memoListJson = sharedPreferences.getString(MEMO_KEY, null)
-        val memoList: MutableList<Memo> = if (memoListJson != null) {
-            val type = object : TypeToken<MutableList<Memo>>() {}.type
-            gson.fromJson(memoListJson, type)
-        } else {
-            mutableListOf()
-        }
+    private fun saveMemoToFirestore(userEmail: String, memo: Memo, onSuccess: () -> Unit) {
+        val docRef = firestore.collection("Memo").document(userEmail)
 
-        memoList.add(memo)
-        val jsonString = gson.toJson(memoList)
-        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
+        docRef.get().addOnSuccessListener { document ->
+            val currentList = if (document.exists()) {
+                // 기존 문서 존재 시 memo_list 필드를 가져옴
+                document.get("memo_list") as? List<Map<String, Any>> ?: emptyList()
+            } else {
+                emptyList()
+            }
+
+            val updatedList = currentList.toMutableList()
+            val newMemoMap = mapOf(
+                "id" to memo.id,
+                "title" to memo.title,
+                "content" to memo.content
+            )
+            updatedList.add(newMemoMap)
+
+            docRef.set(mapOf("memo_list" to updatedList))
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { e ->
+                    // 에러 처리 필요시
+                }
+        }.addOnFailureListener { e ->
+            // 에러 처리
+        }
     }
 }

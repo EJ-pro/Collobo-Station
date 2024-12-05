@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <!-- 상단 바 -->
     <LinearLayout
         android:id="@+id/topBarLayout"
@@ -21,19 +22,19 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
-
             <!-- 중앙 제목 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:weightSum="2">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/image_team_dot"
-                    android:layout_gravity="top" />
+                    android:layout_gravity="center_vertical" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,23 +43,13 @@
                     android:textStyle="bold"
                     android:text="Collobo" />
             </LinearLayout>
-
-            <!-- 우측 여백 -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_weight="1">
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
             android:gravity="left"
-            android:padding="10dp"
-            android:layout_weight="1">
+            android:padding="10dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +61,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- RecyclerView -->
+    <!-- RecyclerView 추가 부분 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
@@ -78,10 +69,10 @@
         android:background="@android:color/white"
         android:elevation="4dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topBarLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topBarLayout" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- FloatingActionButton -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -92,8 +83,8 @@
         android:src="@drawable/icon_add"
         app:backgroundTint="@color/maincolor"
         app:fabSize="normal"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:elevation="8dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

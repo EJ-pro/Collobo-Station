@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation("com.jaredrummler:colorpicker:1.1.0")
     implementation("jp.wasabeef:blurry:4.0.1")
     implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("com.google.android.gms:play-services-auth:20.5.0")

@@ -11,16 +11,20 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.collobo_station.R
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.storage
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import kotlin.random.Random
+
 private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-class ContestDetailActivity : AppCompatActivity() {
+class ContestDetailActivity : AppCompatActivity(), ColorPickerDialogListener {
     private lateinit var contestImageView: ImageView
     private lateinit var contestNameTextView: TextView
     private lateinit var contestFieldTextView: TextView
@@ -35,6 +39,11 @@ class ContestDetailActivity : AppCompatActivity() {
     private lateinit var contestEligibilityTextView: TextView
     private lateinit var contestHomepageUrlTextView: TextView
     private lateinit var contestprecautionsTextView: TextView
+
+    // 선택된 색상을 전달할 콜백 람다
+    private var colorSelectedCallback: ((Int) -> Unit)? = null
+    private val COLOR_DIALOG_ID = 0
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,19 +81,18 @@ class ContestDetailActivity : AppCompatActivity() {
         contestHomepageUrlTextView = findViewById(R.id.contestHomepageUrl)
         contestprecautionsTextView = findViewById(R.id.contestprecautions)
 
-        // 이미지를 로드하고 ImageView에 설정
+        // 이미지 로드
         val storageReference = contestImage?.let { Firebase.storage.reference.child(it) }
         storageReference?.getBytes(Long.MAX_VALUE)
             ?.addOnSuccessListener { bytes ->
-                // 다운로드 성공 시 바이트 데이터를 비트맵으로 변환하여 ImageView에 설정
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 contestImageView.setImageBitmap(bmp)
             }
-            ?.addOnFailureListener { exception ->
-                // 다운로드 실패 시
+            ?.addOnFailureListener {
+                // 실패 시 무시
             }
 
-        // url_Button을 클릭하면 contestUrl 주소로 이동
+        // URL 버튼 클릭
         val urlButton: Button = findViewById(R.id.url_button)
         urlButton.setOnClickListener {
             val url = contestHomepageUrl
@@ -92,6 +100,7 @@ class ContestDetailActivity : AppCompatActivity() {
                 openWebPage(url)
             }
         }
+
         // 텍스트뷰에 데이터 설정
         contestNameTextView.text = contestName
         contestFieldTextView.text = contestField
@@ -107,6 +116,7 @@ class ContestDetailActivity : AppCompatActivity() {
         contestHomepageUrlTextView.text = contestHomepageUrl
         contestprecautionsTextView.text = contestprecautions
 
+        // 공유 버튼
         val shareBtn: ImageButton = findViewById(R.id.shareBtn)
         shareBtn.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
@@ -118,31 +128,85 @@ class ContestDetailActivity : AppCompatActivity() {
             val chooserTitle = "친구에게 공유하기"
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
-        // 스크랩 버튼 클릭 이벤트
+
+        // 스크랩 버튼
         val scrapButton: ImageButton = findViewById(R.id.scrap_add)
         scrapButton.setOnClickListener {
-            val title = contestName ?: "Untitled"
-            val imageUrl = contestImage ?: ""
-            val pageUrl = contestHomepageUrl ?: ""
-            val color = getRandomColor()
-
-            addToScrapCollection(title, imageUrl, pageUrl, color)
+            // 색상 선택 방법 다이얼로그 표시
+            showColorChoiceDialog(contestName ?: "Untitled", contestImage ?: "", contestHomepageUrl ?: "")
         }
     }
+
+    // 색상 선택 방법 다이얼로그 (랜덤 vs 직접선택)
+    private fun showColorChoiceDialog(title: String, imageUrl: String, pageUrl: String) {
+        val options = arrayOf("랜덤 색상 선택", "색상 직접 선택")
+        AlertDialog.Builder(this)
+            .setTitle("색상을 선택하는 방법을 고르세요")
+            .setItems(options) { dialog, which ->
+                when(which) {
+                    0 -> { // 랜덤 색상
+                        val randomColor = getRandomColor()
+                        addToScrapCollection(title, imageUrl, pageUrl, randomColor)
+                    }
+                    1 -> { // 직접 색상 선택
+                        showColorPickerDialog { selectedColor ->
+                            addToScrapCollection(title, imageUrl, pageUrl, selectedColor)
+                        }
+                    }
+                }
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showColorPickerDialog(onColorSelected: (Int) -> Unit) {
+        // 콜백 저장
+        colorSelectedCallback = onColorSelected
+        // ColorPicker 다이얼로그 표시
+        ColorPickerDialog
+            .newBuilder()
+            .setColor(Color.RED) // 초기 컬러
+            .setShowAlphaSlider(true) // 투명도 조절 가능
+            .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+            .setAllowPresets(true)
+            .setPresets(intArrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA))
+            .setDialogId(COLOR_DIALOG_ID)
+            .show(this)
+    }
+
+    // ColorPickerDialogListener 구현 메서드
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        if (dialogId == COLOR_DIALOG_ID) {
+            // 사용자가 색상 선택 완료 시 콜백 호출
+            colorSelectedCallback?.invoke(color)
+        }
+    }
+
+    override fun onDialogDismissed(dialogId: Int) {
+        // 다이얼로그 닫힐 때 특별 처리 없음
+    }
+
+    private fun getRandomColor(): Int {
+        val r = (180..255).random()
+        val g = (180..255).random()
+        val b = (180..255).random()
+        return Color.rgb(r, g, b)
+    }
+
     private fun addToScrapCollection(title: String, imageUrl: String, pageUrl: String, color: Int) {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: "unknown_user"
 
-        // Firestore에서 중복 확인
+        // Firestore 중복 확인
         firestore.collection("Scrap")
             .whereEqualTo("title", title)
             .whereEqualTo("nickname", userEmail)
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
-                    // 이미 존재하는 데이터 처리
+                    // 이미 존재
                     Toast.makeText(this, "이미 스크랩에 추가된 항목입니다.", Toast.LENGTH_SHORT).show()
                 } else {
-                    // `order` 필드의 최대값 계산
+                    // order 필드 최대값 찾기
                     firestore.collection("Scrap")
                         .get()
                         .addOnSuccessListener { allDocuments ->
@@ -155,7 +219,7 @@ class ContestDetailActivity : AppCompatActivity() {
                                 "pageUrl" to pageUrl,
                                 "color" to color,
                                 "nickname" to userEmail,
-                                "추가순서" to newOrder // 새로운 순서값 설정
+                                "추가순서" to newOrder
                             )
 
                             firestore.collection("Scrap")
@@ -177,21 +241,10 @@ class ContestDetailActivity : AppCompatActivity() {
             }
     }
 
-
-
-    // 랜덤 색상 생성
-    private fun getRandomColor(): Int {
-        val r = (180..255).random()
-        val g = (180..255).random()
-        val b = (180..255).random()
-        return Color.rgb(r, g, b)
-    }
     // 웹페이지 열기
     private fun openWebPage(url: String) {
         val webpage = Uri.parse(url)
-
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webpage.toString()))
+        val intent = Intent(Intent.ACTION_VIEW, webpage)
         startActivity(intent)
-
     }
 }

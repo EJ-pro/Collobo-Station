@@ -1,10 +1,10 @@
 package com.example.collobo_station.Main
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,136 +12,238 @@ import com.example.collobo_station.Adapter.Home.MemoAdapter
 import com.example.collobo_station.Data.Memo
 import com.example.collobo_station.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Portfolio_management : AppCompatActivity() {
+
+    private val firestore = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
     private val memoList = mutableListOf<Memo>()
-    private lateinit var memoAdapter: MemoAdapter
+    private lateinit var adapter: MemoAdapter
+
+    // 뷰 변수 선언
     private lateinit var recyclerView: RecyclerView
     private lateinit var fabAddMemo: FloatingActionButton
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var gson: Gson
-
     companion object {
-        private const val PREFS_FILENAME = "com.example.collobo_station.memo"
-        private const val MEMO_KEY = "memo_list"
+        const val REQUEST_CODE_ADD_MEMO = 1001
+        const val REQUEST_CODE_EDIT_MEMO = 1002
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 여기서 레이아웃 파일명을 실제 존재하는 것으로 변경해주세요.
         setContentView(R.layout.action_protfolio_management)
 
+        // findViewById로 뷰 참조
         recyclerView = findViewById(R.id.recyclerView)
         fabAddMemo = findViewById(R.id.fabAddMemo)
 
-        sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
-        gson = Gson()
-
-        memoAdapter = MemoAdapter(memoList, this, { position ->
-            deleteMemo(position)
-        }, { position ->
-            editMemo(position)
-        })
+        adapter = MemoAdapter(memoList, this,
+            deleteMemo = { position -> confirmDelete(position) },
+            editMemo = { position -> showEditMemoDialog(position) }
+        )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = memoAdapter
-
-        loadMemos()
+        recyclerView.adapter = adapter
 
         fabAddMemo.setOnClickListener {
             showAddMemoDialog()
         }
+
+        loadMemosFromFirestore()
+    }
+
+    private fun loadMemosFromFirestore() {
+        val userEmail = auth.currentUser?.email
+        if (userEmail != null) {
+            firestore.collection("Memo").document(userEmail)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val memoData = document.get("memo_list") as? List<Map<String, Any>> ?: emptyList()
+                        memoList.clear()
+
+                        // 역순으로 순회 (memoData.reversed())
+                        for (data in memoData.reversed()) {
+                            val id = data["id"] as? Number ?: 0L
+                            val title = data["title"] as? String ?: ""
+                            val content = data["content"] as? String ?: ""
+                            memoList.add(Memo(id.toLong(), title, content))
+                        }
+
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        memoList.clear()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "메모 불러오기 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "로그인 필요", Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun confirmDelete(position: Int) {
-        val memo = memoList[position]
+        deleteMemoFromFirestore(position)
+    }
 
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("메모 삭제")
-        builder.setMessage("정말 '${memo.title}' 메모를 삭제하시겠습니까?")
-        builder.setPositiveButton("삭제") { _, _ ->
-            deleteMemo(position) // 확인하면 삭제 수행
-        }
-        builder.setNegativeButton("취소") { dialog, _ ->
-            dialog.dismiss() // 취소하면 다이얼로그 닫기
-        }
-        builder.show()
+    private fun deleteMemoFromFirestore(position: Int) {
+        val userEmail = auth.currentUser?.email ?: return
+        firestore.collection("Memo").document(userEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val memoData = document.get("memo_list") as? List<Map<String, Any>> ?: emptyList()
+                    val mutableListData = memoData.toMutableList()
+                    mutableListData.removeAt(position)
+
+                    firestore.collection("Memo").document(userEmail)
+                        .update("memo_list", mutableListData)
+                        .addOnSuccessListener {
+                            memoList.removeAt(position)
+                            adapter.notifyItemRemoved(position)
+                            Toast.makeText(this, "메모 삭제됨", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
     }
 
     private fun showAddMemoDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_memo, null)
-        val editTitle = dialogView.findViewById<EditText>(R.id.editMemoTitle)
-        val editContent = dialogView.findViewById<EditText>(R.id.editMemoContent)
+        val editTitle = dialogView.findViewById<EditText>(R.id.addMemoTitle)
+        val editContent = dialogView.findViewById<EditText>(R.id.addMemoContent)
 
         AlertDialog.Builder(this)
-            .setTitle("메모 작성")
+            .setTitle("메모 추가")
             .setView(dialogView)
             .setPositiveButton("추가") { _, _ ->
                 val title = editTitle.text.toString().trim()
                 val content = editContent.text.toString().trim()
 
                 if (title.isNotEmpty() && content.isNotEmpty()) {
-                    val newMemo = Memo(System.currentTimeMillis(), title, content)
-                    memoList.add(0, newMemo) // 리스트의 맨 앞에 추가
-                    memoAdapter.notifyDataSetChanged() // 데이터 변경 알림
-                    saveMemos()
+                    val memo = Memo(System.currentTimeMillis(), title, content)
+                    addMemoToFirestore(memo)
+                } else {
+                    Toast.makeText(this, "제목과 내용을 모두 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("취소", null)
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
             .show()
     }
 
-    private fun editMemo(position: Int) {
+    private fun addMemoToFirestore(memo: Memo) {
+        val userEmail = auth.currentUser?.email
+        if (userEmail == null) {
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val docRef = firestore.collection("Memo").document(userEmail)
+
+        docRef.get().addOnSuccessListener { document ->
+            val currentList = if (document.exists()) {
+                document.get("memo_list") as? List<Map<String, Any>> ?: emptyList()
+            } else {
+                emptyList()
+            }
+
+            val updatedList = currentList.toMutableList()
+            val newMemoMap = mapOf(
+                "id" to memo.id,
+                "title" to memo.title,
+                "content" to memo.content
+            )
+            updatedList.add(newMemoMap)
+
+            docRef.set(mapOf("memo_list" to updatedList))
+                .addOnSuccessListener {
+                    memoList.add(memo)
+                    adapter.notifyDataSetChanged()
+                    Toast.makeText(this, "메모가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "메모 추가 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Firestore 접근 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showEditMemoDialog(position: Int) {
         val memo = memoList[position]
 
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_memo, null)
+        // 다이얼로그 뷰 인플레이션
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_memo, null)
         val editTitle = dialogView.findViewById<EditText>(R.id.editMemoTitle)
         val editContent = dialogView.findViewById<EditText>(R.id.editMemoContent)
 
+        // 기존 메모 내용 설정
         editTitle.setText(memo.title)
         editContent.setText(memo.content)
 
         AlertDialog.Builder(this)
             .setTitle("메모 수정")
             .setView(dialogView)
-            .setPositiveButton("수정") { _, _ ->
-                val newTitle = editTitle.text.toString()
-                val newContent = editContent.text.toString()
+            .setPositiveButton("저장") { _, _ ->
+                val updatedTitle = editTitle.text.toString().trim()
+                val updatedContent = editContent.text.toString().trim()
 
-                memo.title = newTitle
-                memo.content = newContent
-                memoList.removeAt(position)
-                memoList.add(0, memo) // 수정된 메모를 맨 앞에 추가
-                memoAdapter.notifyDataSetChanged() // 변경 사항 반영
-
-                saveMemos()
+                if (updatedTitle.isNotEmpty() && updatedContent.isNotEmpty()) {
+                    val updatedMemo = Memo(memo.id, updatedTitle, updatedContent)
+                    updateMemoInFirestore(updatedMemo, position)
+                } else {
+                    Toast.makeText(this, "제목과 내용을 모두 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
             }
-            .setNegativeButton("취소", null)
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
             .show()
     }
 
-    private fun deleteMemo(position: Int) {
-        if (position >= 0 && position < memoList.size) {
-            memoList.removeAt(position)
-            memoAdapter.notifyItemRemoved(position)
-            saveMemos()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_ADD_MEMO && resultCode == RESULT_OK) {
+            loadMemosFromFirestore()
+        } else if (requestCode == REQUEST_CODE_EDIT_MEMO && resultCode == RESULT_OK) {
+            val updatedMemo = data?.getParcelableExtra<Memo>("updated_memo") ?: return
+            val position = data.getIntExtra("position", -1)
+            if (position != -1) {
+                updateMemoInFirestore(updatedMemo, position)
+            }
         }
     }
 
-    private fun saveMemos() {
-        val jsonString = gson.toJson(memoList)
-        sharedPreferences.edit().putString(MEMO_KEY, jsonString).apply()
-    }
+    private fun updateMemoInFirestore(updatedMemo: Memo, position: Int) {
+        val userEmail = auth.currentUser?.email ?: return
+        firestore.collection("Memo").document(userEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val memoData = document.get("memo_list") as? List<Map<String, Any>> ?: emptyList()
+                    val mutableListData = memoData.toMutableList()
 
-    private fun loadMemos() {
-        val memoListJson = sharedPreferences.getString(MEMO_KEY, null)
-        if (memoListJson != null) {
-            val type = object : TypeToken<MutableList<Memo>>() {}.type
-            val savedMemos: MutableList<Memo> = gson.fromJson(memoListJson, type)
-            memoList.addAll(savedMemos)
-            memoAdapter.notifyDataSetChanged()
-        }
+                    val newMemoMap = mapOf(
+                        "id" to updatedMemo.id,
+                        "title" to updatedMemo.title,
+                        "content" to updatedMemo.content
+                    )
+                    mutableListData[position] = newMemoMap
+
+                    firestore.collection("Memo").document(userEmail)
+                        .update("memo_list", mutableListData)
+                        .addOnSuccessListener {
+                            memoList[position] = updatedMemo
+                            adapter.notifyItemChanged(position)
+                            Toast.makeText(this, "메모 수정됨", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
     }
 }
