@@ -187,10 +187,7 @@ class Fragment_Home : Fragment() {
         }
         profileImage = view.findViewById(R.id.image_test)
 
-        // 클릭 이벤트 추가
-        profileImage.setOnClickListener {
-            openGallery()
-        }
+
     }
     private fun showMenuDialog() {
         val builder = AlertDialog.Builder(requireContext())
@@ -238,10 +235,11 @@ class Fragment_Home : Fragment() {
                     val nickname = document.getString("nickname") ?: "default_user"
                     val profileUrl = document.getString("profileUrl") // Firestore에 저장된 프로필 이미지 URL
 
+                    // 닉네임 설정
                     textViewUserName.text = nickname
 
+                    // Firestore에 저장된 URL로 프로필 이미지 로드
                     if (profileUrl != null) {
-                        // 저장된 URL로 바로 이미지 로드
                         Glide.with(this)
                             .load(profileUrl)
                             .placeholder(R.drawable.image_test)
@@ -249,7 +247,7 @@ class Fragment_Home : Fragment() {
                             .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
                             .into(profileImage)
                     } else {
-                        // URL이 없으면 Firebase Storage에서 가져오기
+                        // URL이 없을 경우 기본 이미지 로드
                         loadProfileImage(nickname)
                     }
                 } else {
@@ -257,13 +255,12 @@ class Fragment_Home : Fragment() {
                     profileImage.setImageResource(R.drawable.image_test)
                 }
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 textViewUserName.text = "로그인 필요"
                 profileImage.setImageResource(R.drawable.image_test)
+                Log.e(TAG, "Firestore 프로필 불러오기 실패: ${e.message}")
             }
     }
-
-
 
     private fun setupViewPager() {
         val firestore = FirebaseFirestore.getInstance()

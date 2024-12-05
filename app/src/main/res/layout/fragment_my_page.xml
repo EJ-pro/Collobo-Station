@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:adjustViewBounds="true"
@@ -29,6 +28,109 @@
                 android:layout_margin="20dp"
                 android:src="@drawable/image_menu" />
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
+
+            <!-- 상단 이미지 (터치해서 변경 가능) -->
+            <ImageView
+                android:id="@+id/iv_profile_cover"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:src="@drawable/my_page_image"/>
+
+            <!-- 보러가기 버튼 (이미지 위에 겹침) -->
+            <Button
+                android:id="@+id/btn_open_portfolio"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="13dp"
+                android:background="@drawable/my_page_button_background"
+                android:text="보러가기"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+            <!-- 사용자 정보 (이미지 아래에 위치) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_info_container"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="-115dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:src="@drawable/image_dot" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="My Portfolio"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_profile_cover"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="-24dp"
+                android:paddingBottom="30dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- 프로필 이미지 -->
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_profile_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/image_test" />
+
+                <!-- 닉네임과 이메일 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:text="닉네임"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tv_profile_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="bottom"
+                        android:paddingEnd="15dp"
+                        android:gravity="end"
+                        android:text="이메일"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
         <!-- RelativeLayout -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -48,7 +150,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginLeft="16dp">
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,8 +163,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Instagram"
-                android:textColor="@android:color/holo_blue_dark"
+                android:text="       Instagram"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:clickable="true"
                 android:autoLink="web"
@@ -75,7 +178,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@color/black"
+            android:background="@drawable/my_page_round"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
