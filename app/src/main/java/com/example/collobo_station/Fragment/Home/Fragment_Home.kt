@@ -336,27 +336,44 @@ class Fragment_Home : Fragment() {
     }
 
     private fun fetchContestInfo(position: Int) {
-        val currentPosition = viewPager.currentItem
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("Recommendation Contest")
             .get()
             .addOnSuccessListener { documents ->
-                if (!documents.isEmpty && currentPosition < documents.size()) {
-                    val document = documents.elementAtOrNull(currentPosition)
-                    document?.let {
-                        val url = it.getString("url") ?: ""
+                if (!documents.isEmpty && position < documents.size()) {
+                    val document = documents.documents[position]
+                    val url = document.getString("홈페이지url")
 
+                    if (!url.isNullOrEmpty()) {
                         textViewContestName.setOnClickListener {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            startActivity(intent)
+                            try {
+                                val uri = Uri.parse(if (!url.startsWith("http")) "https://$url" else url)
+                                val intent = Intent(Intent.ACTION_VIEW, uri)
+                                startActivity(intent)
+                            } catch (e: Exception) {
+                                Toast.makeText(requireContext(), "URL 이동에 실패했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Log.e(TAG, "URL 이동 실패: ${e.message}")
+                            }
                         }
+                    } else {
+                        textViewContestName.setOnClickListener {
+                            Toast.makeText(requireContext(), "유효하지 않은 URL입니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    textViewContestName.setOnClickListener {
+                        Toast.makeText(requireContext(), "데이터를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .addOnFailureListener { exception ->
-                // 처리
+                textViewContestName.setOnClickListener {
+                    Toast.makeText(requireContext(), "Firestore 데이터를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "Firestore 데이터 불러오기 실패: ${exception.message}")
+                }
             }
     }
+
 
     private fun setupTabLayout(view: View) {
         tabLayout = view.findViewById(R.id.tabLayout)
