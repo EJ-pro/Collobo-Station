@@ -26,7 +26,6 @@ import com.example.collobo_station.databinding.FragmentMyPageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import jp.wasabeef.blurry.Blurry
 import java.util.*
 
 class Fragment_User : Fragment() {

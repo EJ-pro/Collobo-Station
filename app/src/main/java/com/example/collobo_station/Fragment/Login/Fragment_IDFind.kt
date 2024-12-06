@@ -21,7 +21,7 @@ class Fragment_IDFind : Fragment() {
     private var verificationId: String? = null
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    private var currentPhoneNumber: String? = null // phoneNumber 저장용 변수
+    private var originalInputPhoneNumber: String? = null // 사용자가 입력한 원본 전화번호 (하이픈 여부 상관없음)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +29,6 @@ class Fragment_IDFind : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_find_id, container, false)
 
-        // Firebase 인증 객체 초기화
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
@@ -38,7 +37,7 @@ class Fragment_IDFind : Fragment() {
         val verifyCodeButton = view.findViewById<Button>(R.id.findid_code_ckbtn)
         val verificationCodeEditText = view.findViewById<EditText>(R.id.findid_code)
 
-        // 전화번호 인증 요청 버튼 클릭 리스너
+        // 전화번호 인증 요청
         sendVerificationButton.setOnClickListener {
             val phoneNumber = phoneNumberEditText.text.toString().trim()
 
@@ -47,18 +46,17 @@ class Fragment_IDFind : Fragment() {
                 return@setOnClickListener
             }
 
-            // 전화번호를 Firestore 형식에 맞게 변환
-            val formattedPhoneNumber = if (phoneNumber.startsWith("+")) {
-                phoneNumber // 이미 국제 형식
-            } else {
-                "+82" + phoneNumber.removePrefix("0") // 대한민국 국가 코드 추가
+            originalInputPhoneNumber = phoneNumber
+            val e164Phone = convertToE164Format(phoneNumber)
+            if (e164Phone == null) {
+                Toast.makeText(requireContext(), "전화번호 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            // 인증 요청 함수 호출 시 phoneNumber 전달
-            startPhoneNumberVerification(formattedPhoneNumber)
+            startPhoneNumberVerification(e164Phone)
         }
 
-        // 인증 코드 확인 버튼 클릭 리스너
+        // 인증 코드 확인
         verifyCodeButton.setOnClickListener {
             val code = verificationCodeEditText.text.toString().trim()
 
@@ -79,16 +77,10 @@ class Fragment_IDFind : Fragment() {
     }
 
     private fun startPhoneNumberVerification(phoneNumber: String) {
-        // 인증용 포맷
-        val formattedPhoneNumberForAuth = formatPhoneNumberForAuth(phoneNumber)
-        currentPhoneNumber = formatPhoneNumberForFirestore(phoneNumber) // Firestore 조회용 포맷 저장
-
-        Log.d(TAG, "Formatted for Auth: $formattedPhoneNumberForAuth")
-        Log.d(TAG, "Formatted for Firestore: $currentPhoneNumber")
-
+        // phoneNumber는 E.164 형식
         PhoneAuthProvider.verifyPhoneNumber(
             PhoneAuthOptions.newBuilder(firebaseAuth)
-                .setPhoneNumber(formattedPhoneNumberForAuth) // 인증용 포맷 사용
+                .setPhoneNumber(phoneNumber)
                 .setTimeout(60L, TimeUnit.SECONDS)
                 .setActivity(requireActivity())
                 .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -101,10 +93,7 @@ class Fragment_IDFind : Fragment() {
                         Toast.makeText(requireContext(), "인증 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
 
-                    override fun onCodeSent(
-                        verificationId: String,
-                        token: PhoneAuthProvider.ForceResendingToken
-                    ) {
+                    override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
                         this@Fragment_IDFind.verificationId = verificationId
                         Toast.makeText(requireContext(), "인증 코드가 전송되었습니다.", Toast.LENGTH_SHORT).show()
                     }
@@ -112,8 +101,6 @@ class Fragment_IDFind : Fragment() {
                 .build()
         )
     }
-
-
 
     private fun verifyPhoneNumberWithCode(code: String) {
         try {
@@ -129,12 +116,11 @@ class Fragment_IDFind : Fragment() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    val user = task.result?.user
-                    Log.d(TAG, "signInWithCredential:success, user: $user")
-
-                    // 현재 저장된 전화번호로 이메일 가져오기
-                    currentPhoneNumber?.let { phoneNumber ->
-                        fetchEmailFromPhoneNumber(phoneNumber)
+                    Log.d(TAG, "signInWithCredential:success")
+                    // 인증 성공 -> Firestore 조회
+                    originalInputPhoneNumber?.let { phoneNumber ->
+                        val firestoreFormatNumber = convertToFirestoreFormat(phoneNumber)
+                        fetchEmailFromPhoneNumber(firestoreFormatNumber)
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -145,21 +131,18 @@ class Fragment_IDFind : Fragment() {
             }
     }
 
-    private fun fetchEmailFromPhoneNumber(phoneNumber: String) {
-
-        val formattedPhoneNumber = formatPhoneNumberForFirestore(phoneNumber)
+    private fun fetchEmailFromPhoneNumber(firestoreFormattedNumber: String) {
+        // Firestore에 "010-3951-1401" 이런식으로 저장되어 있다고 가정
         firestore.collection("Users")
-            .whereEqualTo("phone_number", formattedPhoneNumber)
+            .whereEqualTo("phone_number", firestoreFormattedNumber)
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
                     val document = documents.documents[0]
                     val email = document.getString("email")
-
-                    // 이메일을 다이얼로그로 표시
                     showEmailDialog(email)
                 } else {
-                    Log.e(TAG, "formattedPhoneNumber 검색 실패: ${formattedPhoneNumber}")
+                    Log.e(TAG, "전화번호 검색 실패: $firestoreFormattedNumber")
                     Toast.makeText(requireContext(), "해당 전화번호로 등록된 계정을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -171,32 +154,45 @@ class Fragment_IDFind : Fragment() {
 
     private fun showEmailDialog(email: String?) {
         val message = email ?: "등록된 이메일이 없습니다."
-        val builder = AlertDialog.Builder(requireContext())
-
-        builder.setTitle("계정 정보")
+        AlertDialog.Builder(requireContext())
+            .setTitle("계정 정보")
             .setMessage("이메일: $message")
-            .setPositiveButton("확인") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("확인") { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
     }
 
-    private fun formatPhoneNumberForAuth(phoneNumber: String): String {
-        // Firebase 인증용 국제 번호 형식으로 변환
-        return if (!phoneNumber.startsWith("+82")) {
-            "+82" + phoneNumber.removePrefix("0") // "01012345678" → "+821012345678"
+    /**
+     * E.164 형식으로 변환
+     * 사용자가 "010-3951-1401"이나 "01039511401"로 입력하면 "+821039511401" 반환
+     */
+    private fun convertToE164Format(inputNumber: String): String? {
+        // 하이픈 제거
+        val cleaned = inputNumber.replace("-", "")
+        // 길이가 11자리이며 '010'으로 시작한다고 가정 (한국 전화번호)
+        // 형식: 01039511401 -> +821039511401
+        return if (cleaned.startsWith("0") && cleaned.length == 11) {
+            "+82" + cleaned.removePrefix("0")
         } else {
-            phoneNumber // 이미 국제 형식인 경우 그대로 반환
+            null // 형식이 맞지 않는 경우 null
         }
     }
 
-    private fun formatPhoneNumberForFirestore(phoneNumber: String): String {
-        // Firestore 조회용 하이픈 포함 형식으로 변환
-        return if (!phoneNumber.contains("-")) {
-            phoneNumber.replaceFirst("(\\d{3})(\\d{4})(\\d{4})".toRegex(), "$1-$2-$3")
+    /**
+     * Firestore 형식으로 변환
+     * Firestore에는 "010-3951-1401" 형태로 저장되어 있다고 가정
+     */
+    private fun convertToFirestoreFormat(inputNumber: String): String {
+        // 기존 데이터가 항상 "010-xxxx-xxxx" 형태라고 가정
+        // 입력으로 들어온 번호에서 하이픈 제거 후 하이픈 위치 삽입
+        val cleaned = inputNumber.replace("-", "")
+        // 길이가 11자리라고 가정: 01039511401
+        // -> 010-3951-1401
+        return if (cleaned.length == 11 && cleaned.startsWith("010")) {
+            cleaned.substring(0,3) + "-" + cleaned.substring(3,7) + "-" + cleaned.substring(7)
         } else {
-            phoneNumber // 이미 하이픈이 포함된 경우 그대로 반환
+            // 혹시 형식이 다르면 그대로 리턴하거나 에러 처리
+            inputNumber
         }
     }
 
